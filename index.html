@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI Chronicals News - Be Informed. Be Ahead. پاکستان اور دنیا کی تازہ خبریں۔">
+<title>AI Chronicals News | Be Informed. Be Ahead.</title>
+
+<style>
+:root {
+  --navy:#071a35;
+  --blue:#1264bd;
+  --red:#e33445;
+  --white:#ffffff;
+  --light:#f2f5fa;
+  --text:#182338;
+  --muted:#6c7788;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,"Noto Nastaliq Urdu",sans-serif;
+  background:var(--light);
+  color:var(--text);
+}
+a { text-decoration:none; color:inherit; }
+.container { width:min(1180px,94%); margin:auto; }
+
+.topbar {
+  background:var(--navy);
+  color:white;
+  padding:9px 0;
+  font-size:13px;
+}
+.topbar .container {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.header {
+  background:white;
+  padding:20px 0;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.logo {
+  width:68px;
+  height:68px;
+  flex-shrink:0;
+}
+.brand-name {
+  font-family:Arial,sans-serif;
+  font-size:clamp(19px,4vw,29px);
+  font-weight:900;
+  color:var(--navy);
+  direction:ltr;
+}
+.tagline {
+  color:var(--red);
+  font-size:13px;
+  direction:ltr;
+  text-align:left;
+  margin-top:5px;
+}
+.nav {
+  background:var(--navy);
+  color:white;
+}
+.nav-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.nav a {
+  display:inline-block;
+  padding:15px 12px;
+  font-size:14px;
+}
+.nav a:hover,.nav a.active {
+  background:var(--red);
+}
+.search {
+  display:flex;
+  gap:5px;
+  padding:8px 0;
+}
+.search input {
+  width:145px;
+  padding:9px;
+  border:0;
+  border-radius:5px;
+}
+.search button {
+  border:0;
+  background:var(--red);
+  color:white;
+  border-radius:5px;
+  padding:8px 12px;
+  cursor:pointer;
+}
+.ticker {
+  display:flex;
+  background:white;
+  margin:18px 0;
+  border-right:5px solid var(--red);
+  align-items:center;
+  overflow:hidden;
+}
+.ticker strong {
+  background:var(--red);
+  color:white;
+  padding:12px;
+  white-space:nowrap;
+}
+.ticker span {
+  padding:10px 14px;
+  font-size:14px;
+}
+.section-title {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:2px solid var(--navy);
+  margin:25px 0 16px;
+  padding-bottom:9px;
+}
+.section-title h2 {
+  margin:0;
+  font-size:22px;
+}
+.section-title a {
+  color:var(--blue);
+  font-size:13px;
+}
+.hero {
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:18px;
+}
+.lead {
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 3px 15px #071a3510;
+}
+.lead-image {
+  min-height:310px;
+  background:
+    linear-gradient(0deg,#071a35cc,transparent 75%),
+    linear-gradient(135deg,#1264bd,#071a35);
+  display:flex;
+  align-items:end;
+  padding:25px;
+  color:white;
+  position:relative;
+}
+.lead-image:before {
+  content:"AI CHRONICALS NEWS";
+  position:absolute;
+  top:25px;
+  left:25px;
+  font:bold 16px Arial;
+  opacity:.8;
+  direction:ltr;
+}
+.lead-image h1 {
+  font-size:clamp(24px,4vw,38px);
+  margin:0;
+}
+.lead-content { padding:20px; }
+.category {
+  color:var(--red);
+  font-size:13px;
+  font-weight:bold;
+}
+.lead-content p,.card p {
+  color:var(--muted);
+  line-height:1.9;
+}
+.side-list {
+  display:grid;
+  gap:12px;
+}
+.side-item {
+  background:white;
+  padding:17px;
+  border-radius:9px;
+  border-right:4px solid var(--blue);
+}
+.side-item h3 { margin:8px 0; font-size:17px; }
+.cards {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+.card {
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 3px 12px #071a3510;
+}
+.card-image {
+  height:165px;
+  background:linear-gradient(135deg,#0c3264,#2584ce);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:30px;
+  font-weight:bold;
+}
+.card-body { padding:17px; }
+.card h3 { margin:9px 0; font-size:18px; }
+.meta {
+  color:var(--muted);
+  font-size:12px;
+}
+.card p {
+  font-size:14px;
+  margin-bottom:12px;
+}
+.read-more {
+  color:var(--blue);
+  font-weight:bold;
+  font-size:14px;
+}
+.empty {
+  background:white;
+  border-radius:8px;
+  padding:25px;
+  text-align:center;
+  color:var(--muted);
+}
+.newsletter {
+  background:var(--navy);
+  color:white;
+  padding:28px;
+  margin:35px 0;
+  border-radius:10px;
+  text-align:center;
+}
+.newsletter h2 { margin-top:0; }
+.newsletter input {
+  padding:12px;
+  width:min(300px,65%);
+  border:0;
+  border-radius:5px;
+}
+.newsletter button {
+  padding:12px 18px;
+  border:0;
+  border-radius:5px;
+  background:var(--red);
+  color:white;
+  cursor:pointer;
+}
+footer {
+  background:#041124;
+  color:white;
+  padding:30px 0;
+  margin-top:35px;
+}
+.footer-grid {
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:25px;
+}
+footer p,footer a {
+  color:#c5d1e1;
+  line-height:2;
+  font-size:14px;
+}
+footer h3 { color:white; }
+.copyright {
+  border-top:1px solid #ffffff22;
+  padding-top:15px;
+  margin-top:20px;
+  text-align:center;
+  font-size:12px;
+  color:#aab6c8;
+}
+@media(max-width:800px) {
+  .hero { grid-template-columns:1fr; }
+  .cards { grid-template-columns:repeat(2,1fr); }
+  .nav-inner { justify-content:center; }
+  .nav a { padding:12px 8px; }
+}
+@media(max-width:520px) {
+  .cards { grid-template-columns:1fr; }
+  .footer-grid { grid-template-columns:1fr; }
+  .lead-image { min-height:230px; }
+  .brand-name { font-size:18px; }
+  .logo { width:55px;height:55px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="container">
+    <span id="today">AI Chronicals News</span>
+    <span>مستند خبریں — ذمہ دارانہ صحافت</span>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container brand">
+    <svg class="logo" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="34" fill="#1264bd" stroke="#d8f3ff" stroke-width="2"/>
+      <path d="M18 50h64M50 16c-17 17-17 51 0 68M50 16c17 17 17 51 0 68"
+        fill="none" stroke="#d8f3ff" stroke-width="2"/>
+      <path d="M8 57C20 5 85 4 94 39c6 25-35 43-67 30"
+        fill="none" stroke="#e33445" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="brand-name">AI CHRONICALS NEWS</div>
+      <div class="tagline">Be Informed. Be Ahead.</div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <div>
+      <a class="active" href="#home">صفحۂ اول</a>
+      <a href="#pakistan">پاکستان</a>
+      <a href="#world">دنیا</a>
+      <a href="#politics">سیاست</a>
+      <a href="#business">کاروبار</a>
+      <a href="#sports">کھیل</a>
+      <a href="#technology">ٹیکنالوجی</a>
+      <a href="#weather">موسم</a>
+    </div>
+    <form class="search" id="searchForm">
+      <input id="searchInput" placeholder="خبر تلاش کریں">
+      <button type="submit">تلاش</button>
+    </form>
+  </div>
+</nav>
+
+<main class="container" id="home">
+
+  <div class="ticker">
+    <strong>اہم خبر</strong>
+    <span>AI Chronicals News میں خوش آمدید — باخبر رہیں، آگے رہیں۔</span>
+  </div>
+
+  <section class="hero">
+    <article class="lead">
+      <div class="lead-image">
+        <h1>پاکستان اور دنیا کی اہم خبریں، ایک ہی جگہ</h1>
+      </div>
+      <div class="lead-content">
+        <span class="category">AI CHRONICALS NEWS</span>
+        <p>
+          عوامی دلچسپی کی خبریں، سیاست، معیشت، کھیل، ٹیکنالوجی
+          اور اہم قومی و بین الاقوامی واقعات۔
+        </p>
+      </div>
+    </article>
+
+    <aside class="side-list">
+      <div class="side-item">
+        <span class="category">تازہ اپ ڈیٹس</span>
+        <h3>اہم خبریں جلد یہاں شائع ہوں گی</h3>
+        <p>ہر خبر کے ساتھ اصل ماخذ اور تاریخ درج کی جائے گی۔</p>
+      </div>
+      <div class="side-item">
+        <span class="category">پاکستان</span>
+        <h3>قومی اور عوامی معاملات</h3>
+        <p>تصدیق شدہ معلومات ہماری اولین ترجیح ہیں۔</p>
+      </div>
+      <div class="side-item">
+        <span class="category">دنیا</span>
+        <h3>بین الاقوامی حالات</h3>
+        <p>اہم عالمی واقعات کی ذمہ دارانہ کوریج۔</p>
+      </div>
+    </aside>
+  </section>
+
+  <section id="latest">
+    <div class="section-title">
+      <h2>تازہ ترین خبریں</h2>
+      <a href="#latest">تمام خبریں</a>
+    </div>
+    <div class="cards" id="newsCards">
+      <div class="empty">فی الحال کوئی خبر شائع نہیں کی گئی۔</div>
+    </div>
+  </section>
+
+  <section id="pakistan">
+    <div class="section-title"><h2>پاکستان</h2></div>
+    <div class="empty">پاکستان کی تصدیق شدہ خبریں یہاں دکھائی جائیں گی۔</div>
+  </section>
+
+  <section id="world">
+    <div class="section-title"><h2>دنیا</h2></div>
+    <div class="empty">بین الاقوامی خبریں یہاں دکھائی جائیں گی۔</div>
+  </section>
+
+  <section id="politics">
+    <div class="section-title"><h2>سیاست</h2></div>
+    <div class="empty">سیاسی خبریں اور حکومتی اپ ڈیٹس۔</div>
+  </section>
+
+  <section id="business">
+    <div class="section-title"><h2>کاروبار اور معیشت</h2></div>
+    <div class="empty">کاروباری اور معاشی خبریں۔</div>
+  </section>
+
+  <section id="sports">
+    <div class="section-title"><h2>کھیل</h2></div>
+    <div class="empty">کھیلوں کی تازہ خبریں۔</div>
+  </section>
+
+  <section id="technology">
+    <div class="section-title"><h2>ٹیکنالوجی</h2></div>
+    <div class="empty">ٹیکنالوجی اور مصنوعی ذہانت کی خبریں۔</div>
+  </section>
+
+  <section id="weather">
+    <div class="section-title"><h2>موسم</h2></div>
+    <div class="empty">موسم کی تصدیق شدہ اپ ڈیٹس۔</div>
+  </section>
+
+  <section class="newsletter">
+    <h2>AI Chronicals News</h2>
+    <p>Be Informed. Be Ahead.</p>
+    <p>ہماری ویب سائٹ پر تازہ خبریں پڑھتے رہیے۔</p>
+  </section>
+
+</main>
+
+<footer id="about">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3>AI CHRONICALS NEWS</h3>
+        <p>مستند معلومات، غیر جانب دار صحافت اور عوامی دلچسپی کی خبریں۔</p>
+        <p><b>Be Informed. Be Ahead.</b></p>
+      </div>
+      <div>
+        <h3>اہم لنکس</h3>
+        <p><a href="#pakistan">پاکستان</a></p>
+        <p><a href="#world">دنیا</a></p>
+        <p><a href="#sports">کھیل</a></p>
+      </div>
+      <div>
+        <h3>ادارتی اصول</h3>
+        <p>خبر کی تصدیق</p>
+        <p>اصل ماخذ کا حوالہ</p>
+        <p>درستگی اور اصلاح</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © <span id="year"></span> AI Chronicals News. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("ur-PK", {
+    weekday:"long", year:"numeric",
+    month:"long", day:"numeric"
+  });
+
+document.getElementById("searchForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const query = document.getElementById("searchInput").value.trim();
+  if (!query) return;
+
+  const cards = document.querySelectorAll(".card");
+  let found = false;
+
+  cards.forEach(card => {
+    const match = card.textContent.toLowerCase().includes(query.toLowerCase());
+    card.style.display = match ? "" : "none";
+    if (match) found = true;
+  });
+
+  document.getElementById("newsCards").scrollIntoView({behavior:"smooth"});
+  if (!found) alert("اس تلاش سے مطابقت رکھنے والی خبر موجود نہیں۔");
+});
+</script>
+
+</body>
+</html>
