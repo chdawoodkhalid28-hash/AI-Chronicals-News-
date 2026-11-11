@@ -12,7 +12,7 @@ function normalize(value) {
 
 export async function resolveTemplate(director, storyBeat = "") {
   const routing = JSON.parse(await readFile(routingUrl, "utf8"));
-  const cleanDirector = String(director || "").replace(/^Director\\s+/i, "").trim();
+  const cleanDirector = String(director || "").replace(/^Director\s+/i, "").trim();
   const entry = routing.directors.find(item => item.director === cleanDirector);
   if (!entry) return { status: "HOLD", template: null, reason: "unknown_director" };
 
