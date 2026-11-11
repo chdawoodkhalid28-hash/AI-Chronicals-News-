@@ -261,6 +261,7 @@ button.addEventListener("click",async()=>{
         completed++;
         progressBox.textContent=completed+" / 26 شعبہ جاتی ٹیمیں مکمل — "+failures.length+" ناکام";
       }
+      if(i+batchSize<departments.length)await new Promise(resolve=>setTimeout(resolve,650));
     }
     const allTeams=Object.values(departmentTeams);
     const held=allTeams.filter(x=>x.status==="HOLD").length;
