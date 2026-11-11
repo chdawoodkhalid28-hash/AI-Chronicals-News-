@@ -28,7 +28,7 @@ Working branch: `ai-newsroom-foundation`
 - Latest previously verified Preview deployment: READY.
 - Branch: `ai-newsroom-foundation`.
 - Latest previously verified deployed commit before the 2026-11-11 queue-sync update: `9f9eb694cac62142bc7bb1824d040c2690c1d0eb`.
-- The queue-sync update is a new source commit and must pass GitHub Actions and receive a READY Preview deployment before being called deployed.
+- Queue-sync source commit `246f1b66938d2b31b62a3e49319a8bee73a60c16` passed GitHub Actions and received a READY Preview deployment on 2026-11-11.
 - Production remains untouched.
 
 ## Outstanding work
@@ -41,6 +41,15 @@ Working branch: `ai-newsroom-foundation`
 6. Implement and test scheduled newsroom research/report automation; do not enable autonomous publishing.
 7. Review outstanding Vercel environment-secret metadata warnings without exposing values or changing credentials without approval.
 8. Complete final security, reliability, and operational acceptance tests.
+
+## 2026-11-11 verification update
+
+- GitHub Actions run #17 for the queue-sync code commit completed successfully: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-/actions/runs/42993739815
+- Preview deployment for commit `246f1b66938d2b31b62a3e49319a8bee73a60c16` is READY.
+- Preview admin page was fetched successfully.
+- Preview `/api/health` returned `status: online`, private Blob configured, admin password configured, OpenAI key configured, and `publishing: disabled-pending-admin-approval`.
+- Unauthenticated `/api/admin/queue` returned HTTP 401 as expected. Authenticated positive-path queue operations still require owner testing in the dashboard.
+- No runtime errors were found in the selected 60-minute Vercel window.
 
 ## Known limitations
 
@@ -57,4 +66,4 @@ Working branch: `ai-newsroom-foundation`
 - Added clearer status text for local-only fallback and failed server persistence.
 - Removed the outdated localStorage-only limitation from the newsroom run report.
 - Commit: `246f1b66938d2b31b62a3e49319a8bee73a60c16`.
-- Pending: CI and Preview deployment verification.
+- Verified after commit: CI passed and Preview deployment is READY; authenticated queue round-trip remains pending.
