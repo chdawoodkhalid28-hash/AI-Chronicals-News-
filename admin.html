@@ -22,7 +22,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <main>
 <section class="panel">
 <h1>نیوز روم — ایڈمن ڈیسک</h1>
-<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج اسی براؤزر کے مقامی Approval Queue میں محفوظ کیے جا سکتے ہیں۔ یہ سرور پر محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
+<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج نجی Vercel Blob سرور اور مقامی بیک اپ دونوں میں محفوظ ہوں گے۔ ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
 <details class="panel"><summary style="font-weight:bold;cursor:pointer">26 شعبہ جاتی ڈائریکٹرز — ذمہ داریاں دیکھیں</summary>
 <ol style="line-height:2.1">
 <li><b>Director Newsroom / Editor-in-Chief:</b> ادارتی قیادت، خبر کا زاویہ، مسودہ اور اشاعت کی تیاری کی سفارش۔</li>
@@ -65,7 +65,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
 <section class="panel" id="diagnosticsPanel"><h2>سسٹم تشخیص — System Diagnostics</h2><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
-<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
+<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
 <div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
@@ -173,10 +173,40 @@ function renderReport(data){
 function exportJson(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download=name;link.click();URL.revokeObjectURL(url);}
 document.getElementById("exportCurrent").addEventListener("click",()=>{if(currentReport)exportJson(currentReport,"ai-chronicals-news-run.json");});
 const queueList=document.getElementById("queueList");
+const queueSyncStatus=document.getElementById("queueSyncStatus");
 const QUEUE_KEY="aiChronicalsNewsApprovalQueueV1";
 let latestRun=null;
 function readQueue(){try{const value=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]");return Array.isArray(value)?value:[]}catch{return []}}
 function writeQueue(items){localStorage.setItem(QUEUE_KEY,JSON.stringify(items.slice(0,20)));}
+function queuePassword(){const value=document.getElementById("password").value.trim();if(value)activeAdminPassword=value;return activeAdminPassword;}
+async function queueApi(method,body){
+  const password=queuePassword();
+  if(!password)throw new Error("سرور Queue کے لیے ایڈمن پاس ورڈ درج کریں۔");
+  const options={method,headers:{"Authorization":"Bearer "+password,"Accept":"application/json"}};
+  if(body){options.headers["Content-Type"]="application/json";options.body=JSON.stringify(body);}
+  const response=await fetch("/api/admin/queue",options);
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.error||"Private approval queue request failed");
+  return data;
+}
+async function persistQueueItem(item){return queueApi("POST",{item});}
+async function syncServerQueue(){
+  const button=document.getElementById("syncServerQueue");
+  button.disabled=true;queueSyncStatus.textContent="نجی سرور سے ریکارڈ لوڈ ہو رہے ہیں…";
+  try{
+    const remote=await queueApi("GET");
+    const merged=new Map();
+    const stamp=item=>Math.max(Date.parse(item.savedAt||"")||0,Date.parse(item.decisionAt||"")||0);
+    [...(remote.items||[]),...readQueue()].forEach(item=>{
+      const previous=merged.get(item.id);
+      if(!previous||stamp(item)>=stamp(previous))merged.set(item.id,item);
+    });
+    const items=[...merged.values()].sort((a,b)=>stamp(b)-stamp(a)).slice(0,20);
+    writeQueue(items);renderQueue();
+    queueSyncStatus.textContent="سرور سے "+(remote.count||0)+" ریکارڈ موصول ہوئے؛ مقامی ریکارڈ کے ساتھ Sync مکمل۔";
+  }catch(error){queueSyncStatus.textContent="سرور Sync ناکام: "+error.message;}
+  finally{button.disabled=false;}
+}
 function renderQueue(){
   const items=readQueue();queueList.replaceChildren();
   if(!items.length){queueList.textContent="ابھی کوئی ڈرافٹ محفوظ نہیں۔";return;}
@@ -187,21 +217,39 @@ function renderQueue(){
     const view=document.createElement("button");view.type="button";view.textContent="مکمل رپورٹ دیکھیں";view.addEventListener("click",()=>{renderReport(item.payload);outputPanel.hidden=false;outputPanel.scrollIntoView({behavior:"smooth"});});card.appendChild(view);
     const approve=document.createElement("button");approve.type="button";approve.textContent="Admin review: Approved";approve.addEventListener("click",()=>updateDecision(item.id,"APPROVED_BY_ADMIN — NOT PUBLISHED"));card.appendChild(approve);
     const revise=document.createElement("button");revise.type="button";revise.textContent="Revision درکار";revise.addEventListener("click",()=>updateDecision(item.id,"REVISION_REQUIRED"));card.appendChild(revise);
-    const remove=document.createElement("button");remove.type="button";remove.textContent="Queue سے حذف کریں";remove.style.background="#69778b";remove.addEventListener("click",()=>{if(confirm("اس مقامی ریکارڈ کو حذف کریں؟")){writeQueue(readQueue().filter(x=>x.id!==item.id));renderQueue();}});card.appendChild(remove);
+    const remove=document.createElement("button");remove.type="button";remove.textContent="Queue سے حذف کریں";remove.style.background="#69778b";remove.addEventListener("click",async()=>{
+      if(!confirm("اس نیوز روم ریکارڈ کو مقامی اور نجی سرور Queue سے حذف کریں؟"))return;
+      writeQueue(readQueue().filter(x=>x.id!==item.id));renderQueue();
+      try{await queueApi("DELETE",{id:item.id});queueSyncStatus.textContent="ریکارڈ مقامی اور نجی سرور Queue سے حذف کر دیا گیا۔";}
+      catch(error){queueSyncStatus.textContent="مقامی ریکارڈ حذف ہوا، مگر سرور حذف ناکام: "+error.message;}
+    });card.appendChild(remove);
     queueList.appendChild(card);
   });
 }
-function updateDecision(id,decision){const items=readQueue().map(x=>x.id===id?{...x,decision,decisionAt:new Date().toISOString()}:x);writeQueue(items);renderQueue();}
+function updateDecision(id,decision){
+  const items=readQueue().map(x=>x.id===id?{...x,decision,decisionAt:new Date().toISOString()}:x);
+  writeQueue(items);renderQueue();
+  queueApi("PATCH",{id,decision}).then(()=>{queueSyncStatus.textContent="ایڈمن فیصلہ نجی سرور پر محفوظ ہو گیا؛ اشاعت بند ہے۔";})
+    .catch(error=>{queueSyncStatus.textContent="فیصلہ مقامی طور پر محفوظ ہوا، سرور Sync ناکام: "+error.message;});
+}
 function saveRunToQueue(payload){
   const items=readQueue();
+  let item;
   if(payload.queueId&&items.some(x=>x.id===payload.queueId)){
     const updated=items.map(x=>x.id===payload.queueId?{...x,savedAt:new Date().toISOString(),completedDepartments:payload.executionSummary.completedDepartments,payload}:x);
-    writeQueue(updated);renderQueue();return updated.find(x=>x.id===payload.queueId);
+    writeQueue(updated);item=updated.find(x=>x.id===payload.queueId);
+  }else{
+    item={id:"run-"+Date.now(),savedAt:new Date().toISOString(),instruction:payload.buland.instruction,completedDepartments:payload.executionSummary.completedDepartments,decision:"PENDING_ADMIN_REVIEW",payload};
+    payload.queueId=item.id;writeQueue([item,...items]);
   }
-  const item={id:"run-"+Date.now(),savedAt:new Date().toISOString(),instruction:payload.buland.instruction,completedDepartments:payload.executionSummary.completedDepartments,decision:"PENDING_ADMIN_REVIEW",payload};
-  payload.queueId=item.id;
-  writeQueue([item,...items]);renderQueue();return item;
+  renderQueue();
+  if(queuePassword()){
+    persistQueueItem(item).then(()=>{queueSyncStatus.textContent="نیوز روم رن نجی سرور Approval Queue میں محفوظ ہو گیا؛ اشاعت بند ہے。";})
+      .catch(error=>{queueSyncStatus.textContent="مقامی بیک اپ محفوظ ہے، مگر سرور پر محفوظ نہیں ہو سکا: "+error.message;});
+  }
+  return item;
 }
+document.getElementById("syncServerQueue").addEventListener("click",syncServerQueue);
 document.getElementById("exportQueue").addEventListener("click",()=>{const data=JSON.stringify(readQueue(),null,2);const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="ai-chronicals-news-approval-queue.json";link.click();URL.revokeObjectURL(url);});
 document.getElementById("importQueue").addEventListener("change",async(event)=>{
   const file=event.target.files&&event.target.files[0];if(!file)return;
@@ -212,7 +260,13 @@ document.getElementById("importQueue").addEventListener("change",async(event)=>{
     if(!valid.length)throw new Error("کوئی قابلِ درآمد نیوز روم ریکارڈ نہیں ملا۔");
     const merged=[...valid,...readQueue()];
     const unique=Array.from(new Map(merged.map(item=>[item.id,item])).values()).slice(0,20);
-    writeQueue(unique);renderQueue();statusBox.textContent=valid.length+" ریکارڈ مقامی Approval Queue میں واپس درآمد ہو گئے۔";
+    writeQueue(unique);renderQueue();
+    if(queuePassword()){
+      const results=await Promise.allSettled(valid.map(persistQueueItem));
+      const failed=results.filter(x=>x.status==="rejected").length;
+      queueSyncStatus.textContent=(valid.length-failed)+" درآمد شدہ ریکارڈ نجی سرور پر محفوظ؛ ناکام: "+failed;
+    }
+    statusBox.textContent=valid.length+" ریکارڈ Queue میں درآمد ہو گئے۔";
   }catch(error){statusBox.textContent="Queue درآمد نہیں ہو سکی: "+error.message;}
   finally{event.target.value="";}
 });
