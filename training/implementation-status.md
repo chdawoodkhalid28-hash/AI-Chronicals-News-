@@ -3,6 +3,7 @@
 Updated: 2026-11-11
 Repository: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-
 Working branch: `ai-newsroom-foundation`
+Latest recorded branch commit: `098e20eda59bcc53f846d8e406a21282819a556b`
 Production branch: unchanged
 
 ## Current implementation
@@ -21,7 +22,7 @@ Production branch: unchanged
 |---|---|---|
 | Latest CI regression run | Pending confirmation | Workflow installs dependencies and triggers on pushes to this branch; expanded test expects 26 × 7 = 182 mocked calls. Latest successful run has not yet been confirmed by the available run lookup. |
 | Real API-backed department pilot | Blocked | Vercel environment metadata shows `OPENAI_API_KEY` entry with empty value. Admin must configure a valid key directly in Vercel; never paste it into chat or repository. |
-| Activate/populate private memory and verify retrieval | Code implemented; activation pending | `BLOB_READ_WRITE_TOKEN` is connected. Admin-only endpoint is `POST /api/admin/knowledge`. Records are written only when Admin explicitly saves them; no seed records have been inserted in this implementation pass. Preview deployment and authenticated write/read verification remain pending. |
+| Activate/populate private memory and verify retrieval | Code implemented; activation pending | `BLOB_READ_WRITE_TOKEN` is connected. Admin-only endpoint is `POST /api/admin/knowledge`. Records are written only when Admin explicitly saves them; no seed records have been inserted in this implementation pass. Preview deployment and authenticated write/read verification remain pending. Vercel's Hobby API deployment quota is exhausted (more than 100 deployments in the daily window); the API returned a 24-hour retry period. The latest confirmed READY Preview is commit `4845dbefe2ac11b1e18a0c73e9dd95f02d809b45`. |
 | Production release | Not performed | Requires successful latest CI, real pilot, verified Preview, explicit Admin release approval, then a controlled merge/deploy. No merge to `main`, secret mutation, or Production deployment was made. |
 
 ## Data storage and authoritative locations
@@ -38,8 +39,8 @@ Production branch: unchanged
    - `.github/workflows/department-team-tests.yml` — push/PR regression workflow.
 
 2. **Dropbox master backups**
-   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, revision 40 after the 11 Nov update.
-   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, revision 4 after the 11 Nov update.
+   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, revision 41 after the 11 Nov update.
+   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, revision 5 after the 11 Nov update.
    - Both contain the current training/RAG status and rollout boundaries. Dropbox remains documentation backup; two-way automated sync is not implemented.
 
 3. **Vercel private storage**
