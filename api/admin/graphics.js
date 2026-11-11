@@ -24,6 +24,7 @@ export default async function handler(req, res) {
   const headline = typeof body.headline === "string" ? body.headline.trim().slice(0, 240) : "";
   const director = typeof body.director === "string" ? body.director.trim().slice(0, 120) : "";
   const storyBeat = typeof body.storyBeat === "string" ? body.storyBeat.trim().slice(0, 120) : "";
+  const assignedDesk = typeof body.assignedDesk === "string" ? body.assignedDesk.trim().slice(0, 120) : "";
   if (prompt.length < 20 || prompt.length > 5000) {
     return res.status(400).json({ error: "Graphics prompt must contain 20 to 5000 characters" });
   }
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
 
   let route;
   try {
-    route = await resolveTemplate(director, storyBeat);
+    route = await resolveTemplate(director, storyBeat, { assignedDesk });
   } catch (error) {
     return res.status(500).json({ error: "TemplateFlyer routing configuration could not be loaded", detail: error.message });
   }
@@ -79,7 +80,8 @@ export default async function handler(req, res) {
       imageData: image,
       templateName: route.template,
       director: route.director,
-      storyBeat
+      storyBeat,
+      assignedDesk: route.assignedDesk || ""
     });
   } catch (error) {
     return res.status(error.status || 502).json({
