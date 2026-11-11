@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "node:crypto";
+
 const DEPARTMENTS = {
   newsroom: "Newsroom / Editor-in-Chief",
   assignment_desk: "Assignment Desk",
@@ -29,9 +31,8 @@ const DEPARTMENTS = {
 
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
-  const crypto = require("crypto");
   const left = Buffer.from(a), right = Buffer.from(b);
-  return left.length === right.length && crypto.timingSafeEqual(left, right);
+  return left.length === right.length && timingSafeEqual(left, right);
 }
 
 async function openAIChat(body) {
