@@ -153,3 +153,10 @@ Working branch: `ai-newsroom-foundation`
 - Added `graphics/ready-made-flyer-library.html`, a responsive, VFX-styled directory with direct Canva edit links and a visible note to check any Canva Pro assets before export. Added a link to this library from `graphics/department-templateflyers.html`.
 - Canva copies are existing editable designs, not a claim that every embedded Canva element is free. Check Canva's asset licensing/Pro labels in the editor before using/exporting. No AI image or video generation was invoked.
 - Vercel Preview build and route checks are pending for the latest commits. Production remains untouched; publishing remains disabled and requires administrator approval.
+
+
+### 2026-11-11 — Weather / environment flyer added
+- Added a seventh Canva working copy based on the existing Lahore air-quality news design (10 November 2026); the original remains unchanged.
+- Labeled it as a story-specific Weather & Environment starter, not a live alert. Before reuse, replace its old date, location, AQI, claims and source with newly verified details.
+- Canva folder now contains seven independent editable copies. The web library links to the stable Canva design ID route for each copy.
+- Browser test of the canonical Canva editor URL redirects to Canva sign-in as expected; users must be signed into Canva to edit.
