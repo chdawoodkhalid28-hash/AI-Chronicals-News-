@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070b16"><title>AI Chronicals News — Breaking News Graphics | Final Review Draft</title>
+<style>
+:root{--bg:#050914;--red:#ff294d;--cyan:#39e8ff;--blue:#287bff;--white:#f5f8ff;--muted:#a8bad0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 5%,#172f58 0,transparent 38%),#050914;color:var(--white);font-family:Inter,Arial,sans-serif}
+.review{padding:9px 12px;text-align:center;background:linear-gradient(90deg,#7c1d35,#182c50,#164d63);font-size:11px;font-weight:900;letter-spacing:.15em}
+header{padding:28px clamp(16px,4vw,56px);border-bottom:1px solid #24435f;background:linear-gradient(115deg,#091222,#102b4b 65%,#271a3b)}
+.kicker{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.25em;text-transform:uppercase}
+h1{margin:9px 0;font-size:clamp(28px,5vw,54px);line-height:.95;text-transform:uppercase;letter-spacing:-.04em}
+header p{margin:0;color:#bdcde0;max-width:800px;font-size:14px}
+main{max-width:1400px;margin:auto;padding:24px clamp(12px,3vw,36px) 48px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+button{border:1px solid #426585;background:#10233d;color:#fff;border-radius:7px;padding:9px 13px;font-weight:800;cursor:pointer}
+button:hover{border-color:var(--cyan);box-shadow:0 0 18px #39e8ff44}
+.stage{position:relative;aspect-ratio:16/9;min-height:280px;overflow:hidden;border:1px solid #3d6688;border-radius:12px;background:radial-gradient(ellipse at 70% 25%,#1d4b80 0,transparent 45%),linear-gradient(120deg,#07101e,#10182b 58%,#1a1028);box-shadow:0 25px 70px #0009}
+.stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 5px);opacity:.4;pointer-events:none}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#5ddfff15 1px,transparent 1px),linear-gradient(90deg,#5ddfff15 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(90deg,transparent,#000 45%,#000)}
+.sweep{position:absolute;top:-20%;left:-30%;width:26%;height:150%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,#ff315955,#4ceaffaa,transparent);filter:blur(12px);animation:sweep 7s linear infinite}
+@keyframes sweep{to{left:130%}}
+.top{position:absolute;left:4%;right:4%;top:6%;display:flex;justify-content:space-between;align-items:center;font-size:clamp(8px,1.2vw,13px);font-weight:900;letter-spacing:.15em}
+.live{padding:7px 12px;background:var(--red);box-shadow:0 0 22px #ff294d88;animation:pulse 1.5s infinite}
+@keyframes pulse{50%{filter:brightness(1.45);box-shadow:0 0 34px #ff294dcc}}
+.headline{position:absolute;left:6%;right:7%;top:28%;text-transform:uppercase;font-weight:1000;font-size:clamp(27px,6.2vw,82px);line-height:.9;letter-spacing:-.045em;text-shadow:0 3px 0 #152b4a,0 8px 28px #000b}
+.headline .accent{color:var(--cyan);text-shadow:0 0 24px #39e8ff77,0 4px 0 #102d52}
+.sub{position:absolute;left:6%;top:58%;max-width:62%;color:#d7e4f3;font-size:clamp(10px,1.5vw,17px);line-height:1.4}
+.lower{position:absolute;left:0;right:0;bottom:12%;display:grid;grid-template-columns:auto 1fr;align-items:stretch;filter:drop-shadow(0 10px 20px #0009)}
+.lower strong{background:linear-gradient(110deg,#f52349,#a90e32);padding:clamp(10px,1.5vw,18px) clamp(12px,2vw,24px);font-size:clamp(10px,1.7vw,19px);letter-spacing:.1em}
+.lower span{background:linear-gradient(100deg,#102d50ed,#071322f2);border-top:1px solid #57e8ff;padding:clamp(10px,1.5vw,18px);font-size:clamp(12px,2vw,22px);font-weight:900;text-transform:uppercase}
+.ticker{position:absolute;bottom:0;left:0;right:0;height:9%;display:flex;align-items:center;gap:16px;padding:0 4%;background:#030813;border-top:1px solid #39e8ff88;font-size:clamp(8px,1.2vw,13px);letter-spacing:.08em}
+.ticker b{color:var(--cyan);white-space:nowrap}.ticker span{color:#d9e7f8}
+.note{margin:14px 2px 0;color:#9fb2c9;font-size:12px;line-height:1.6}
+[contenteditable=true]:focus{outline:1px dashed var(--cyan);outline-offset:3px}
+@media(max-width:600px){.stage{min-height:250px}.sub{max-width:78%;top:55%}.lower{bottom:13%}.headline{top:25%}.ticker{gap:7px}}
+@media(prefers-reduced-motion:reduce){.sweep,.live{animation:none}}
+@media print{body{background:#fff}.review,.toolbar,.note,header{display:none}.stage{box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact;border-radius:0}}
+</style></head><body>
+<div class="review">FINAL REVIEW DRAFT · NOT APPROVED FOR PUBLICATION · ADMIN SIGN-OFF REQUIRED</div>
+<header><div class="kicker">Broadcast identity / urgent coverage</div><h1>Breaking News<br>Graphics System</h1><p>Standalone 16:9 breaking-news package with editable headline, lower-third, live marker and ticker. Replace all sample copy with verified, time-stamped reporting before use.</p></header>
+<main><div class="toolbar"><button onclick="window.print()">Print / Save PDF</button><button onclick="document.querySelectorAll('[contenteditable=true]').forEach(e=>e.setAttribute('contenteditable','true'))">Edit text in preview</button></div>
+<section class="stage"><div class="grid"></div><div class="sweep"></div>
+<div class="top"><span contenteditable="true">AI CHRONICALS NEWS · NEWSROOM</span><span class="live" contenteditable="true">LIVE / ALERT</span></div>
+<div class="headline" contenteditable="true">BREAKING<br><span class="accent">NEWS</span></div>
+<div class="sub" contenteditable="true">Confirmed development goes here. State what is known, where it happened and what authorities or primary sources have verified.</div>
+<div class="lower"><strong contenteditable="true">BREAKING</strong><span contenteditable="true">Verified headline goes here — location / key development</span></div>
+<div class="ticker"><b contenteditable="true">NEWS ALERT</b><span contenteditable="true">Update ticker · add source reference · last verified: HH:MM PKT</span></div>
+</section>
+<p class="note">Editorial safeguards: no unverified casualty counts, claims, names or footage. Add source and timestamp to the story record. The LIVE label is a design element only and must not imply an actual live broadcast. Use only cleared imagery. Publishing remains disabled pending admin approval.</p>
+</main></body></html>
