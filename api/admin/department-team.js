@@ -35,28 +35,47 @@ function safeEqual(a, b) {
 }
 
 async function openAIChat(body) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + process.env.OPENAI_API_KEY,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    const message = data && data.error && data.error.message ? data.error.message : "Upstream AI request failed";
-    const error = new Error(message);
-    error.status = 502;
-    throw error;
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + process.env.OPENAI_API_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(55000)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const message = data && data.error && data.error.message ? data.error.message : "Upstream AI request failed";
+        const error = new Error(message);
+        error.status = response.status;
+        if (attempt === 0 && (response.status === 429 || response.status >= 500)) {
+          await new Promise(resolve => setTimeout(resolve, 900));
+          lastError = error;
+          continue;
+        }
+        throw error;
+      }
+      const message = data.choices && data.choices[0] && data.choices[0].message;
+      if (!message || typeof message.content !== "string" || !message.content.trim()) {
+        const error = new Error("AI returned an empty response");
+        error.status = 502;
+        throw error;
+      }
+      return message;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0 && (!error.status || error.status >= 500)) {
+        await new Promise(resolve => setTimeout(resolve, 900));
+        continue;
+      }
+      throw error;
+    }
   }
-  const message = data.choices && data.choices[0] && data.choices[0].message;
-  if (!message || typeof message.content !== "string" || !message.content.trim()) {
-    const error = new Error("AI returned an empty response");
-    error.status = 502;
-    throw error;
-  }
-  return message;
+  throw lastError || new Error("Upstream AI request failed");
 }
 
 export default async function handler(req, res) {
