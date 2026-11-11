@@ -199,3 +199,17 @@ Working branch: `ai-newsroom-foundation`
 - The source branch-head commit `2b0893d3d9901b7bb179f5874deecee074870534` passed the Vercel Git commit status check and its Preview deployment reached READY: `https://ai-chronicals-news-hawfgqqwu-chdawoodkhalid28-5713.vercel.app`.
 - Production alias promotion is not yet confirmed. The latest Vercel deployment record remains the earlier Production deployment; continue verifying Git-triggered Production deployment before claiming the public site is updated.
 - Publishing remains disabled; all story output stays pending Admin approval.
+
+ 
+## 2026-11-11 — TemplateFlyer routing API enhancement (foundation only)
+
+- Reviewed the existing implementation: `api/admin/graphics.js` already imports `resolveTemplate()` from `api/admin/templateflyer-routing.js`; the helper already reads `graphics/templateflyer-routing.json`. The earlier statement that the API did not load the routing map was stale/inaccurate.
+- Enhanced the existing helper with optional, validated `assignedDesk` inheritance for dynamic/cross-functional directors. Fixed directors retain their approved master; a conflicting fixed desk returns HOLD. Dynamic assigned desks still require a mapped story beat. Existing `director + storyBeat` calls remain supported.
+- Added optional `assignedDesk` parsing and passed it to `resolveTemplate()` in `api/admin/graphics.js`. Existing Admin frontend requests do not currently send this field; the source of a verified assigned-desk value has not yet been identified, so no frontend assignment inference was added.
+- Preserved Agriculture & Rural Affairs behavior, ten-master allow-list, unknown director/desk HOLD behavior, and the rule that routing HOLD happens before any image-provider request.
+- Added `tests/templateflyer-routing.test.js`: 12 Node tests passed locally, including all 26 configured directors resolving within the ten approved masters, legacy behavior, desk inheritance, conflicts, agriculture routing, HOLD-before-provider behavior, and a mocked graphics API success path. The image provider was mocked; no paid generation was performed.
+- Source commits on `ai-newsroom-foundation`: helper enhancement `1d70ca3298b3cfc068eb8b9c76960d75236022f0`; graphics API optional field `fc6901f05e16517b8dfbea1ee3c4788ffdee4ad1`; director-prefix normalization correction `71ac12b339b73bedf5f7e74c27a4d615d27f8811`; routing tests `b16770bce92b28c609f47699dca3d36465967d90`; expanded tests `fe59acc9232d58e20adfc960b76d3593ac2c8a1a`.
+- Vercel Preview for branch-head commit `fe59acc9232d58e20adfc960b76d3593ac2c8a1a` reached READY: https://ai-chronicals-news-namzugy1d-chdawoodkhalid28-5713.vercel.app
+- GitHub combined commit status reports Vercel success. A separate GitHub Actions test-run result was not available in this check; local Node execution of the new 12-test file passed.
+- Not yet verified: authenticated browser/API end-to-end flow using a real assignment record; Admin UI does not yet pass assignedDesk; 24/26 workflow inheritance should not be represented as fully wired until that verified source is integrated.
+- No Production deployment, main merge, secrets/environment changes, full department AI workflow, public posting, or news publication. Publishing remains disabled and all stories remain pending explicit Admin approval.
