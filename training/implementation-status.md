@@ -19,7 +19,7 @@ Production branch: unchanged
 
 | Workstream | Status | Evidence / blocker |
 |---|---|---|
-| Latest CI regression run | Pending confirmation | Workflow triggers on pushes to this branch; expanded test expects 26 × 7 = 182 mocked calls. Latest successful run has not yet been confirmed by the available run lookup. |
+| Latest CI regression run | Pending confirmation | Workflow installs dependencies and triggers on pushes to this branch; expanded test expects 26 × 7 = 182 mocked calls. Latest successful run has not yet been confirmed by the available run lookup. |
 | Real API-backed department pilot | Blocked | Vercel environment metadata shows `OPENAI_API_KEY` entry with empty value. Admin must configure a valid key directly in Vercel; never paste it into chat or repository. |
 | Activate/populate private memory and verify retrieval | Code implemented; activation pending | `BLOB_READ_WRITE_TOKEN` is connected. Admin-only endpoint is `POST /api/admin/knowledge`. Records are written only when Admin explicitly saves them; no seed records have been inserted in this implementation pass. Preview deployment and authenticated write/read verification remain pending. |
 | Production release | Not performed | Requires successful latest CI, real pilot, verified Preview, explicit Admin release approval, then a controlled merge/deploy. No merge to `main`, secret mutation, or Production deployment was made. |
@@ -31,7 +31,7 @@ Production branch: unchanged
    - `training/26-department-practical-exercises.md` — 26 practical department exercises.
    - `api/admin/department-team.js` — runtime department/search/specialist/Director workflow and RAG retrieval integration.
    - `api/admin/knowledge.js` — Admin-only knowledge save/search API.
-   - `api/_lib/knowledge-store.js` — private Blob record storage and lexical RAG retrieval.
+   - `lib/knowledge-store.js` — private Blob record storage and lexical RAG retrieval.
    - `tests/department-team.test.js` — department routing, Director and approval safeguards.
    - `tests/knowledge-store.test.js` — private writes, approved-only retrieval, global/department lookup and validation.
    - `package.json` — `@vercel/blob ^2.3.1` for private storage support.
