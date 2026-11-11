@@ -73,3 +73,11 @@ The five specialist roles are separate model invocations coordinated by the depa
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`)
 
 Never put secrets in source files, commits, browser code, logs, or chat messages.
+
+## Operational reliability improvements
+- The admin dashboard now shows a live per-department state (queued, running, successful, failed) during a newsroom run.
+- Department requests receive one client-side retry for network, rate-limit, and server errors; authentication and validation errors are not retried.
+- If a run stops after some departments have completed, the dashboard renders and attempts to save a clearly marked partial report. Missing departments must be completed before editorial assessment.
+- The public health endpoint is surfaced through a safe admin diagnostics panel. It reports only whether required environment variables are present; it never returns secret values.
+- Department PASS status is now gated on a valid evidence-audit structure, at least one claim check, a recognized audit status, and no declared verification gaps. Malformed or incomplete audits are HOLD, not PASS.
+- JavaScript syntax was checked for the updated admin client and department API handler. A full live 26-department run, real upstream API calls, and cross-device persistence have not yet been verified.
