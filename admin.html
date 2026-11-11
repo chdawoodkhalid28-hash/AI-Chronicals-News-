@@ -16,7 +16,38 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 .status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
 #result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}.department-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}.department-state{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 11px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font-size:13px}.department-state small{color:#69778b}.state-running{border-color:#1264bd;background:#eef6ff}.state-success{border-color:#16834a;background:#effaf3}.state-failed{border-color:#d33b48;background:#fff1f2}
 .newsroom-nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 14px;background:#071a35;border-radius:12px;scrollbar-width:thin}.newsroom-nav a{flex:0 0 auto;color:#fff;text-decoration:none;border:1px solid #49617f;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700}.newsroom-nav a:focus,.newsroom-nav a:hover{background:#173b66;outline:2px solid #91bfff;outline-offset:1px}html{scroll-behavior:smooth}main section[id]{scroll-margin-top:76px}
-.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-vector-icon{float:left;width:44px;height:44px;margin:0 0 8px 10px;padding:8px;border:1px solid #3b829e;border-radius:10px;background:linear-gradient(145deg,#0c2941,#25204a);stroke:#45ddec;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #45ddec66)}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}</style>
+.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-vector-icon{float:left;width:44px;height:44px;margin:0 0 8px 10px;padding:8px;border:1px solid #3b829e;border-radius:10px;background:linear-gradient(145deg,#0c2941,#25204a);stroke:#45ddec;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #45ddec66)}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}
+@media(max-width:680px){
+  header{padding:18px 4%;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  header strong{font-size:19px}
+  header span{font-size:12px}
+  main{width:96%;margin:14px auto}
+  .panel{padding:15px;margin:12px 0;border-radius:10px}
+  .newsroom-nav{gap:6px;padding:8px;border-radius:9px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  .newsroom-nav a{padding:9px 10px;font-size:12px;white-space:nowrap}
+  h1{font-size:21px;line-height:1.45}
+  h2{font-size:19px;line-height:1.45}
+  input,textarea,select{min-width:0;font-size:16px}
+  button{width:100%;min-height:44px;padding:12px 14px;margin-top:12px;white-space:normal;overflow-wrap:anywhere}
+  .team-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .department-progress{grid-template-columns:1fr}
+  .department-state{align-items:flex-start;flex-wrap:wrap}
+  .report-card{padding:12px}
+  .report-card a{overflow-wrap:anywhere;word-break:break-word}
+  .admin-tool-access a{display:block;text-align:center;overflow-wrap:anywhere}
+  main section[id]{scroll-margin-top:66px}
+}
+@media(max-width:420px){
+  header strong{font-size:17px}
+  main{width:96%}
+  .panel{padding:13px}
+  .team-roster-grid{grid-template-columns:1fr}
+  .newsroom-nav a{font-size:11px;padding:8px 9px}
+  h1{font-size:19px}
+  h2{font-size:18px}
+  .department-state{font-size:12px}
+}
+</style>
 </head>
 <body>
 <header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span></header>
