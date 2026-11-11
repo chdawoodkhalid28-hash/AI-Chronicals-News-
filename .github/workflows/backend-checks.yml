@@ -1,0 +1,44 @@
+name: Backend source checks
+
+on:
+  push:
+    branches:
+      - ai-newsroom-foundation
+  pull_request:
+    branches:
+      - ai-newsroom-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  backend-source-checks:
+    name: Validate backend JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Check ES module syntax and API route files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(node -p "require('./package.json').type")" = "module"
+          mapfile -t api_files < <(find api -type f -name '*.js' -print | sort)
+          test "${#api_files[@]}" -gt 0
+          for file in "${api_files[@]}"; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+
+      - name: Prevent CommonJS require in ES module API
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -nE '\brequire[[:space:]]*\(' api --include='*.js'; then
+            echo "CommonJS require() is not allowed in the ES module API."
+            exit 1
+          fi
+          echo "No CommonJS require() calls found."
