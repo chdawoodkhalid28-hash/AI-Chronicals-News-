@@ -64,7 +64,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
-<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button></section>
+<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
 <div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
@@ -77,7 +77,8 @@ const progressBox=document.getElementById("progress");
 const outputPanel=document.getElementById("outputPanel");
 const resultBox=document.getElementById("result");
 const reportView=document.getElementById("reportView");
-let currentReport=null;\nlet activeAdminPassword="";
+let currentReport=null;
+let activeAdminPassword="";
 function addText(parent,tag,textValue,className){const el=document.createElement(tag);el.textContent=textValue==null?"":String(textValue);if(className)el.className=className;parent.appendChild(el);return el;}
 function renderReport(data){
   currentReport=data;reportView.replaceChildren();
@@ -165,6 +166,19 @@ function saveRunToQueue(payload){
   const items=[item,...readQueue()];writeQueue(items);renderQueue();return item;
 }
 document.getElementById("exportQueue").addEventListener("click",()=>{const data=JSON.stringify(readQueue(),null,2);const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="ai-chronicals-news-approval-queue.json";link.click();URL.revokeObjectURL(url);});
+document.getElementById("importQueue").addEventListener("change",async(event)=>{
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    if(!Array.isArray(parsed)||parsed.length>100)throw new Error("Queue JSON کی ساخت درست نہیں یا 100 سے زیادہ ریکارڈ ہیں۔");
+    const valid=parsed.filter(item=>item&&typeof item==="object"&&item.payload&&item.payload.executionSummary&&item.payload.buland&&typeof item.id==="string");
+    if(!valid.length)throw new Error("کوئی قابلِ درآمد نیوز روم ریکارڈ نہیں ملا۔");
+    const merged=[...valid,...readQueue()];
+    const unique=Array.from(new Map(merged.map(item=>[item.id,item])).values()).slice(0,20);
+    writeQueue(unique);renderQueue();statusBox.textContent=valid.length+" ریکارڈ مقامی Approval Queue میں واپس درآمد ہو گئے۔";
+  }catch(error){statusBox.textContent="Queue درآمد نہیں ہو سکی: "+error.message;}
+  finally{event.target.value="";}
+});
 renderQueue();
 const departments=[
   ["newsroom","Director Newsroom"],
@@ -207,7 +221,8 @@ async function callDepartmentTeam(department,payload,password){
 }
 
 button.addEventListener("click",async()=>{
-  const password=document.getElementById("password").value;\n  activeAdminPassword=password;
+  const password=document.getElementById("password").value;
+  activeAdminPassword=password;
   const instruction=document.getElementById("instruction").value.trim();
   const language=document.getElementById("language").value;
   if(!password||!instruction){
