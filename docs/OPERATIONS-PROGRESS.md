@@ -108,3 +108,14 @@ Working branch: `ai-newsroom-foundation`
 - Preserved all seven existing template/workspace concepts, editable placeholder copy, print/save-PDF behavior, and publication safety wording. No live news claims, licensed imagery assumptions, or auto-publishing behavior were introduced.
 - Commit: `8694cf4c2eab184e87555cd83a47a32e2efd784b`.
 - Pending verification: GitHub CI and Vercel Preview build/route fetch. Production remains untouched.
+
+
+## 2026-11-11 — Owner-approved 10-department TemplateFlyer architecture
+
+- Owner clarified that “AI Chronicals News — Cinematic News TemplateFlyer” is the finalized master visual direction, not a single universal flyer.
+- Create 10 distinct department-specific TemplateFlyers, one owned by each of the 10 major departments. Each must retain the shared cinematic brand system while using department-appropriate visual hierarchy, imagery, colour accents, data/story modules, and formats.
+- The remaining 16 department/agent workflows must reuse the approved TemplateFlyer system of the relevant major department rather than inventing an unrelated visual identity or requiring 16 additional master flyers.
+- Treat the 10 major-department flyers as master templates; downstream 16 agents may populate approved layouts with their own verified story content, source credits, data, and graphics while preserving layout/brand constraints.
+- Do not assume department names or map agents to departments until checked against the repository's authoritative 26-department configuration. Do not create or publish guessed department assignments.
+- Workflow: department brief -> research/storyline -> evidence/fact-check -> matching master TemplateFlyer -> graphics/presentation QA -> editorial/admin approval. Publication remains disabled pending owner approval.
+- This is an architecture/design requirement; the 10 department-specific flyer assets and agent-to-template mapping remain to be implemented and verified.
