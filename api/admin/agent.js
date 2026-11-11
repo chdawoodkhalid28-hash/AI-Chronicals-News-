@@ -394,12 +394,12 @@ export default async function handler(req, res) {
   if (!Object.prototype.hasOwnProperty.call(DEPARTMENTS, department)) return res.status(400).json({ error: "Unknown department" });
   if (typeof topic !== "string" || topic.trim().length < 8) return res.status(400).json({ error: "Topic must contain at least 8 characters" });
   if (!Array.isArray(sources) || sources.length < 1 || sources.length > 8) return res.status(400).json({ error: "Provide 1 to 8 source references" });
-  const cleanSources = sources.map((s) => ({
+  const cleanSources = sources.map((s) => s && typeof s === "object" ? ({
     title: String(s.title || "").slice(0, 240),
     url: String(s.url || "").slice(0, 1000),
     excerpt: String(s.excerpt || "").slice(0, 5000)
-  }));
-  if (cleanSources.some((s) => !/^https:\/\//i.test(s.url) || !s.excerpt.trim())) {
+  }) : null);
+  if (cleanSources.some((s) => !s || !/^https:\/\//i.test(s.url) || !s.excerpt.trim())) {
     return res.status(400).json({ error: "Every source needs an HTTPS URL and excerpt" });
   }
   const isLead = department === "newsroom";
