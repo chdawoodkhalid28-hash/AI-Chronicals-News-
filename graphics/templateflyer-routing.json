@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "1.0",
+  "purpose": "Route every one of the 26 director workflows to one of the 10 approved department master TemplateFlyers. Cross-functional directors inherit the story's assigned beat; they do not create additional master templates.",
+  "masters": [
+    "Politics & Government",
+    "Courts & Judiciary",
+    "Crime & Public Safety",
+    "Business & Economy",
+    "Weather & Disasters",
+    "Health & Science",
+    "Education",
+    "Sports",
+    "Entertainment & Culture",
+    "World & Foreign Affairs"
+  ],
+  "storyBeatRouting": {
+    "politics": "Politics & Government",
+    "government": "Politics & Government",
+    "parliament": "Politics & Government",
+    "judiciary": "Courts & Judiciary",
+    "courts": "Courts & Judiciary",
+    "legal": "Courts & Judiciary",
+    "crime": "Crime & Public Safety",
+    "public_safety": "Crime & Public Safety",
+    "business": "Business & Economy",
+    "economy": "Business & Economy",
+    "finance": "Business & Economy",
+    "markets": "Business & Economy",
+    "agriculture": "Business & Economy",
+    "weather": "Weather & Disasters",
+    "disaster": "Weather & Disasters",
+    "climate_emergency": "Weather & Disasters",
+    "health": "Health & Science",
+    "science": "Health & Science",
+    "technology": "Health & Science",
+    "ai": "Health & Science",
+    "education": "Education",
+    "schools": "Education",
+    "universities": "Education",
+    "sports": "Sports",
+    "entertainment": "Entertainment & Culture",
+    "culture": "Entertainment & Culture",
+    "arts": "Entertainment & Culture",
+    "world": "World & Foreign Affairs",
+    "foreign_affairs": "World & Foreign Affairs",
+    "diplomacy": "World & Foreign Affairs"
+  },
+  "directors": [
+    {
+      "director": "Newsroom / Editor-in-Chief",
+      "template": "Dynamic: select master from approved story beat; no fixed desk identity."
+    },
+    {
+      "director": "Assignment Desk",
+      "template": "Dynamic: route each assignment by its primary verified story beat."
+    },
+    {
+      "director": "Pakistan",
+      "template": "Dynamic: geographic overlay; use the relevant Pakistan story beat master."
+    },
+    {
+      "director": "Provincial & Local",
+      "template": "Dynamic: provincial/local overlay; use the relevant story beat master."
+    },
+    {
+      "director": "Politics",
+      "template": "Politics & Government"
+    },
+    {
+      "director": "World",
+      "template": "World & Foreign Affairs"
+    },
+    {
+      "director": "Crime & Public Safety",
+      "template": "Crime & Public Safety"
+    },
+    {
+      "director": "Courts & Legal Affairs",
+      "template": "Courts & Judiciary"
+    },
+    {
+      "director": "Business & Economy",
+      "template": "Business & Economy"
+    },
+    {
+      "director": "Finance & Markets",
+      "template": "Business & Economy"
+    },
+    {
+      "director": "Sports",
+      "template": "Sports"
+    },
+    {
+      "director": "Technology & AI",
+      "template": "Health & Science"
+    },
+    {
+      "director": "Science & Health",
+      "template": "Health & Science"
+    },
+    {
+      "director": "Climate & Environment",
+      "template": "Weather & Disasters"
+    },
+    {
+      "director": "Education",
+      "template": "Education"
+    },
+    {
+      "director": "Agriculture & Rural Affairs",
+      "template": "Business & Economy (default); Weather & Disasters for weather/disaster-led coverage."
+    },
+    {
+      "director": "Research",
+      "template": "Dynamic: follow the assigned desk's master."
+    },
+    {
+      "director": "Open-Source Verification",
+      "template": "Dynamic: follow the assigned desk's master."
+    },
+    {
+      "director": "Fact-Check",
+      "template": "Dynamic: follow the assigned desk's master."
+    },
+    {
+      "director": "Urdu & English",
+      "template": "Dynamic: follow the assigned desk's master; language treatment only."
+    },
+    {
+      "director": "Copy Editing",
+      "template": "Dynamic: follow the assigned desk's master; copy treatment only."
+    },
+    {
+      "director": "Photo & Visuals",
+      "template": "Dynamic: follow the assigned desk's master; visual production only."
+    },
+    {
+      "director": "Audience & Social Media",
+      "template": "Dynamic: follow the assigned desk's master; adapt approved crops/formats."
+    },
+    {
+      "director": "SEO & Distribution",
+      "template": "Dynamic: follow the assigned desk's master; metadata/distribution only."
+    },
+    {
+      "director": "Ethics & Standards",
+      "template": "Dynamic: follow the assigned desk's master; standards overlay only."
+    },
+    {
+      "director": "Security & Privacy",
+      "template": "Dynamic: follow the assigned desk's master; privacy/safety overlay only."
+    }
+  ],
+  "safeguards": [
+    "Do not fabricate a department assignment when the story beat is unclear; hold for Assignment Desk.",
+    "All 26 director workflows reuse exactly one of the 10 masters per story package.",
+    "Keep source credits, timestamps, verification labels and image-rights notes visible.",
+    "All outputs remain unpublished and pending admin approval."
+  ]
+}
