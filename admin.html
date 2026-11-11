@@ -14,7 +14,7 @@ input,textarea,select{width:100%;padding:12px;border:1px solid #ccd5e2;border-ra
 textarea{min-height:110px;resize:vertical}button{border:0;border-radius:7px;padding:12px 18px;background:var(--blue);color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:16px}
 button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-height:1.8}
 .status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
-#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}
+#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}
 </style>
 </head>
 <body>
@@ -67,7 +67,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
-<div id="result"></div>
+<div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
 </section>
 </main>
 <script>
@@ -76,6 +76,44 @@ const statusBox=document.getElementById("status");
 const progressBox=document.getElementById("progress");
 const outputPanel=document.getElementById("outputPanel");
 const resultBox=document.getElementById("result");
+const reportView=document.getElementById("reportView");
+let currentReport=null;
+function addText(parent,tag,textValue,className){const el=document.createElement(tag);el.textContent=textValue==null?"":String(textValue);if(className)el.className=className;parent.appendChild(el);return el;}
+function renderReport(data){
+  currentReport=data;reportView.replaceChildren();
+  const summary=data.executionSummary||{};
+  const top=document.createElement("article");top.className="report-card";
+  addText(top,"h3","نیوز روم رن کا خلاصہ");
+  addText(top,"p",(summary.completedDepartments||0)+"/"+(summary.requestedDepartments||26)+" شعبے مکمل | PASS: "+(summary.passRecommendations||0)+" | REVISE: "+(summary.reviseRecommendations||0)+" | HOLD: "+(summary.holdRecommendations||0)+" | ناکام: "+(summary.failedDepartments||0));
+  addText(top,"p","اشاعتی حالت: "+(summary.editorialStatus||"PENDING_ADMIN_APPROVAL")+" — اشاعت مکمل طور پر بند ہے۔","report-meta");
+  reportView.appendChild(top);
+  Object.entries(data.departmentTeams||{}).forEach(([key,team])=>{
+    const card=document.createElement("article");card.className="report-card";
+    addText(card,"h3",team.directorTitle||key);
+    addText(card,"p","Director recommendation: "+(team.status||"HOLD"),"report-meta");
+    const story=team.storylineTeam||{};
+    addText(card,"h4",story.headline||"سرخی دستیاب نہیں");
+    if(story.dek)addText(card,"p",story.dek);
+    if(story.article)addText(card,"p",story.article);
+    const research=team.researchTeam||{};
+    if(Array.isArray(research.keyFacts)&&research.keyFacts.length){addText(card,"h4","اہم حقائق");research.keyFacts.forEach(x=>addText(card,"p",typeof x==="string"?x:JSON.stringify(x)));}
+    const fact=team.factCheckTeam||{};
+    if(fact.overallStatus)addText(card,"p","Evidence audit: "+fact.overallStatus,"report-meta");
+    if(Array.isArray(fact.missingEvidence)&&fact.missingEvidence.length){addText(card,"h4","مزید تصدیق درکار");fact.missingEvidence.forEach(x=>addText(card,"p",typeof x==="string"?x:JSON.stringify(x)));}
+    const graphic=team.graphicsTeam||{};
+    if(graphic.visualConcept)addText(card,"h4","Graphics concept");
+    if(graphic.visualConcept)addText(card,"p",graphic.visualConcept);
+    if(graphic.imagePrompt)addText(card,"p","Image prompt: "+graphic.imagePrompt);
+    const present=team.presentationTeam||{};
+    if(present.seoTitle)addText(card,"p","SEO: "+present.seoTitle);
+    const sources=(team.searchResearch&&team.searchResearch.sources)||team.searchTeam?.sources||[];
+    if(sources.length){addText(card,"h4","ذرائع");sources.forEach(s=>{if(/^https:\/\//i.test(s.url||"")){const a=document.createElement("a");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=s.title||s.url;card.appendChild(a);}});}
+    reportView.appendChild(card);
+  });
+  resultBox.textContent=JSON.stringify(data,null,2);
+}
+function exportJson(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download=name;link.click();URL.revokeObjectURL(url);}
+document.getElementById("exportCurrent").addEventListener("click",()=>{if(currentReport)exportJson(currentReport,"ai-chronicals-news-run.json");});
 const queueList=document.getElementById("queueList");
 const QUEUE_KEY="aiChronicalsNewsApprovalQueueV1";
 let latestRun=null;
@@ -88,7 +126,7 @@ function renderQueue(){
     const card=document.createElement("article");card.className="panel";
     const heading=document.createElement("h3");heading.textContent=item.instruction||"Newsroom run";card.appendChild(heading);
     const meta=document.createElement("p");meta.className="muted";meta.textContent=new Date(item.savedAt).toLocaleString()+" | "+(item.completedDepartments||0)+"/26 شعبے | "+item.decision;card.appendChild(meta);
-    const view=document.createElement("button");view.type="button";view.textContent="مکمل رپورٹ دیکھیں";view.addEventListener("click",()=>{resultBox.textContent=JSON.stringify(item.payload,null,2);outputPanel.hidden=false;outputPanel.scrollIntoView({behavior:"smooth"});});card.appendChild(view);
+    const view=document.createElement("button");view.type="button";view.textContent="مکمل رپورٹ دیکھیں";view.addEventListener("click",()=>{renderReport(item.payload);outputPanel.hidden=false;outputPanel.scrollIntoView({behavior:"smooth"});});card.appendChild(view);
     const approve=document.createElement("button");approve.type="button";approve.textContent="Admin review: Approved";approve.addEventListener("click",()=>updateDecision(item.id,"APPROVED_BY_ADMIN — NOT PUBLISHED"));card.appendChild(approve);
     const revise=document.createElement("button");revise.type="button";revise.textContent="Revision درکار";revise.addEventListener("click",()=>updateDecision(item.id,"REVISION_REQUIRED"));card.appendChild(revise);
     const remove=document.createElement("button");remove.type="button";remove.textContent="Queue سے حذف کریں";remove.style.background="#69778b";remove.addEventListener("click",()=>{if(confirm("اس مقامی ریکارڈ کو حذف کریں؟")){writeQueue(readQueue().filter(x=>x.id!==item.id));renderQueue();}});card.appendChild(remove);
@@ -204,7 +242,7 @@ button.addEventListener("click",async()=>{
       ],
       note:"No story is published. All packages remain PENDING_ADMIN_APPROVAL and publishing is disabled."
     };
-    resultBox.textContent=JSON.stringify(result,null,2);
+    renderReport(result);
     outputPanel.hidden=false;
     try{saveRunToQueue(result);statusBox.textContent+=" ڈرافٹ اس براؤزر کی مقامی Approval Queue میں محفوظ کر دیا گیا ہے۔"}catch(storageError){statusBox.textContent+=" مقامی اسٹوریج دستیاب نہیں؛ براہ کرم رپورٹ فوراً JSON میں محفوظ کریں۔";}
     statusBox.textContent=failures.length
