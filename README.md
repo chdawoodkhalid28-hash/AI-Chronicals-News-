@@ -70,6 +70,12 @@ The five specialist roles are separate model invocations coordinated by the depa
 - The legacy public Blob store is not used for draft persistence.
 - No news is automatically published. Do not enable publishing or production deployment without explicit admin approval.
 
+## Graphics and department TemplateFlyers
+- Ten distinct department master flyers: [Open the 10 Department Master TemplateFlyers](/graphics/department-templateflyers.html).
+- Director-to-template routing rules: `graphics/templateflyer-routing.json`.
+- The ten masters are reusable by all 26 director workflows; cross-functional teams inherit the story's assigned beat. Unclear beats are held for Assignment Desk.
+- Preview-only; no automatic publishing. All stories remain pending explicit admin approval.
+
 ## Required Vercel environment variables
 - `OPENAI_API_KEY`
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`)
