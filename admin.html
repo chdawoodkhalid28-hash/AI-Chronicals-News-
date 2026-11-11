@@ -247,7 +247,7 @@ button.addEventListener("click",async()=>{
     progressBox.textContent="مرحلہ 2 / 3 — 26 ڈائریکٹرز اپنی الگ سرچ و ریسرچ ٹیمیں چلا رہے ہیں";
     statusBox.textContent="بلند کا مرکزی brief تیار ہے۔ اب ہر شعبہ اپنی تازہ ویب سرچ، تحقیق، اسٹوری لائن، گرافکس اور پریزنٹیشن تیار کرے گا…";
     const payload={instruction,centralBrief:research.researchBrief,language};
-    const batchSize=3;
+    const batchSize=2;
     for(let i=0;i<departments.length;i+=batchSize){
       const batch=departments.slice(i,i+batchSize);
       const settled=await Promise.allSettled(batch.map(async([key])=>{
