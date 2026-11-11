@@ -127,50 +127,106 @@ export default async function handler(req, res) {
       });
     }
 
-    // The Director coordinates distinct Search, Research, Storyline, Graphics and Presentation workstreams.
-    const packageMessage = await openAIChat({
-      model: "gpt-4.1-mini",
-      temperature: 0.15,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: "You are Director " + title + " at AI Chronicals News. You command a department team with five workstreams: Search, Research, Storyline, Graphics, and Presentation. The Search & Research unit has supplied the dossier and cited links. Now coordinate the workstreams and return a complete, unpublished news package in " + languageName + ". Use only facts in the dossier; URLs are citations returned by search, not proof that every page was opened or independently verified. Do not invent quotes, numbers, dates, image credits, licensing, interviews or visual assets. If evidence is inadequate, mark HOLD and clearly list missing verification. Storyline must include a headline, summary and coherent article. Graphics must provide a practical creative brief, suggested layout and caption/alt text; do not claim an image file was generated. Presentation must provide a publish-ready content order and platform variants, not claim anything was published or distributed. Include source limitations. Return JSON only with this schema: {\"department\":\"\",\"directorTitle\":\"\",\"status\":\"PASS|REVISE|HOLD\",\"executiveSummary\":\"\",\"searchTeam\":{\"searchFocus\":\"\",\"sources\":[]},\"researchTeam\":{\"keyFacts\":[],\"timeline\":[],\"context\":[],\"claimsNeedingVerification\":[],\"sourceLimitations\":[]},\"storylineTeam\":{\"headline\":\"\",\"dek\":\"\",\"category\":\"\",\"article\":\"\",\"socialCaption\":\"\"},\"graphicsTeam\":{\"visualConcept\":\"\",\"layoutBrief\":\"\",\"infographicData\":[],\"imagePrompt\":\"\",\"caption\":\"\",\"altText\":\"\",\"rightsAndAuthenticityChecks\":[]},\"presentationTeam\":{\"contentOrder\":[],\"websitePresentation\":\"\",\"socialVariants\":[],\"seoTitle\":\"\",\"metaDescription\":\"\",\"keywords\":[]},\"directorFindings\":[],\"actionPlan\":[],\"issues\":[],\"directorRecommendation\":\"\",\"editorialStatus\":\"PENDING_ADMIN_APPROVAL\"}. PASS is allowed only when all material claims are supported by the dossier; otherwise use REVISE or HOLD."
-        },
-        {
-          role: "user",
-          content: JSON.stringify({
-            department,
-            directorTitle: "Director " + title,
-            assignment: instruction,
-            researchDossier: researchBrief,
-            citedSources: sources
-          })
-        }
-      ]
-    });
+    // Five specialist roles run as separate model invocations under this department Director.
+    const dossierContext = JSON.stringify({ department, title, instruction, researchBrief, sources });
+    const roleSpecs = [
+      {
+        key: "researchTeam",
+        name: "Research Specialist",
+        task: "Structure the research dossier into keyFacts, timeline, context, claimsNeedingVerification, sourceLimitations. Distinguish sourced facts from allegations and unknowns. Do not add facts absent from the dossier."
+      },
+      {
+        key: "storylineTeam",
+        name: "Storyline Editor",
+        task: "Write a clear, balanced news headline, dek, category, article and socialCaption. Use only facts in the dossier. Attribute claims and preserve uncertainty."
+      },
+      {
+        key: "factCheckTeam",
+        name: "Evidence Audit Specialist",
+        task: "Audit each material claim against the supplied dossier and citations. Do not claim to have opened sources or independently verified them. Return overallStatus PASS, REVISE or HOLD, claimChecks with claim/evidence/status, missingEvidence and riskNotes. Mark HOLD when serious claims lack support."
+      },
+      {
+        key: "graphicsTeam",
+        name: "Graphics & Visuals Designer",
+        task: "Create visualConcept, layoutBrief, infographicData, imagePrompt, caption, altText and rightsAndAuthenticityChecks. Do not invent data, claim an image file was generated, or assume photo licensing."
+      },
+      {
+        key: "presentationTeam",
+        name: "Presentation & Distribution Producer",
+        task: "Prepare contentOrder, websitePresentation, socialVariants, seoTitle, metaDescription and keywords. Do not claim anything was published or distributed."
+      }
+    ];
+    const roleResults = await Promise.all(roleSpecs.map(async role => {
+      const message = await openAIChat({
+        model: "gpt-4.1-mini",
+        temperature: 0.15,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: "You are the " + role.name + " on the dedicated AI team reporting to Director " + title + " at AI Chronicals News. Work independently within your specialist remit. Output valid JSON only, in " + languageName + ". " + role.task + " Your JSON must contain the fields required by your task, and may include a concise executiveNote."
+          },
+          { role: "user", content: dossierContext }
+        ]
+      });
+      let parsed;
+      try { parsed = JSON.parse(message.content); }
+      catch { throw new Error(role.name + " returned invalid JSON"); }
+      return [role.key, parsed];
+    }));
 
-    let result;
-    try {
-      result = JSON.parse(packageMessage.content);
-    } catch {
-      return res.status(502).json({ error: "Department team returned invalid JSON" });
-    }
-    result.department = department;
-    result.directorTitle = "Director " + title;
-    result.editorialStatus = "PENDING_ADMIN_APPROVAL";
-    result.publication = "DISABLED";
-    result.searchResearch = {
-      independentSearchPerformed: true,
-      sourceCount: sources.length,
-      sources,
-      dossier: researchBrief
+    const team = Object.fromEntries(roleResults);
+    const factStatus = String(team.factCheckTeam.overallStatus || "HOLD").toUpperCase();
+    const hasMaterialGaps = Array.isArray(team.researchTeam.claimsNeedingVerification) &&
+      team.researchTeam.claimsNeedingVerification.length > 0;
+    const status = factStatus === "PASS" && !hasMaterialGaps ? "PASS" :
+      factStatus === "HOLD" ? "HOLD" : "REVISE";
+    const result = {
+      department,
+      directorTitle: "Director " + title,
+      status,
+      executiveSummary: team.storylineTeam.dek || team.researchTeam.executiveNote || "Department package prepared for editorial review.",
+      searchTeam: {
+        searchFocus: title + " independent web search",
+        sources
+      },
+      researchTeam: team.researchTeam,
+      storylineTeam: team.storylineTeam,
+      factCheckTeam: team.factCheckTeam,
+      graphicsTeam: team.graphicsTeam,
+      presentationTeam: team.presentationTeam,
+      directorFindings: [
+        "Search was performed independently for this department.",
+        "Research, Storyline, Evidence Audit, Graphics and Presentation were handled by separate model invocations."
+      ],
+      actionPlan: [
+        ...(Array.isArray(team.researchTeam.claimsNeedingVerification) ? team.researchTeam.claimsNeedingVerification : []),
+        ...(Array.isArray(team.factCheckTeam.missingEvidence) ? team.factCheckTeam.missingEvidence : [])
+      ],
+      issues: Array.isArray(team.factCheckTeam.riskNotes) ? team.factCheckTeam.riskNotes : [],
+      directorRecommendation: status === "PASS" ?
+        "Ready for human editorial review; not published." :
+        "Do not publish until listed evidence gaps and editorial issues are resolved.",
+      editorialStatus: "PENDING_ADMIN_APPROVAL",
+      publication: "DISABLED",
+      searchResearch: {
+        independentSearchPerformed: true,
+        sourceCount: sources.length,
+        sources,
+        dossier: researchBrief
+      },
+      executionModel: {
+        search: "one independent web-search model invocation",
+        specialistRoles: 5,
+        roleNames: roleSpecs.map(role => role.name),
+        note: "Each specialist role is a separate model invocation coordinated by this department Director; these are not persistent background services."
+      }
     };
     return res.status(200).json({
       ok: true,
       department,
       directorTitle: result.directorTitle,
-      status: result.status || "HOLD",
+      status: result.status,
       result
     });
   } catch (error) {
