@@ -144,3 +144,12 @@ Working branch: `ai-newsroom-foundation`
 - TinyFish browser QA verified all 10 reference photos visible and loaded, all source and license links present, and no broken images or desktop layout problems. Full narrow-mobile viewport test remains pending.
 - Canva media-library imports were attempted for all 10 photos but failed because Canva returned HTTP non-200 on the public Wikimedia image URLs. MagicPath project listing was unavailable because its external API quota is exhausted. GitHub, Vercel, TinyFish and Dropbox were used as fallback connectors; the deployed website templates contain the photos successfully.
 - Production remains untouched. Publishing remains disabled and all story publication requires administrator approval.
+
+## 2026-11-11 — Ready-made editable Canva flyer collection
+- Searched the connected Canva workspace and located existing AI Chronicals News designs for National News, Economy, Politics, Sports, Public Safety and Cyber Crime.
+- Created six independent copies; original designs were left unchanged.
+- Created Canva folder: https://www.canva.com/folder/FAHamtnXIIk
+- Verified the folder listing contains all six copies and each has a one-page 940 × 788 canvas. Canva edit links are listed in `graphics/ready-made-flyer-library.html`.
+- Added `graphics/ready-made-flyer-library.html`, a responsive, VFX-styled directory with direct Canva edit links and a visible note to check any Canva Pro assets before export. Added a link to this library from `graphics/department-templateflyers.html`.
+- Canva copies are existing editable designs, not a claim that every embedded Canva element is free. Check Canva's asset licensing/Pro labels in the editor before using/exporting. No AI image or video generation was invoked.
+- Vercel Preview build and route checks are pending for the latest commits. Production remains untouched; publishing remains disabled and requires administrator approval.
