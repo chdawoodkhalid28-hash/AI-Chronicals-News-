@@ -90,3 +90,9 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - The public health endpoint is surfaced through a safe admin diagnostics panel. It reports only whether required environment variables are present; it never returns secret values.
 - Department PASS status is now gated on a valid evidence-audit structure, at least one claim check, a recognized audit status, and no declared verification gaps. Malformed or incomplete audits are HOLD, not PASS.
 - All six JavaScript API handlers are configured as ES modules; every `require()` call was removed from the API source and Node crypto uses the native `node:crypto` import. The latest preview deployment passed live health and API method-guard checks, with no runtime error logs in the checked 30-minute window. A full live 26-department run, real upstream OpenAI calls, and cross-device persistence have not yet been verified.
+
+## Graphics review and newsroom UI
+- Public homepage visual system: dark broadcast newsroom theme with HUD styling, cinematic accents, departmental desk overview, and a design-only Breaking News lower-third preview.
+- Admin Graphics & Presentation panel links to the three separate review drafts under `graphics/drafts/`.
+- Review drafts are not production approvals. Verified story copy, image rights, sources and administrator sign-off are required before publication.
+- Development changes are held on `ai-newsroom-foundation`; do not merge or deploy to Production without explicit admin approval.
