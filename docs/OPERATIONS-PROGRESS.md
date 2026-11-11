@@ -119,3 +119,15 @@ Working branch: `ai-newsroom-foundation`
 - Do not assume department names or map agents to departments until checked against the repository's authoritative 26-department configuration. Do not create or publish guessed department assignments.
 - Workflow: department brief -> research/storyline -> evidence/fact-check -> matching master TemplateFlyer -> graphics/presentation QA -> editorial/admin approval. Publication remains disabled pending owner approval.
 - This is an architecture/design requirement; the 10 department-specific flyer assets and agent-to-template mapping remain to be implemented and verified.
+
+
+## 2026-11-11 — 10 Department Master TemplateFlyers implemented and verified
+
+- Created `graphics/department-templateflyers.html`: 10 distinct department-specific master flyers with separate accent palettes, cinematic gradients, visual motifs, headline hierarchy, desk-specific editorial modules, verification/source footers, and 16:9 / 1:1 / 9:16 / data-explainer format guidance. Copy is editable in-browser and Print / Save PDF is supported.
+- Master flyers: Politics & Government; Courts & Judiciary; Crime & Public Safety; Business & Economy; Weather & Disasters; Health & Science; Education; Sports; Entertainment & Culture; World & Foreign Affairs.
+- Created `graphics/templateflyer-routing.json` to route all 26 directors to the appropriate master. Cross-functional directors inherit the assigned story beat; unclear beats are held for Assignment Desk. No 16 additional master identities are created.
+- Linked the 10-master page from the Admin Graphics & Presentation workspace.
+- Preview page: https://ai-chronicals-news-96fy2cuqy-chdawoodkhalid28-5713.vercel.app/graphics/department-templateflyers.html
+- Routing commit: `50072f43fda4f4d1706558365cebf5b9675a8b11`; Vercel Preview deployment READY; GitHub combined status success. TinyFish verified the 10 flyer page and the Admin workspace link.
+- Canva design generation, MagicPath project creation, and fal image generation were unavailable due to previously exhausted credits/quota/balance; connected GitHub + Vercel + TinyFish fallback delivered the editable HTML/CSS/SVG design system.
+- Production remains untouched. Publishing remains disabled and every story remains pending admin approval.
