@@ -1,0 +1,32 @@
+name: Department Team Safeguard Tests
+
+on:
+  push:
+    branches:
+      - ai-newsroom-foundation
+    paths:
+      - "api/admin/department-team.js"
+      - "tests/**"
+      - "package.json"
+      - ".github/workflows/department-team-tests.yml"
+  pull_request:
+    paths:
+      - "api/admin/department-team.js"
+      - "tests/**"
+      - "package.json"
+
+permissions:
+  contents: read
+
+jobs:
+  department-team-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out preview branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run isolated newsroom tests
+        run: npm test
