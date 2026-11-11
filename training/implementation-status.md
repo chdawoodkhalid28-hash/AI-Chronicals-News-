@@ -39,8 +39,8 @@ Production branch: unchanged
    - `.github/workflows/department-team-tests.yml` — push/PR regression workflow.
 
 2. **Dropbox master backups**
-   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, revision 41 after the 11 Nov update.
-   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, revision 5 after the 11 Nov update.
+   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, revision 42 after the 11 Nov update.
+   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, revision 6 after the 11 Nov update.
    - Both contain the current training/RAG status and rollout boundaries. Dropbox remains documentation backup; two-way automated sync is not implemented.
 
 3. **Vercel private storage**
