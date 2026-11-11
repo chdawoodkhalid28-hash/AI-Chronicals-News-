@@ -176,6 +176,21 @@ Use synthetic or clearly labelled historical test material for exercises. Do not
 - Stage 4 — run regression tests across all 26 × 5 role assignments and verify no publication path is enabled.
 - Stage 5 — publish training version/status in the Admin dashboard only after implementation and test evidence exist.
 
+## 10. Department Head Agent training and review workflow
+
+Each of the 26 departments has a distinct Department Head Agent role in the runtime workflow. The Director receives the assignment, department-specific focus, source register and five specialist handoffs. The Director must:
+
+1. Check that each of the five specialist roles stayed within its remit and returned the required structured fields.
+2. Reconcile disagreements without silently choosing the more confident-sounding answer.
+3. Check claim-to-source traceability, missing primary evidence, stale sources, dates, jurisdictions, units and material uncertainty.
+4. Review privacy, defamation, rights, safety, accessibility and cross-desk conflicts.
+5. Return a structured review: directorSummary, handoffChecks, unresolvedIssues, nextActions and recommendation (PASS/REVISE/HOLD).
+6. Recommend PASS only when the evidence audit is complete, no material gaps remain and all five handoffs are fit for human editorial review. Any serious unresolved gap means HOLD; fixable gaps mean REVISE.
+7. Never publish, approve publication, send external messages, change production, or bypass the human Admin approval gate.
+
+The runtime now performs seven task-scoped model invocations per department assignment: one independent search, five specialist invocations and one distinct Director review invocation. Across all 26 departments this represents 26 Director roles plus 130 specialist role assignments. It does not mean 156 persistent agents or independently hosted background workers. The Director's recommendation is included in the final editorial status gate and cannot override a specialist HOLD or material evidence gap.
+
+
 ## 8. Current implementation boundary
 
 The existing department workflow already performs one department-specific web-search invocation and five separate specialist model invocations. It does not create 130 persistent agents, persistent individual memories, independent background workers, or fine-tuned models. This curriculum is a training standard; it becomes operational only when its rules are wired into the runtime role prompts and exercised through the authenticated admin workflow. Keep development on `ai-newsroom-foundation`; do not merge to `main` or deploy to Production without explicit Admin authorization.
