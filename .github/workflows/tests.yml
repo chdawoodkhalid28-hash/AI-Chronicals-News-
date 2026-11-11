@@ -1,0 +1,34 @@
+name: Newsroom Test Suite
+
+on:
+  push:
+    branches:
+      - ai-newsroom-foundation
+  pull_request:
+    branches:
+      - main
+      - ai-newsroom-foundation
+
+permissions:
+  contents: read
+
+concurrency:
+  group: newsroom-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Node.js unit and safety tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Run test suite
+        run: npm test
