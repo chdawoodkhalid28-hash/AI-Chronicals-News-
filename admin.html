@@ -166,14 +166,15 @@ function renderReport(data){
        const graphicButton=document.createElement("button");
        graphicButton.type="button";
        graphicButton.textContent="اصل گرافک تیار کریں";
-       const graphicStatus=addText(card,"p","یہ تصویر صرف بٹن دبانے پر بنے گی؛ API استعمال/لاگت ہو سکتی ہے۔","report-meta");
+       const graphicStatus=addText(card,"p","Approved master template اس شعبے اور خبر کے موضوع کے مطابق منتخب ہوگا۔","report-meta");
        graphicButton.addEventListener("click",async()=>{
          if(!activeAdminPassword){graphicStatus.textContent="ایڈمن سیشن دستیاب نہیں؛ دوبارہ لاگ اِن کریں۔";return;}
          graphicButton.disabled=true;graphicStatus.textContent="گرافک تیار ہو رہا ہے…";
          try{
-           const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||""})});
+           const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:(team.directorTitle||key).replace(/^Director\\s+/,""),storyBeat:story.category||story.desk||""})});
            const result=await response.json();
            if(!response.ok)throw new Error(result.detail||result.error||"Graphics request failed");
+           graphicStatus.textContent="Selected master: "+result.templateName+" — "+(result.storyBeat||"fixed department mapping");
            const image=document.createElement("img");
            image.src="data:"+result.mimeType+";base64,"+result.imageData;
            image.alt=graphic.altText||"AI-generated editorial graphic";
