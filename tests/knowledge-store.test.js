@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createKnowledgeStore, scoreKnowledgeRecords, tokenizeKnowledge } from "../api/_lib/knowledge-store.js";
+import { createKnowledgeStore, scoreKnowledgeRecords, tokenizeKnowledge } from "../lib/knowledge-store.js";
 
 test("knowledge tokenizer preserves English and Urdu terms", () => {
   assert.deepEqual(tokenizeKnowledge("Pakistan زراعت climate 2026"), ["pakistan", "زراعت", "climate", "2026"]);
