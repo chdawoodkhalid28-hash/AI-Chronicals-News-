@@ -99,6 +99,11 @@ test("runs five separate specialist invocations and keeps the package unpublishe
         } }]
       }), { status: 200 });
     }
+    if (payload.messages[0].content.includes("Department Head Agent")) {
+      return new Response(JSON.stringify({
+        choices: [{ message: { content: JSON.stringify({"directorSummary":"Synthetic Director review only.","handoffChecks":["All five synthetic handoffs received."],"unresolvedIssues":[],"nextActions":["Continue controlled testing."],"recommendation":"REVISE"}) } }]
+      }), { status: 200 });
+    }
     const roleIndex = calls.length - 2;
     return new Response(JSON.stringify({
       choices: [{ message: { content: JSON.stringify(roleOutputs[roleIndex]) } }]
@@ -114,12 +119,14 @@ test("runs five separate specialist invocations and keeps the package unpublishe
   } }), res);
 
   assert.equal(res.statusCode, 200);
-  assert.equal(calls.length, 6, "one search plus five specialist calls");
+  assert.equal(calls.length, 7, "one search, five specialists and one Director review");
   assert.equal(res.body.ok, true);
   assert.equal(res.body.status, "REVISE");
   assert.equal(res.body.result.editorialStatus, "PENDING_ADMIN_APPROVAL");
   assert.equal(res.body.result.publication, "DISABLED");
   assert.equal(res.body.result.executionModel.specialistRoles, 5);
+    assert.equal(res.body.result.executionModel.directorRole, "one distinct Department Head model invocation");
+    assert.equal(res.body.result.directorReview.recommendation, "REVISE");
 });
 
 
@@ -153,6 +160,11 @@ test("routes all 26 configured department keys through the same five-role pipeli
         } }]
       }), { status: 200 });
     }
+    if (payload.messages[0].content.includes("Department Head Agent")) {
+      return new Response(JSON.stringify({
+        choices: [{ message: { content: JSON.stringify({"directorSummary":"Synthetic Director review only.","handoffChecks":["All five synthetic handoffs received."],"unresolvedIssues":[],"nextActions":["Continue controlled testing."],"recommendation":"REVISE"}) } }]
+      }), { status: 200 });
+    }
     const roleIndex = (invocationCount - 2) % 5;
     return new Response(JSON.stringify({
       choices: [{ message: { content: JSON.stringify(roleOutputs[roleIndex]) } }]
@@ -172,5 +184,5 @@ test("routes all 26 configured department keys through the same five-role pipeli
     assert.equal(res.body.result.editorialStatus, "PENDING_ADMIN_APPROVAL");
     assert.equal(res.body.result.publication, "DISABLED");
   }
-  assert.equal(invocationCount, 26 * 6, "each department should run one search and five specialist calls");
+  assert.equal(invocationCount, 26 * 7, "each department should run one search, five specialist calls and one Director review");
 });
