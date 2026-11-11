@@ -6,16 +6,16 @@ const html = await readFile(new URL("../admin.html", import.meta.url), "utf8");
 
 test("newsroom navigation exposes all five operating areas", () => {
   for (const id of ["dashboardPanel", "assignmentPanel", "researchPanel", "graphicsPanel", "queuePanel"]) {
-    assert.match(html, new RegExp(\`id=["']\${id}["']\`), \`missing section: \${id}\`);
-    assert.match(html, new RegExp(\`href=["']#\${id}["']\`), \`missing navigation link: \${id}\`);
+    assert.ok(html.includes('id="' + id + '"'), "missing section: " + id);
+    assert.ok(html.includes('href="#' + id + '"'), "missing navigation link: " + id);
   }
 });
 
 test("all in-page navigation targets resolve to unique IDs", () => {
-  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map((match) => match[1]);
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(new Set(ids).size, ids.length, "duplicate HTML id found");
-  const targets = [...html.matchAll(/href=["']#([^"']+)["']/g)].map((match) => match[1]);
-  for (const target of targets) assert.ok(ids.includes(target), \`broken navigation target: \${target}\`);
+  const targets = [...html.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
+  for (const target of targets) assert.ok(ids.includes(target), "broken navigation target: " + target);
 });
 
 test("section markup is balanced", () => {
@@ -37,6 +37,6 @@ test("generated report is inside the research workspace", () => {
 });
 
 test("publication safety language remains visible", () => {
-  assert.match(html, /اشاعت بند ہے/);
-  assert.match(html, /ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی/);
+  assert.ok(html.includes("اشاعت بند ہے"));
+  assert.ok(html.includes("ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی"));
 });
