@@ -51,11 +51,11 @@ For each admin assignment:
 1. Buland researches the overall instruction and creates a central assignment brief with cited HTTPS links.
 2. The dashboard calls all 26 department team endpoints in small batches.
 3. Each department makes its own independent web-search request focused on its remit; it does not simply reuse Buland's central brief.
-4. Each Director coordinates structured workstreams for Search, Research, Storyline, Graphics, and Presentation.
+4. Each Director coordinates one independent Search request and five separate specialist model invocations: Research, Storyline, Evidence Audit, Graphics, and Presentation.
 5. Each department returns an unpublished package containing its research dossier, source links, key facts, timeline/context, claims needing verification, headline, article, social caption, graphics creative brief/image prompt/caption/alt text, presentation order, social variants, SEO metadata, findings, action plan, and recommendation.
 6. The dashboard gathers successes and failures and shows the packages to the admin.
 
-The team workstreams are coordinated stages in each department's workflow, not separate persistent hosted services or separate independent model instances for every role. Each department currently uses one web-search model request and one structured package-generation model request. Graphics output is a creative brief and image prompt; the endpoint does not render or license an image file.
+The five specialist roles are separate model invocations coordinated by the department Director; they are not persistent background services. This is a meaningful separation of AI tasks, but not five long-running agents with their own hosting or memory. Graphics output is a creative brief and image prompt; the endpoint does not render or license an image file.
 
 ## Editorial safeguards and known limitations
 - Every result is marked `PENDING_ADMIN_APPROVAL`; publication is disabled.
