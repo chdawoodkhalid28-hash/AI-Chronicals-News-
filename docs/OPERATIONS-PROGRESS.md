@@ -90,3 +90,14 @@ Working branch: `ai-newsroom-foundation`
 - GitHub Actions run #25 passed for test commit `d458ac747ed08c58f27ea4e289a99d01b01f44e7`; approval-queue tests, newsroom layout tests, API syntax checks, and ES module/CommonJS guard all passed: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-/actions/runs/42994582879
 - Vercel Preview deployment for the test commit is READY: https://ai-chronicals-news-kbzygcvq3-chdawoodkhalid28-5713.vercel.app/admin.html
 - The five-area UI itself was verified on the prior Preview deployment for the same dashboard source commit. No production deployment was made.
+
+
+## 2026-11-11 — Newsroom graphics and layout draft
+- Created `graphics/newsroom-templates.html` as a self-contained responsive, editable HTML draft (no image-generation credits required).
+- Includes newsroom master control dashboard; breaking-news 16:9; anchor lower-third/ticker; square social news card; vertical mobile story cover; data explainer; and editorial decision slate.
+- Text placeholders are editable in-browser and the page supports Print / Save PDF. No live claims or fabricated news data are included.
+- Linked the draft from the Admin Graphics & Presentation workspace.
+- Verified deployed Preview URL returns the graphics page and Admin page links to it: `https://ai-chronicals-news-l4cvkfyy3-chdawoodkhalid28-5713.vercel.app/graphics/newsroom-templates.html`.
+- GitHub Actions run #29 passed for the Admin link commit `46f29e65b7bc0617f315a2e70d9989c5e825b08e`; Vercel Preview deployment reached READY.
+- Canva design generation was blocked by exhausted credits; MagicPath project creation was blocked by exhausted API quota; fal image generation account balance is exhausted. The editable HTML template draft was built and deployed instead.
+- Publication remains disabled; all designs are placeholders and require editorial verification and admin approval before any real content is used.
