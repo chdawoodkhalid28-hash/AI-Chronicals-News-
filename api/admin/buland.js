@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "node:crypto";
+
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") {
@@ -6,11 +8,10 @@ export default async function handler(req, res) {
   }
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  const crypto = require("crypto");
   const safeEqual = (a, b) => {
     if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
     const left = Buffer.from(a), right = Buffer.from(b);
-    return left.length === right.length && crypto.timingSafeEqual(left, right);
+    return left.length === right.length && timingSafeEqual(left, right);
   };
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
   if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
