@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { knowledgeStore } from "../_lib/knowledge-store.js";
+import { knowledgeStore } from "../../lib/knowledge-store.js";
 
 const DEPARTMENTS = {
   newsroom: "Newsroom / Editor-in-Chief",
