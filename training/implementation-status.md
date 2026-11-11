@@ -3,7 +3,7 @@
 Updated: 2026-11-11
 Repository: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-
 Working branch: `ai-newsroom-foundation`
-Branch head: `bce16bc825507fcc79803aa3a4871529759e2bc4`
+Branch head: `6c98a117017b3d2a3752e6dbb7df678c457497b8`
 Production branch: `main` exists at `1d9cd9a28b0c0725aeb1b67e8e47cfd1e91155f0`; it is not synchronized with the current preview branch implementation.
 
 ## Current implementation
@@ -53,8 +53,8 @@ Production branch: `main` exists at `1d9cd9a28b0c0725aeb1b67e8e47cfd1e91155f0`; 
    - `.github/workflows/department-team-tests.yml` — push/PR/manual regression workflow.
 
 2. **Dropbox master backups**
-   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, last known revision 43 before this status refresh.
-   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, last known revision 6 before this status refresh.
+   - Primary Paper master: `AI CHRONICALS NEWS — MASTER WEBSITE BACKUP`, doc ID `id:HVxaWcXuMhkAAAAAAAAABg`, verified revision 44.
+   - Secondary Paper source: `AI CHRONICALS NEWS — Website Master Backup (PDF Source)`, doc ID `id:HVxaWcXuMhkAAAAAAAAADA`, verified revision 7.
    - Dropbox remains documentation backup; two-way automated sync is not implemented.
 
 3. **Vercel private storage**
