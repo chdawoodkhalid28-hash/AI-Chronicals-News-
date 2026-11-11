@@ -18,7 +18,7 @@ export function validateItem(item) {
   if (!item.payload.executionSummary || typeof item.payload.executionSummary !== "object" || Array.isArray(item.payload.executionSummary)) return false;
   const teams = item.payload.departmentTeams;
   if (!teams || typeof teams !== "object") return false;
-  return Array.isArray(teams) || !Array.isArray(teams);
+  return true;
 }
 
 export function sanitizeItem(item) {
