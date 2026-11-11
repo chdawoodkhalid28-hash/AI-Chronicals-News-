@@ -16,11 +16,11 @@ The production project is connected to Vercel and this GitHub repository:
 - `index.html`: public Urdu news homepage.
 - `admin.html`: admin draft workspace (opening the page does not publish anything).
 - `api/health.js`: safe configuration health check; reports configuration presence only.
-- `api/admin/draft.js`: password-protected AI draft endpoint.
+- `api/admin/draft.js`: password-protected legacy AI draft endpoint.\n- `api/admin/buland.js`: password-protected Buland research endpoint using live web search.
 
 ## Newsroom workflow status
 
-The admin dashboard runs a real multi-agent sequence:
+The admin dashboard is controlled by Buland: the admin gives one natural-language instruction, Buland performs live web research with the OpenAI web-search model, returns a cited research brief, and passes the discovered HTTPS sources to the newsroom workflow. The browser then runs a real multi-agent sequence:
 1. The Newsroom Lead makes the initial unpublished draft.
 2. The other 25 department agents are invoked through separate authenticated API requests, in small batches, and independently review the same draft and supplied source excerpts.
 3. The dashboard gathers the 25 reviews, records failed calls, and presents the draft and review results to the admin.
@@ -40,6 +40,6 @@ Never put secrets in source files, commits, browser code, or chat messages.
 
 ## Important limitations
 
-Source discovery, persistent draft storage, a durable approval/rejection queue, independent external fact-checking integrations, and scheduled autonomous workflows still need implementation and testing. The 26 agent outputs are not saved after the browser session. Public Blob storage is intentionally not used for drafts and remains deferred.
+Persistent draft storage, a durable approval/rejection queue, independent external fact-checking integrations, and scheduled/background autonomous workflows still need implementation and testing. Buland currently runs on demand from the admin browser; keep the dashboard open until the run completes. The admin supplies only an instruction and language, while Buland discovers sources and coordinates the 26 department calls. The 26 agent outputs are not saved after the browser session. Public Blob storage is intentionally not used for drafts and remains deferred.
 
 No story is automatically published. Production publishing remains disabled pending explicit admin authorization.
