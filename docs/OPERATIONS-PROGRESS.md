@@ -160,3 +160,12 @@ Working branch: `ai-newsroom-foundation`
 - Labeled it as a story-specific Weather & Environment starter, not a live alert. Before reuse, replace its old date, location, AQI, claims and source with newly verified details.
 - Canva folder now contains seven independent editable copies. The web library links to the stable Canva design ID route for each copy.
 - Browser test of the canonical Canva editor URL redirects to Canva sign-in as expected; users must be signed into Canva to edit.
+
+## 2026-11-11 — Website aligned to separate graphics review drafts
+
+- Reworked `index.html` on `ai-newsroom-foundation` into a dark broadcast-newsroom visual system aligned with the separate Newsroom, Departmental and Breaking News review drafts: HUD/grid styling, cinematic light sweep, broadcast ticker, lower-third preview, 10 editorial desks, and explicit editorial verification/approval gates.
+- Removed the old globe/orbit logo artwork from the public homepage; replaced it with a text-only wordmark.
+- Added a clear design-only disclaimer to the Breaking News preview so it cannot be mistaken for a real live broadcast or current alert.
+- Updated `admin.html` Graphics & Presentation panel with direct links to all three separate Final Review Drafts and the Broadcast VFX Template Suite.
+- Homepage and admin changes are committed to `ai-newsroom-foundation`; no merge to `main`, production deployment, or auto-publishing was performed.
+- QA status: source changes saved; live Vercel Preview/browser QA remains pending due the earlier Vercel API deployment quota restriction. All story/news content remains placeholder or empty until verified reporting is connected; no fabricated current news has been added.
