@@ -403,8 +403,8 @@ function renderTeamRoster(){
     card.appendChild(state);
     const master=masterTemplateByDepartment[key];
     const templateLink=document.createElement("a");
-    templateLink.href="/graphics/department-templateflyers.html#"+(master?master[1]:"p1");
-    templateLink.textContent=master?"MASTER TEMPLATE · "+master[0]:(key==="agriculture_desk"?"MASTER TEMPLATE · "+masterTemplateByDepartment[key][0]:"MASTER TEMPLATE · STORY-BEAT ROUTING");
+    templateLink.href=master?"/graphics/department-templateflyers.html#"+master[1]:"/graphics/department-templateflyers.html";
+    templateLink.textContent=master?"MASTER TEMPLATE · "+master[0]:(inheritedTemplateDepartments.has(key)?"MASTER TEMPLATE · STORY-BEAT ROUTING":"MASTER TEMPLATE · ASSIGNMENT DESK ROUTING");
     templateLink.style.cssText="display:block;margin:8px 0;padding:6px 8px;border:1px solid #3b829e;border-radius:6px;color:#62e8f2;font:800 10px Arial,sans-serif;text-decoration:none";
     templateLink.setAttribute("aria-label","Open assigned department master template");
     card.appendChild(templateLink);
