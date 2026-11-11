@@ -101,3 +101,10 @@ Working branch: `ai-newsroom-foundation`
 - GitHub Actions run #29 passed for the Admin link commit `46f29e65b7bc0617f315a2e70d9989c5e825b08e`; Vercel Preview deployment reached READY.
 - Canva design generation was blocked by exhausted credits; MagicPath project creation was blocked by exhausted API quota; fal image generation account balance is exhausted. The editable HTML template draft was built and deployed instead.
 - Publication remains disabled; all designs are placeholders and require editorial verification and admin approval before any real content is used.
+
+
+## 2026-11-11 — Vibrant digital newsroom visual refresh
+- Updated `graphics/newsroom-templates.html` on the working branch `ai-newsroom-foundation` with a richer digital broadcast visual system: layered midnight-blue gradients, electric cyan/blue/violet/pink accents, subtle grid and orbital motifs, brighter headline hierarchy, glass-style control bar, gradient status treatments, upgraded cards, social templates, and responsive mobile spacing.
+- Preserved all seven existing template/workspace concepts, editable placeholder copy, print/save-PDF behavior, and publication safety wording. No live news claims, licensed imagery assumptions, or auto-publishing behavior were introduced.
+- Commit: `8694cf4c2eab184e87555cd83a47a32e2efd784b`.
+- Pending verification: GitHub CI and Vercel Preview build/route fetch. Production remains untouched.
