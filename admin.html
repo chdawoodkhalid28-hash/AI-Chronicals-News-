@@ -64,6 +64,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div><div id="departmentProgress" class="department-progress" aria-live="polite"></div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
+<section class="panel" id="diagnosticsPanel"><h2>سسٹم تشخیص — System Diagnostics</h2><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
@@ -180,6 +181,26 @@ document.getElementById("importQueue").addEventListener("change",async(event)=>{
   finally{event.target.value="";}
 });
 renderQueue();
+document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
+  const button=document.getElementById("diagnosticsButton");
+  const output=document.getElementById("diagnosticsResult");
+  button.disabled=true;output.textContent="سسٹم کنفیگریشن چیک ہو رہی ہے…";
+  try{
+    const response=await fetch("/api/health",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||!data||!data.capabilities)throw new Error(data&&data.error||"Health endpoint returned an invalid response");
+    const c=data.capabilities;
+    output.textContent=[
+      "API status: "+(data.status||"unknown"),
+      "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
+      "OpenAI API key: "+(c.openAIKeyConfigured?"configured":"MISSING"),
+      "Cloud Blob token: "+(c.blobStorageConfigured?"configured":"not configured — local queue only"),
+      "Publishing: "+(data.publishing||"unknown"),
+      "Checked: "+(data.checkedAt||"unknown")
+    ].join("\\n");
+  }catch(error){output.textContent="تشخیص ناکام: "+error.message;}
+  finally{button.disabled=false;}
+});
 const departments=[
   ["newsroom","Director Newsroom"],
   ["assignment_desk","Director Assignment Desk"],
