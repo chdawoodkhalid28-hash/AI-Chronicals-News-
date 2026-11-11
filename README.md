@@ -20,17 +20,17 @@ The production project is connected to Vercel and this GitHub repository:
 
 ## Newsroom workflow status
 
-The foundation draft endpoint coordinates seven editorial review roles:
-1. Newsroom
-2. Research
-3. Fact-check
-4. Urdu/English desk
-5. Politics and world desk
-6. Business, sports and technology desk
-7. Standards editor
+The admin dashboard runs a real multi-agent sequence:
+1. The Newsroom Lead makes the initial unpublished draft.
+2. The other 25 department agents are invoked through separate authenticated API requests, in small batches, and independently review the same draft and supplied source excerpts.
+3. The dashboard gathers the 25 reviews, records failed calls, and presents the draft and review results to the admin.
 
-Draft generation requires source URLs and source excerpts. The endpoint labels every result `PENDING_ADMIN_APPROVAL`. It does not publish stories.
+The 26 department roles are Editor-in-Chief/Newsroom, Assignment, Pakistan, Provincial & Local, Politics, World, Crime & Public Safety, Courts & Legal Affairs, Business & Economy, Finance & Markets, Sports, Technology & AI, Science & Health, Climate & Environment, Education, Agriculture & Rural Affairs, Research, Open-Source Verification, Fact-Check, Urdu & English, Copy Editing, Photo & Visuals, Audience & Social Media, SEO & Distribution, Ethics & Standards, and Security & Privacy.
 
+These are separate model invocations, not 26 separately hosted services or long-running autonomous agents. AI review is not independent external verification. The admin browser tab must remain open while the sequence runs. Results currently exist in the browser response only; persistent storage and an approval queue are not implemented. Each run makes 26 model requests and consumes API usage.
+
+The dashboard uses `api/admin/agent.js` for the 26-agent sequence. The older `api/admin/draft.js` endpoint remains as a legacy endpoint and is not used by the new dashboard. All results remain `PENDING_ADMIN_APPROVAL`; publishing is disabled.
+ 
 ## Required Vercel environment variables
 
 - `OPENAI_API_KEY`
@@ -40,13 +40,6 @@ Never put secrets in source files, commits, browser code, or chat messages.
 
 ## Important limitations
 
-This is the first newsroom foundation, not a fully autonomous production system. Persistent editorial storage, source discovery/ingestion, independent fact-checking integrations, approval/publishing controls, and scheduled department workflows still need implementation and testing.
+Source discovery, persistent draft storage, a durable approval/rejection queue, independent external fact-checking integrations, and scheduled autonomous workflows still need implementation and testing. The 26 agent outputs are not saved after the browser session. Public Blob storage is intentionally not used for drafts and remains deferred.
 
 No story is automatically published. Production publishing remains disabled pending explicit admin authorization.
-
-
-## Editorial department model
-
-The draft endpoint now returns review notes for 26 editorial desks: Editor-in-Chief, Assignment, Pakistan, Provincial & Local, Politics, World, Crime & Public Safety, Courts & Legal Affairs, Business & Economy, Finance & Markets, Sports, Technology & AI, Science & Health, Climate & Environment, Education, Agriculture & Rural Affairs, Research, Open-Source Verification, Fact-Check, Urdu & English, Copy Editing, Photo & Visuals, Audience & Social Media, SEO & Distribution, Ethics & Standards, and Security & Privacy.
-
-Important limitation: these are 26 structured editorial perspectives generated in one AI request. They are not 26 separate autonomous agents, and their notes do not replace independent source verification or human editorial approval. All drafts remain `PENDING_ADMIN_APPROVAL`; this foundation does not publish news.
