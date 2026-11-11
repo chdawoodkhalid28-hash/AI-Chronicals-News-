@@ -80,6 +80,11 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <h2>ریسرچ اور فیکٹ چیک — Research & Fact-check</h2>
 <p class="muted">ہر شعبے کے نتائج، ذرائع، ثبوت، تضادات اور مزید تصدیق کی ضرورت کو رپورٹ میں دیکھیں۔ سرچ citation خود بخود اس بات کا ثبوت نہیں کہ اصل صفحہ آزادانہ طور پر verify کیا گیا ہے۔</p>
 <section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
+<section class="panel" id="outputPanel" hidden>
+<h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
+<div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
+</section>
+</section>
 <section class="panel" id="graphicsPanel">
 <h2>گرافکس اور پریزنٹیشن اسٹوڈیو — Graphics & Presentation</h2>
 <p class="muted">ہر ڈپارٹمنٹ رپورٹ میں Graphics Designer کا visual brief اور presentation plan شامل ہوگا۔ اصل تصویر صرف متعلقہ رپورٹ کے Generate Graphics بٹن پر Admin کی کارروائی سے بنے گی؛ کوئی تصویر یا ویڈیو خودکار طور پر شائع نہیں ہوگی۔</p>
@@ -87,10 +92,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <a href="#researchPanel">تازہ Research Report دیکھیں</a>
 </section>
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
-<section class="panel" id="outputPanel" hidden>
-<h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
-<div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
-</section>
+
 </main>
 <script>
 const button=document.getElementById("generate");
