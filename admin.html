@@ -88,6 +88,36 @@ function renderReport(data){
   addText(top,"h3","نیوز روم رن کا خلاصہ");
   addText(top,"p",(summary.completedDepartments||0)+"/"+(summary.requestedDepartments||26)+" شعبے مکمل | PASS: "+(summary.passRecommendations||0)+" | REVISE: "+(summary.reviseRecommendations||0)+" | HOLD: "+(summary.holdRecommendations||0)+" | ناکام: "+(summary.failedDepartments||0));
   addText(top,"p","اشاعتی حالت: "+(summary.editorialStatus||"PENDING_ADMIN_APPROVAL")+" — اشاعت مکمل طور پر بند ہے۔","report-meta");
+  const retryableFailures=Array.isArray(summary.failures)?summary.failures:[];
+  if(retryableFailures.length){
+    const retryButton=document.createElement("button");retryButton.type="button";retryButton.textContent="ناکام شعبوں کو دوبارہ چلائیں ("+retryableFailures.length+")";
+    retryButton.addEventListener("click",async()=>{
+      if(!activeAdminPassword){statusBox.textContent="دوبارہ کوشش کے لیے ایڈمن سیشن درکار ہے۔";return;}
+      retryButton.disabled=true;statusBox.textContent="صرف ناکام شعبہ جاتی ٹیموں کو دوبارہ چلایا جا رہا ہے…";
+      const retryPayload={instruction:data.buland&&data.buland.instruction||"",centralBrief:data.buland&&data.buland.centralResearchBrief||"",language:data.language||"ur"};
+      const remaining=[];
+      for(let i=0;i<retryableFailures.length;i+=2){
+        const batch=retryableFailures.slice(i,i+2);
+        const settled=await Promise.allSettled(batch.map(f=>callDepartmentTeam(f.department,retryPayload,activeAdminPassword)));
+        settled.forEach((result,index)=>{
+          const key=batch[index].department;
+          if(result.status==="fulfilled")data.departmentTeams[key]=result.value;
+          else remaining.push({department:key,error:result.reason&&result.reason.message||"Retry failed"});
+        });
+      }
+      summary.failures=remaining;
+      summary.completedDepartments=Object.keys(data.departmentTeams||{}).length;
+      summary.failedDepartments=remaining.length;
+      const teams=Object.values(data.departmentTeams||{});
+      summary.passRecommendations=teams.filter(x=>x.status==="PASS").length;
+      summary.reviseRecommendations=teams.filter(x=>x.status==="REVISE").length;
+      summary.holdRecommendations=teams.filter(x=>x.status==="HOLD").length;
+      renderReport(data);
+      try{saveRunToQueue(data);}catch(error){statusBox.textContent="دوبارہ کوشش مکمل، مگر مقامی Queue محفوظ نہیں ہو سکی۔ JSON Export کریں۔";}
+      statusBox.textContent=remaining.length?"کچھ شعبے اب بھی ناکام ہیں؛ انہیں دوبارہ چلایا جا سکتا ہے۔":"تمام سابقہ ناکام شعبے کامیابی سے دوبارہ مکمل ہو گئے۔ اب مکمل رپورٹ کا ادارتی جائزہ لیں۔";
+    });
+    top.appendChild(retryButton);
+  }
   reportView.appendChild(top);
   Object.entries(data.departmentTeams||{}).forEach(([key,team])=>{
     const card=document.createElement("article");card.className="report-card";
@@ -163,8 +193,14 @@ function renderQueue(){
 }
 function updateDecision(id,decision){const items=readQueue().map(x=>x.id===id?{...x,decision,decisionAt:new Date().toISOString()}:x);writeQueue(items);renderQueue();}
 function saveRunToQueue(payload){
+  const items=readQueue();
+  if(payload.queueId&&items.some(x=>x.id===payload.queueId)){
+    const updated=items.map(x=>x.id===payload.queueId?{...x,savedAt:new Date().toISOString(),completedDepartments:payload.executionSummary.completedDepartments,payload}:x);
+    writeQueue(updated);renderQueue();return updated.find(x=>x.id===payload.queueId);
+  }
   const item={id:"run-"+Date.now(),savedAt:new Date().toISOString(),instruction:payload.buland.instruction,completedDepartments:payload.executionSummary.completedDepartments,decision:"PENDING_ADMIN_REVIEW",payload};
-  const items=[item,...readQueue()];writeQueue(items);renderQueue();return item;
+  payload.queueId=item.id;
+  writeQueue([item,...items]);renderQueue();return item;
 }
 document.getElementById("exportQueue").addEventListener("click",()=>{const data=JSON.stringify(readQueue(),null,2);const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="ai-chronicals-news-approval-queue.json";link.click();URL.revokeObjectURL(url);});
 document.getElementById("importQueue").addEventListener("change",async(event)=>{
@@ -320,6 +356,7 @@ button.addEventListener("click",async()=>{
     const pass=allTeams.filter(x=>x.status==="PASS").length;
     const result={
       buland:{instruction,centralResearchBrief:research.researchBrief,sources:research.sources},
+      language,
       departmentTeams,
       executionSummary:{
         requestedDepartments:26,completedDepartments:allTeams.length,failedDepartments:failures.length,
@@ -344,7 +381,7 @@ button.addEventListener("click",async()=>{
   }catch(error){
     statusBox.textContent="بلند/نیوز روم کام مکمل نہ کر سکا: "+error.message;
     if(Object.keys(departmentTeams).length){
-      const partial={buland:{instruction,centralResearchBrief:research&&research.researchBrief||"",sources:research&&research.sources||[]},departmentTeams,executionSummary:{requestedDepartments:26,completedDepartments:Object.keys(departmentTeams).length,failedDepartments:failures.length,passRecommendations:Object.values(departmentTeams).filter(x=>x.status==="PASS").length,reviseRecommendations:Object.values(departmentTeams).filter(x=>x.status==="REVISE").length,holdRecommendations:Object.values(departmentTeams).filter(x=>x.status==="HOLD").length,failures,editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"},partial:true,limitations:["This is a partial newsroom run. Missing departments must be retried before editorial assessment.","No story is published; admin approval remains mandatory."]};
+      const partial={buland:{instruction,centralResearchBrief:research&&research.researchBrief||"",sources:research&&research.sources||[]},language,departmentTeams,executionSummary:{requestedDepartments:26,completedDepartments:Object.keys(departmentTeams).length,failedDepartments:failures.length,passRecommendations:Object.values(departmentTeams).filter(x=>x.status==="PASS").length,reviseRecommendations:Object.values(departmentTeams).filter(x=>x.status==="REVISE").length,holdRecommendations:Object.values(departmentTeams).filter(x=>x.status==="HOLD").length,failures,editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"},partial:true,limitations:["This is a partial newsroom run. Missing departments must be retried before editorial assessment.","No story is published; admin approval remains mandatory."]};
       renderReport(partial);outputPanel.hidden=false;
       try{saveRunToQueue(partial);}catch(storageError){statusBox.textContent+=" جزوی رپورٹ مقامی طور پر محفوظ نہیں ہو سکی؛ فوراً JSON Export کریں۔";}
     }
