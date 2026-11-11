@@ -67,3 +67,18 @@ Working branch: `ai-newsroom-foundation`
 - Removed the outdated localStorage-only limitation from the newsroom run report.
 - Commit: `246f1b66938d2b31b62a3e49319a8bee73a60c16`.
 - Verified after commit: CI passed and Preview deployment is READY; authenticated queue round-trip remains pending.
+
+
+## 2026-11-11 — Five-area Newsroom Control Center
+
+- Added a sticky five-section navigation to `admin.html`: Main Dashboard, Assignment Center (Buland), Research & Fact-check, Graphics & Presentation, and Editorial Approval.
+- Separated the Buland assignment controls from the dashboard overview while preserving the existing API element IDs and workflow handlers.
+- Moved the generated research report into the Research & Fact-check workspace.
+- Added a Graphics & Presentation workspace explaining the admin-triggered image generation workflow and source/licensing checks; no autonomous image/video publishing is enabled.
+- Kept the private Approval Queue panel and server sync controls in the Editorial Approval workspace.
+- Static markup checks: all section tags balanced, no duplicate element IDs, no broken in-page navigation anchors.
+- GitHub Actions run #21 passed for commit `bf04da0125475fc5602abddd2fdeb68202b04cb1`: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-/actions/runs/42994393060
+- Vercel Preview deployment is READY: https://ai-chronicals-news-r92iyxdvg-chdawoodkhalid28-5713.vercel.app/admin.html
+- Preview page fetch confirmed all five sections. Preview health returned online with private Blob configured and publishing disabled. No runtime errors were found in the selected one-hour window.
+- Not yet verified: authenticated queue positive-path; actual Buland + 26 team run; graphics generation persistence; scheduled automatic news research. Full AI run remains gated due to cost.
+- Production remains untouched; all stories remain pending admin approval.
