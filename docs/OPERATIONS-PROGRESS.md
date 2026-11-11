@@ -169,3 +169,5 @@ Working branch: `ai-newsroom-foundation`
 - Updated `admin.html` Graphics & Presentation panel with direct links to all three separate Final Review Drafts and the Broadcast VFX Template Suite.
 - Homepage and admin changes are committed to `ai-newsroom-foundation`; no merge to `main`, production deployment, or auto-publishing was performed.
 - QA status: source changes saved; live Vercel Preview/browser QA remains pending due the earlier Vercel API deployment quota restriction. All story/news content remains placeholder or empty until verified reporting is connected; no fabricated current news has been added.
+
+- Preview deployment attempt for the latest source commit was rejected by Vercel with HTTP 402 `api-deployments-free-per-day` (daily API deployment limit; retry after 24 hours). No deployment was created. No CLI fallback was available in the connected environment. The source changes remain saved on the development branch only.
