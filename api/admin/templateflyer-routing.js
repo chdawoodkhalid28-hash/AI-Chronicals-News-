@@ -11,7 +11,7 @@ function normalize(value) {
 }
 
 function cleanDirector(value) {
-  return String(value || "").replace(/^Director\\s+/i, "").trim();
+  return String(value || "").replace(/^Director\s+/i, "").trim();
 }
 
 function findBeatMaster(routing, storyBeat) {
