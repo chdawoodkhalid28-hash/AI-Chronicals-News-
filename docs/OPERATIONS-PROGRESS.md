@@ -82,3 +82,11 @@ Working branch: `ai-newsroom-foundation`
 - Preview page fetch confirmed all five sections. Preview health returned online with private Blob configured and publishing disabled. No runtime errors were found in the selected one-hour window.
 - Not yet verified: authenticated queue positive-path; actual Buland + 26 team run; graphics generation persistence; scheduled automatic news research. Full AI run remains gated due to cost.
 - Production remains untouched; all stories remain pending admin approval.
+
+
+## 2026-11-11 — Automated layout regression checks
+
+- Added `tests/admin-layout.test.js` to verify all five newsroom navigation areas and their links, unique element IDs, balanced section markup, report placement inside Research & Fact-check, and visible publication-safety language.
+- GitHub Actions run #25 passed for test commit `d458ac747ed08c58f27ea4e289a99d01b01f44e7`; approval-queue tests, newsroom layout tests, API syntax checks, and ES module/CommonJS guard all passed: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-/actions/runs/42994582879
+- Vercel Preview deployment for the test commit is READY: https://ai-chronicals-news-kbzygcvq3-chdawoodkhalid28-5713.vercel.app/admin.html
+- The five-area UI itself was verified on the prior Preview deployment for the same dashboard source commit. No production deployment was made.
