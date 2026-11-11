@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Newsroom Admin | AI Chronicals News</title>
+<style>
+:root{--navy:#071a35;--blue:#1264bd;--red:#e33445;--bg:#f2f5fa;--ink:#182338}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Nastaliq Urdu",sans-serif}
+header{background:var(--navy);color:white;padding:22px 4%}header strong{font:900 22px Arial;direction:ltr;display:block}header span{color:#ff9aa5}
+main{width:min(900px,94%);margin:28px auto}.panel{background:white;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #071a3510}
+h1{font-size:25px;margin-top:0}label{display:block;font-weight:bold;margin:13px 0 6px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:7px;font:inherit;background:white}
+textarea{min-height:110px;resize:vertical}button{border:0;border-radius:7px;padding:12px 18px;background:var(--blue);color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:16px}
+button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-height:1.8}
+.status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
+#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}
+</style>
+</head>
+<body>
+<header><strong>AI CHRONICALS NEWS</strong><span>Be Informed. Be Ahead.</span></header>
+<main>
+<section class="panel">
+<h1>نیوز روم — ایڈمن ڈیسک</h1>
+<p class="muted">یہ ڈیش بورڈ صرف غیر شائع شدہ نیوز ڈرافٹ تیار کرتا ہے۔ ہر ڈرافٹ انسانی ایڈمن منظوری کا منتظر رہے گا۔ اس صفحے سے کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p>
+<label for="password">ایڈمن پاس ورڈ</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Vercel میں محفوظ ایڈمن پاس ورڈ">
+<label for="topic">خبر کا موضوع / واقعہ</label>
+<textarea id="topic" placeholder="خبر کا موضوع اور بنیادی تفصیل لکھیں"></textarea>
+<label for="language">زبان</label>
+<select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
+<h3>اصل ماخذ (لازمی)</h3>
+<label for="sourceTitle">ماخذ کا عنوان</label>
+<input id="sourceTitle" placeholder="مثلاً سرکاری اعلامیہ یا خبر کا عنوان">
+<label for="sourceUrl">ماخذ کا HTTPS لنک</label>
+<input id="sourceUrl" type="url" placeholder="https://...">
+<label for="excerpt">ماخذ سے متعلقہ متن / اقتباس</label>
+<textarea id="excerpt" placeholder="اصل ماخذ سے متعلقہ حقائق یہاں پیسٹ کریں"></textarea>
+<button id="generate">AI ڈرافٹ تیار کریں</button>
+<div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
+</section>
+<section class="panel" id="outputPanel" hidden>
+<h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
+<div id="result"></div>
+</section>
+</main>
+<script>
+const button=document.getElementById("generate");
+const statusBox=document.getElementById("status");
+const outputPanel=document.getElementById("outputPanel");
+const resultBox=document.getElementById("result");
+button.addEventListener("click",async()=>{
+  const password=document.getElementById("password").value;
+  const topic=document.getElementById("topic").value.trim();
+  const sourceTitle=document.getElementById("sourceTitle").value.trim();
+  const sourceUrl=document.getElementById("sourceUrl").value.trim();
+  const excerpt=document.getElementById("excerpt").value.trim();
+  if(!password||!topic||!sourceTitle||!sourceUrl||!excerpt){
+    statusBox.textContent="براہ کرم تمام فیلڈز مکمل کریں۔ خبر کے لیے اصل ماخذ لازمی ہے۔";return;
+  }
+  button.disabled=true;statusBox.textContent="AI نیوز روم ڈرافٹ تیار کر رہا ہے…";
+  outputPanel.hidden=true;
+  try{
+    const response=await fetch("/api/admin/draft",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},
+      body:JSON.stringify({topic,language:document.getElementById("language").value,sources:[{title:sourceTitle,url:sourceUrl,excerpt}]})
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error+(data.detail?": "+data.detail:""));
+    resultBox.textContent=JSON.stringify(data.draft,null,2);
+    outputPanel.hidden=false;
+    statusBox.textContent="ڈرافٹ تیار ہے۔ یہ شائع نہیں ہوا؛ اشاعت کے لیے الگ انسانی منظوری درکار ہے۔";
+  }catch(error){statusBox.textContent="خرابی: "+error.message;}
+  finally{button.disabled=false;}
+});
+</script>
+</body>
+</html>
