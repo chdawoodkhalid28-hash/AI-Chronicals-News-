@@ -43,3 +43,10 @@ Never put secrets in source files, commits, browser code, or chat messages.
 This is the first newsroom foundation, not a fully autonomous production system. Persistent editorial storage, source discovery/ingestion, independent fact-checking integrations, approval/publishing controls, and scheduled department workflows still need implementation and testing.
 
 No story is automatically published. Production publishing remains disabled pending explicit admin authorization.
+
+
+## Editorial department model
+
+The draft endpoint now returns review notes for 26 editorial desks: Editor-in-Chief, Assignment, Pakistan, Provincial & Local, Politics, World, Crime & Public Safety, Courts & Legal Affairs, Business & Economy, Finance & Markets, Sports, Technology & AI, Science & Health, Climate & Environment, Education, Agriculture & Rural Affairs, Research, Open-Source Verification, Fact-Check, Urdu & English, Copy Editing, Photo & Visuals, Audience & Social Media, SEO & Distribution, Ethics & Standards, and Security & Privacy.
+
+Important limitation: these are 26 structured editorial perspectives generated in one AI request. They are not 26 separate autonomous agents, and their notes do not replace independent source verification or human editorial approval. All drafts remain `PENDING_ADMIN_APPROVAL`; this foundation does not publish news.
