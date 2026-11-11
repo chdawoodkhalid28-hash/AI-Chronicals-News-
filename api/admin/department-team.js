@@ -208,12 +208,15 @@ export default async function handler(req, res) {
     const factCheckTeam = team.factCheckTeam;
     const factStatus = String(factCheckTeam.overallStatus || "HOLD").toUpperCase();
     const validFactStatus = ["PASS", "REVISE", "HOLD"].includes(factStatus);
+    const claimsNeedingVerification = Array.isArray(researchTeam.claimsNeedingVerification)
+      ? researchTeam.claimsNeedingVerification : [];
+    const missingEvidence = Array.isArray(factCheckTeam.missingEvidence)
+      ? factCheckTeam.missingEvidence : [];
     const hasValidAudit = Array.isArray(researchTeam.claimsNeedingVerification) &&
       Array.isArray(factCheckTeam.claimChecks) &&
       factCheckTeam.claimChecks.length > 0 &&
       Array.isArray(factCheckTeam.missingEvidence);
-    const hasMaterialGaps = researchTeam.claimsNeedingVerification.length > 0 ||
-      factCheckTeam.missingEvidence.length > 0;
+    const hasMaterialGaps = claimsNeedingVerification.length > 0 || missingEvidence.length > 0;
     // PASS is reserved for a structurally complete evidence audit with no declared gaps.
     const status = !validFactStatus || !hasValidAudit || factStatus === "HOLD" ? "HOLD" :
       factStatus === "PASS" && !hasMaterialGaps ? "PASS" : "REVISE";
