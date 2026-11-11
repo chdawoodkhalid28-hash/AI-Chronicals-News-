@@ -53,7 +53,7 @@ For each admin assignment:
 3. Each department makes its own independent web-search request focused on its remit; it does not simply reuse Buland's central brief.
 4. Each Director coordinates one independent Search request and five separate specialist model invocations: Research, Storyline, Evidence Audit, Graphics, and Presentation.
 5. Each department returns an unpublished package containing its research dossier, source links, key facts, timeline/context, claims needing verification, headline, article, social caption, graphics creative brief/image prompt/caption/alt text, presentation order, social variants, SEO metadata, findings, action plan, and recommendation.
-6. The dashboard gathers successes and failures and shows the packages to the admin.
+6. The dashboard gathers successes and failures, displays readable department report cards with source links, retains raw JSON details, and offers JSON exports for the admin.
 
 The five specialist roles are separate model invocations coordinated by the department Director; they are not persistent background services. This is a meaningful separation of AI tasks, but not five long-running agents with their own hosting or memory. Graphics output is a creative brief and image prompt; the endpoint does not render or license an image file.
 
