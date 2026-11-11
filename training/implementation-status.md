@@ -3,7 +3,7 @@
 Updated: 2026-11-11
 Repository: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-
 Working branch: `ai-newsroom-foundation`
-Latest recorded branch commit: `098e20eda59bcc53f846d8e406a21282819a556b`
+Branch head: verify the current `ai-newsroom-foundation` ref in GitHub before deployment.
 Production branch: unchanged
 
 ## Current implementation
