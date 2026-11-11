@@ -29,6 +29,35 @@ const DEPARTMENTS = {
   security_privacy_desk: "Security & Privacy"
 };
 
+const DEPARTMENT_FOCUS = {
+  newsroom: "editorial balance, cross-desk coherence, corrections and publication-readiness recommendation",
+  assignment_desk: "newsworthiness, urgency, prioritization, duplicate detection and reporting plans",
+  pakistan_desk: "federal institutions, national policy, geography, official titles and citizen impact",
+  provincial_local_desk: "province, district and tehsil accuracy, local authorities, community impact and local voices",
+  politics_desk: "political neutrality, party and policy claims, election context and precise attribution",
+  world_desk: "country and institution accuracy, local dates and time zones, diplomatic context and competing accounts",
+  crime_desk: "presumption of innocence, victim and minor privacy, police/rescue attribution and public risk",
+  courts_legal_desk: "exact court orders, case status, procedural terms, due process and appeal status",
+  business_economy_desk: "company and sector data, trade, jobs, inflation, units, periods and causal limits",
+  finance_markets_desk: "timestamped market data, currency and units, exchange, rates, risk and no investment advice",
+  sports_desk: "official results, competition rules, team/player attribution, match dates and statistics",
+  technology_ai_desk: "product and version claims, technical documentation, benchmarks, security and AI limitations",
+  science_health_desk: "peer-reviewed evidence, study design, limitations, medical uncertainty and no diagnosis",
+  climate_environment_desk: "weather versus climate, measurement periods, geography, official alerts and attribution",
+  education_desk: "institution and board accuracy, academic calendars, policy status, enrollment and exam records",
+  agriculture_desk: "crop, season and location, official advisories, input units, farmer impact and weather context",
+  research_desk: "method transparency, evidence synthesis, reproducibility and source-quality comparison",
+  open_source_verification_desk: "provenance, geolocation and time checks, original uploads, manipulation indicators and confidence limits",
+  fact_check_desk: "atomic claims, evidence sufficiency, contradiction checks and explicit PASS/REVISE/HOLD",
+  urdu_english_desk: "meaning-preserving translation, names and transliteration, idiom and bilingual consistency",
+  copy_editing_desk: "grammar, clarity, house style and attribution without factual alteration",
+  photo_visuals_desk: "image provenance, rights, captions, context, accessibility and non-misleading crops",
+  audience_social_desk: "audience clarity, platform-fit variants, safety, context and no engagement bait",
+  seo_distribution_desk: "search intent, metadata accuracy, canonical links and distribution checklist only",
+  ethics_standards_desk: "fairness, harm minimization, conflicts, corrections, privacy and public interest",
+  security_privacy_desk: "data minimization, source protection, access boundaries, secret handling and incident escalation"
+};
+
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
   const left = Buffer.from(a), right = Buffer.from(b);
@@ -112,7 +141,7 @@ export default async function handler(req, res) {
       messages: [
         {
           role: "system",
-          content: "You are the dedicated Search & Research unit reporting only to the " + title + " Director at AI Chronicals News. Independently research the user's assignment from this department's perspective. Find current, relevant, credible sources; prioritize primary documents, official agencies, original datasets and reputable newsrooms. Separate confirmed facts, attributed claims, context, and unknowns. Include dates and precise locations. Do not invent facts, quotations, source titles or URLs. The central Buland brief is background only: independently search rather than simply repeat it. Return a concise structured research dossier in " + languageName + "."
+          content: "You are the dedicated Search & Research unit reporting only to the " + title + " Director at AI Chronicals News. Department-specific training focus: " + DEPARTMENT_FOCUS[department] + ". Independently research the assignment from this department perspective. Find current, relevant, credible sources; prioritize primary documents, official agencies, original datasets and reputable newsrooms. Separate confirmed facts, attributed claims, context, and unknowns. Include dates and precise locations. Do not invent facts, quotations, source titles or URLs. The central Buland brief is background only: independently search rather than simply repeat it. Return a concise structured research dossier in " + languageName + "."
         },
         {
           role: "user",
@@ -205,6 +234,34 @@ export default async function handler(req, res) {
       throw error;
     }
 
+    // The Department Director is a distinct model invocation that reviews all five specialist handoffs.
+    const directorMessage = await openAIChat({
+      model: "gpt-4.1-mini",
+      temperature: 0.1,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: "You are the Department Head Agent (Director) for " + title + " at AI Chronicals News. Your specialist focus is " + DEPARTMENT_FOCUS[department] + ". Review the five specialist handoffs independently. Reconcile disagreements, identify missing evidence, enforce newsroom ethics and role boundaries, and produce a concise director review. Never convert unsupported claims into facts, never invent evidence, and never override a HOLD or material evidence gap. You do not publish, send external messages, change production, or approve publication. Return valid JSON only in " + languageName + " with fields: directorSummary, handoffChecks (array), unresolvedIssues (array), nextActions (array), recommendation (PASS/REVISE/HOLD)."
+        },
+        {
+          role: "user",
+          content: JSON.stringify({ department, focus: DEPARTMENT_FOCUS[department], instruction, sources, specialistHandoffs: team })
+        }
+      ]
+    });
+    let directorReview;
+    try { directorReview = JSON.parse(directorMessage.content); }
+    catch { throw new Error("Department Director returned invalid JSON"); }
+    if (!directorReview || typeof directorReview !== "object" || Array.isArray(directorReview) ||
+        !Array.isArray(directorReview.handoffChecks) || !Array.isArray(directorReview.unresolvedIssues) ||
+        !Array.isArray(directorReview.nextActions) ||
+        !["PASS", "REVISE", "HOLD"].includes(String(directorReview.recommendation || "").toUpperCase())) {
+      const error = new Error("Department Director returned an incomplete review");
+      error.status = 502;
+      throw error;
+    }
+
     const researchTeam = team.researchTeam;
     const factCheckTeam = team.factCheckTeam;
     const factStatus = String(factCheckTeam.overallStatus || "HOLD").toUpperCase();
@@ -235,9 +292,11 @@ export default async function handler(req, res) {
       factCheckTeam: team.factCheckTeam,
       graphicsTeam: team.graphicsTeam,
       presentationTeam: team.presentationTeam,
+      directorReview,
       directorFindings: [
         "Search was performed independently for this department.",
-        "Research, Storyline, Evidence Audit, Graphics and Presentation were handled by separate model invocations."
+        "The Department Director reviewed five separate specialist handoffs in a distinct model invocation.",
+        ...directorReview.handoffChecks
       ],
       actionPlan: [
         ...(Array.isArray(team.researchTeam.claimsNeedingVerification) ? team.researchTeam.claimsNeedingVerification : []),
@@ -258,8 +317,10 @@ export default async function handler(req, res) {
       executionModel: {
         search: "one independent web-search model invocation",
         specialistRoles: 5,
+        directorRole: "one distinct Department Head model invocation",
+        totalModelInvocations: 7,
         roleNames: roleSpecs.map(role => role.name),
-        note: "Each specialist role is a separate model invocation coordinated by this department Director; these are not persistent background services."
+        note: "One independent search, five separate specialist model invocations and one separate Director review invocation; these are task-scoped calls, not persistent background services."
       }
     };
     return res.status(200).json({
