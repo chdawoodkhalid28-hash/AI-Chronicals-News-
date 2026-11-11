@@ -276,8 +276,10 @@ export default async function handler(req, res) {
       Array.isArray(factCheckTeam.missingEvidence);
     const hasMaterialGaps = claimsNeedingVerification.length > 0 || missingEvidence.length > 0;
     // PASS is reserved for a structurally complete evidence audit with no declared gaps.
-    const status = !validFactStatus || !hasValidAudit || factStatus === "HOLD" ? "HOLD" :
-      factStatus === "PASS" && !hasMaterialGaps ? "PASS" : "REVISE";
+    const directorStatus = String(directorReview.recommendation || "HOLD").toUpperCase();
+    const status = !validFactStatus || !hasValidAudit || factStatus === "HOLD" ||
+      directorStatus === "HOLD" ? "HOLD" :
+      factStatus === "PASS" && !hasMaterialGaps && directorStatus === "PASS" ? "PASS" : "REVISE";
     const result = {
       department,
       directorTitle: "Director " + title,
