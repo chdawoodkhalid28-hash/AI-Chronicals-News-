@@ -191,3 +191,11 @@ Working branch: `ai-newsroom-foundation`
 - Remaining QA limitation: exact live visual checks at 768px and 390px are pending because the browser runner did not expose viewport resizing. Branch protection is currently disabled on `ai-newsroom-foundation`; Production was not touched.
 
 - Additional integration boundary identified after source inspection: `graphics/templateflyer-routing.json` is a validated configuration map, but the current `api/admin/graphics.js` endpoint does not load or apply it. Therefore 26-director-to-10-master mappings are verified as data/configuration, not yet proven as automatic runtime routing. Wiring that map into graphics generation is pending and was not attempted because it would change workflow behavior/architecture.
+
+
+## 2026-11-11 — GitHub promotion and vector deployment
+- Owner authorized promotion of the newsroom foundation to the GitHub production line.
+- Pull request #1 from `ai-newsroom-foundation` to `main` was merged successfully using squash merge; merge commit: `df927212ad354255a9e860c11ef54307a0c947c3`.
+- The source branch-head commit `2b0893d3d9901b7bb179f5874deecee074870534` passed the Vercel Git commit status check and its Preview deployment reached READY: `https://ai-chronicals-news-hawfgqqwu-chdawoodkhalid28-5713.vercel.app`.
+- Production alias promotion is not yet confirmed. The latest Vercel deployment record remains the earlier Production deployment; continue verifying Git-triggered Production deployment before claiming the public site is updated.
+- Publishing remains disabled; all story output stays pending Admin approval.
