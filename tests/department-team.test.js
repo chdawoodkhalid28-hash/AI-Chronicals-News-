@@ -181,6 +181,8 @@ test("routes all 26 configured department keys through the same five-role pipeli
     assert.equal(res.statusCode, 200, department + " should be accepted");
     assert.match(res.body.directorTitle, /^Director /);
     assert.equal(res.body.result.executionModel.specialistRoles, 5);
+    assert.equal(res.body.result.executionModel.totalModelInvocations, 7);
+    assert.equal(res.body.result.directorReview.recommendation, "REVISE");
     assert.equal(res.body.result.editorialStatus, "PENDING_ADMIN_APPROVAL");
     assert.equal(res.body.result.publication, "DISABLED");
   }
