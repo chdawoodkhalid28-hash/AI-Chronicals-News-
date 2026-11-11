@@ -80,7 +80,7 @@ Working branch: `ai-newsroom-foundation`
 - GitHub Actions run #21 passed for commit `bf04da0125475fc5602abddd2fdeb68202b04cb1`: https://github.com/chdawoodkhalid28-hash/AI-Chronicals-News-/actions/runs/42994393060
 - Vercel Preview deployment is READY: https://ai-chronicals-news-r92iyxdvg-chdawoodkhalid28-5713.vercel.app/admin.html
 - Preview page fetch confirmed all five sections. Preview health returned online with private Blob configured and publishing disabled. No runtime errors were found in the selected one-hour window.
-- Not yet verified: authenticated queue positive-path; actual Buland + 26 team run; graphics generation persistence; scheduled automatic news research. Full AI run remains gated due to cost.
+- Owner confirmed the Preview website opened and manual server Sync completed successfully. Still not verified: individual queue decision PATCH and DELETE; actual Buland + 26 team run; graphics generation persistence; scheduled automatic news research. Full AI run remains gated due to cost.
 - Production remains untouched; all stories remain pending admin approval.
 
 
