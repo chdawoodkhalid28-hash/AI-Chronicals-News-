@@ -18,11 +18,11 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 </style>
 </head>
 <body>
-<header><strong>AI CHRONICALS NEWS</strong><span>Be Informed. Be Ahead.</span></header>
+<header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span></header>
 <main>
 <section class="panel">
 <h1>نیوز روم — ایڈمن ڈیسک</h1>
-<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج فی الحال مستقل محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
+<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج اسی براؤزر کے مقامی Approval Queue میں محفوظ کیے جا سکتے ہیں۔ یہ سرور پر محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
 <details class="panel"><summary style="font-weight:bold;cursor:pointer">26 شعبہ جاتی ڈائریکٹرز — ذمہ داریاں دیکھیں</summary>
 <ol style="line-height:2.1">
 <li><b>Director Newsroom / Editor-in-Chief:</b> ادارتی قیادت، خبر کا زاویہ، مسودہ اور اشاعت کی تیاری کی سفارش۔</li>
@@ -64,6 +64,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
+<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
 <div id="result"></div>
@@ -75,6 +76,32 @@ const statusBox=document.getElementById("status");
 const progressBox=document.getElementById("progress");
 const outputPanel=document.getElementById("outputPanel");
 const resultBox=document.getElementById("result");
+const queueList=document.getElementById("queueList");
+const QUEUE_KEY="aiChronicalsNewsApprovalQueueV1";
+let latestRun=null;
+function readQueue(){try{const value=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]");return Array.isArray(value)?value:[]}catch{return []}}
+function writeQueue(items){localStorage.setItem(QUEUE_KEY,JSON.stringify(items.slice(0,20)));}
+function renderQueue(){
+  const items=readQueue();queueList.replaceChildren();
+  if(!items.length){queueList.textContent="ابھی کوئی ڈرافٹ محفوظ نہیں۔";return;}
+  items.forEach(item=>{
+    const card=document.createElement("article");card.className="panel";
+    const heading=document.createElement("h3");heading.textContent=item.instruction||"Newsroom run";card.appendChild(heading);
+    const meta=document.createElement("p");meta.className="muted";meta.textContent=new Date(item.savedAt).toLocaleString()+" | "+(item.completedDepartments||0)+"/26 شعبے | "+item.decision;card.appendChild(meta);
+    const view=document.createElement("button");view.type="button";view.textContent="مکمل رپورٹ دیکھیں";view.addEventListener("click",()=>{resultBox.textContent=JSON.stringify(item.payload,null,2);outputPanel.hidden=false;outputPanel.scrollIntoView({behavior:"smooth"});});card.appendChild(view);
+    const approve=document.createElement("button");approve.type="button";approve.textContent="Admin review: Approved";approve.addEventListener("click",()=>updateDecision(item.id,"APPROVED_BY_ADMIN — NOT PUBLISHED"));card.appendChild(approve);
+    const revise=document.createElement("button");revise.type="button";revise.textContent="Revision درکار";revise.addEventListener("click",()=>updateDecision(item.id,"REVISION_REQUIRED"));card.appendChild(revise);
+    const remove=document.createElement("button");remove.type="button";remove.textContent="Queue سے حذف کریں";remove.style.background="#69778b";remove.addEventListener("click",()=>{if(confirm("اس مقامی ریکارڈ کو حذف کریں؟")){writeQueue(readQueue().filter(x=>x.id!==item.id));renderQueue();}});card.appendChild(remove);
+    queueList.appendChild(card);
+  });
+}
+function updateDecision(id,decision){const items=readQueue().map(x=>x.id===id?{...x,decision,decisionAt:new Date().toISOString()}:x);writeQueue(items);renderQueue();}
+function saveRunToQueue(payload){
+  const item={id:"run-"+Date.now(),savedAt:new Date().toISOString(),instruction:payload.buland.instruction,completedDepartments:payload.executionSummary.completedDepartments,decision:"PENDING_ADMIN_REVIEW",payload};
+  const items=[item,...readQueue()];writeQueue(items);renderQueue();return item;
+}
+document.getElementById("exportQueue").addEventListener("click",()=>{const data=JSON.stringify(readQueue(),null,2);const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="ai-chronicals-news-approval-queue.json";link.click();URL.revokeObjectURL(url);});
+renderQueue();
 const departments=[
   ["newsroom","Director Newsroom"],
   ["assignment_desk","Director Assignment Desk"],
@@ -173,12 +200,13 @@ button.addEventListener("click",async()=>{
         "The team roles are coordinated stages in the department workflow, not separate persistent hosted services.",
         "Graphics output is a design brief and image prompt; this endpoint does not render an image file.",
         "Search citations do not prove that every linked page was opened or independently authenticated.",
-        "Results are temporary in this browser session; persistent draft storage and a durable approval queue are not implemented."
+        "The approval queue is stored only in this browser localStorage and is not synced to a server or other devices; export JSON backups regularly."
       ],
       note:"No story is published. All packages remain PENDING_ADMIN_APPROVAL and publishing is disabled."
     };
     resultBox.textContent=JSON.stringify(result,null,2);
     outputPanel.hidden=false;
+    try{saveRunToQueue(result);statusBox.textContent+=" ڈرافٹ اس براؤزر کی مقامی Approval Queue میں محفوظ کر دیا گیا ہے۔"}catch(storageError){statusBox.textContent+=" مقامی اسٹوریج دستیاب نہیں؛ براہ کرم رپورٹ فوراً JSON میں محفوظ کریں۔";}
     statusBox.textContent=failures.length
       ?"شعبہ جاتی کام جزوی طور پر مکمل ہوا۔ کچھ ٹیمیں ناکام ہوئیں؛ تمام نتائج غیر شائع شدہ ہیں اور ایڈمن منظوری درکار ہے۔"
       :"بلند اور 26 شعبہ جاتی ٹیموں کا کام مکمل ہو گیا۔ تمام نیوز پیکجز غیر شائع شدہ ہیں اور آپ کی منظوری کے منتظر ہیں۔";
