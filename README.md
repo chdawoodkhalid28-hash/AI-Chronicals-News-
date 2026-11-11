@@ -61,7 +61,8 @@ The team workstreams are coordinated stages in each department's workflow, not s
 - Every result is marked `PENDING_ADMIN_APPROVAL`; publication is disabled.
 - A model's web-search citations do not prove that every linked page was opened or independently authenticated. Claims needing verification must remain visible.
 - AI assessments are not external human verification. Primary-source review and real-world confirmation may still be required.
-- Results currently remain in the open admin browser session. Persistent draft storage and a durable approval/rejection queue are not yet implemented.
+- The admin dashboard now stores completed run records and local review decisions in the current browser's localStorage and provides JSON export backups. This is device/browser-specific, is not server-side storage, does not sync across devices, and may be lost if browser data is cleared. Export backups regularly.
+- No server-side persistent approval queue is configured. Public Vercel Blob remains deferred as requested; do not connect or use it without explicit authorization.
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows.
 - Public Vercel Blob storage is intentionally deferred and is not used for draft persistence.
