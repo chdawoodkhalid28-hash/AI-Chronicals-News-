@@ -22,7 +22,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <main>
 <section class="panel">
 <h1>نیوز روم — ایڈمن ڈیسک</h1>
-<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند آپ کی ہدایت پر ذرائع تلاش کرکے تمام ڈائریکٹرز کو کام دے گا اور ان کی رپورٹس یکجا کرے گا۔ نتائج فی الحال مستقل محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
+<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج فی الحال مستقل محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
 <details class="panel"><summary style="font-weight:bold;cursor:pointer">26 شعبہ جاتی ڈائریکٹرز — ذمہ داریاں دیکھیں</summary>
 <ol style="line-height:2.1">
 <li><b>Director Newsroom / Editor-in-Chief:</b> ادارتی قیادت، خبر کا زاویہ، مسودہ اور اشاعت کی تیاری کی سفارش۔</li>
@@ -61,7 +61,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <label for="language">ڈرافٹ کی زبان</label>
 <select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
 <button id="generate">بلند کو ہدایت دیں — کام شروع کریں</button>
-<div id="progress" class="status" aria-live="polite">بلند تحقیق اور 26 ڈائریکٹرز کی پیش رفت یہاں نظر آئے گی۔</div>
+<div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
 <section class="panel" id="outputPanel" hidden>
@@ -104,14 +104,14 @@ const departments=[
   ["security_privacy_desk","سکیورٹی و پرائیویسی"]
 ];
 
-async function callAgent(department,payload,password){
-  const response=await fetch("/api/admin/agent",{
+async function callDepartmentTeam(department,payload,password){
+  const response=await fetch("/api/admin/department-team",{
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},
     body:JSON.stringify({...payload,department})
   });
   const data=await response.json();
-  if(!response.ok)throw new Error((data.error||"Agent failed")+(data.detail?": "+data.detail:""));
+  if(!response.ok)throw new Error((data.error||"Department team failed")+(data.detail?": "+data.detail:""));
   return data.result;
 }
 
@@ -126,60 +126,64 @@ button.addEventListener("click",async()=>{
   outputPanel.hidden=true;
   resultBox.textContent="";
   const headers={"Content-Type":"application/json","Authorization":"Bearer "+password};
-  const reviews={};
+  const departmentTeams={};
   const failures=[];
   let completed=0;
   try{
-    statusBox.textContent="بلند آپ کی ہدایت سمجھ کر تازہ ویب ذرائع تلاش کر رہا ہے…";
-    progressBox.textContent="مرحلہ 1 / 3 — بلند تحقیق کر رہا ہے";
+    statusBox.textContent="بلند مرکزی اسائنمنٹ تیار کر رہا ہے…";
+    progressBox.textContent="مرحلہ 1 / 3 — بلند مرکزی تحقیق اور assignment brief تیار کر رہا ہے";
     const researchResponse=await fetch("/api/admin/buland",{
       method:"POST",headers,
       body:JSON.stringify({instruction,language})
     });
     const research=await researchResponse.json();
     if(!researchResponse.ok)throw new Error((research.error||"Buland research failed")+(research.detail?": "+research.detail:""));
-    progressBox.textContent="مرحلہ 2 / 3 — "+research.sourceCount+" ویب ذرائع مل گئے؛ نیوز روم ڈرافٹ تیار ہو رہا ہے";
-    statusBox.textContent="بلند نے تحقیق مکمل کر لی۔ اب 26 نیوز روم ایجنٹس کام کر رہے ہیں…";
-    const payload={topic:instruction+"\n\nBuland research brief:\n"+research.researchBrief,language,sources:research.sources};
-    const draft=await callAgent("newsroom",payload,password);
-    completed=1;
-    progressBox.textContent="1 / 26 مکمل — ابتدائی ڈرافٹ تیار";
-    const remaining=departments.slice(1);
-    const batchSize=5;
-    for(let i=0;i<remaining.length;i+=batchSize){
-      const batch=remaining.slice(i,i+batchSize);
+    progressBox.textContent="مرحلہ 2 / 3 — 26 ڈائریکٹرز اپنی الگ سرچ و ریسرچ ٹیمیں چلا رہے ہیں";
+    statusBox.textContent="بلند کا مرکزی brief تیار ہے۔ اب ہر شعبہ اپنی تازہ ویب سرچ، تحقیق، اسٹوری لائن، گرافکس اور پریزنٹیشن تیار کرے گا…";
+    const payload={instruction,centralBrief:research.researchBrief,language};
+    const batchSize=3;
+    for(let i=0;i<departments.length;i+=batchSize){
+      const batch=departments.slice(i,i+batchSize);
       const settled=await Promise.allSettled(batch.map(async([key])=>{
-        const result=await callAgent(key,{...payload,draft},password);
+        const result=await callDepartmentTeam(key,payload,password);
         return [key,result];
       }));
       for(let j=0;j<settled.length;j++){
         const item=settled[j], key=batch[j][0];
-        if(item.status==="fulfilled")reviews[item.value[0]]=item.value[1];
-        else failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Agent failed"});
+        if(item.status==="fulfilled")departmentTeams[item.value[0]]=item.value[1];
+        else failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Department team failed"});
         completed++;
-        progressBox.textContent=completed+" / 26 ایجنٹس مکمل — "+failures.length+" ناکام";
+        progressBox.textContent=completed+" / 26 شعبہ جاتی ٹیمیں مکمل — "+failures.length+" ناکام";
       }
     }
-    const held=Object.values(reviews).filter(x=>x.status==="HOLD").length;
-    const revise=Object.values(reviews).filter(x=>x.status==="REVISE").length;
+    const allTeams=Object.values(departmentTeams);
+    const held=allTeams.filter(x=>x.status==="HOLD").length;
+    const revise=allTeams.filter(x=>x.status==="REVISE").length;
+    const pass=allTeams.filter(x=>x.status==="PASS").length;
     const result={
-      buland:{instruction,researchBrief:research.researchBrief,sources:research.sources},
-      draft,
-      independentDepartmentReviews:reviews,
+      buland:{instruction,centralResearchBrief:research.researchBrief,sources:research.sources},
+      departmentTeams,
       executionSummary:{
-        requestedAgents:26,completedAgents:completed-failures.length,failedAgents:failures.length,
-        holdReviews:held,reviseReviews:revise,failures,
+        requestedDepartments:26,completedDepartments:allTeams.length,failedDepartments:failures.length,
+        passRecommendations:pass,reviseRecommendations:revise,holdRecommendations:held,failures,
         editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"
       },
-      note:"Buland researched the instruction using web search and supplied cited sources to 26 separate department model requests. This is not external fact verification. Results are temporary in this browser session. Admin approval remains mandatory; publishing is disabled."
+      limitations:[
+        "Each department makes its own web-search request and produces a structured package through Search, Research, Storyline, Graphics and Presentation workstreams.",
+        "The team roles are coordinated stages in the department workflow, not separate persistent hosted services.",
+        "Graphics output is a design brief and image prompt; this endpoint does not render an image file.",
+        "Search citations do not prove that every linked page was opened or independently authenticated.",
+        "Results are temporary in this browser session; persistent draft storage and a durable approval queue are not implemented."
+      ],
+      note:"No story is published. All packages remain PENDING_ADMIN_APPROVAL and publishing is disabled."
     };
     resultBox.textContent=JSON.stringify(result,null,2);
     outputPanel.hidden=false;
     statusBox.textContent=failures.length
-      ?"بلند کا کام جزوی طور پر مکمل ہوا۔ کچھ ایجنٹس ناکام ہوئے؛ ڈرافٹ غیر شائع شدہ ہے اور منظوری درکار ہے۔"
-      :"بلند نے تحقیق، ڈرافٹ اور 26 ایجنٹس کا جائزہ مکمل کر لیا۔ خبر غیر شائع شدہ ہے اور آپ کی منظوری کی منتظر ہے۔";
+      ?"شعبہ جاتی کام جزوی طور پر مکمل ہوا۔ کچھ ٹیمیں ناکام ہوئیں؛ تمام نتائج غیر شائع شدہ ہیں اور ایڈمن منظوری درکار ہے۔"
+      :"بلند اور 26 شعبہ جاتی ٹیموں کا کام مکمل ہو گیا۔ تمام نیوز پیکجز غیر شائع شدہ ہیں اور آپ کی منظوری کے منتظر ہیں۔";
   }catch(error){
-    statusBox.textContent="بلند کام مکمل نہ کر سکا: "+error.message;
+    statusBox.textContent="بلند/نیوز روم کام مکمل نہ کر سکا: "+error.message;
   }finally{
     button.disabled=false;
   }
