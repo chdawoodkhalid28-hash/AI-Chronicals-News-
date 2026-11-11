@@ -22,21 +22,14 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <main>
 <section class="panel">
 <h1>نیوز روم — ایڈمن ڈیسک</h1>
-<p class="muted">یہ ڈیش بورڈ 26 الگ AI درخواستیں چلاتا ہے: پہلے نیوز روم ڈرافٹ بناتا ہے، پھر 25 شعبے الگ الگ اس کا جائزہ لیتے ہیں۔ ایک رن میں 26 AI درخواستیں اور API استعمال ہوگا۔ نتائج فی الحال صرف اسی براؤزر سیشن میں رہتے ہیں؛ مستقل محفوظ نہیں ہوتے۔ ہر ڈرافٹ انسانی ایڈمن منظوری کا منتظر ہے، اور یہاں سے خبر شائع نہیں ہوتی۔</p>
+<p class="muted">بلند (Buland) آپ کی ہدایات لے کر خود ویب پر تازہ ذرائع تلاش کرے گا، تحقیقی خلاصہ بنائے گا، پھر نیوز روم کے 26 الگ AI ایجنٹس کو کام دے گا۔ آپ کو ماخذ کے لنکس یا اقتباسات خود فراہم کرنے کی ضرورت نہیں۔ یہ عمل اسی ڈیش بورڈ کے کھلے رہنے تک چلتا ہے؛ نتائج فی الحال مستقل محفوظ نہیں ہوتے۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
 <label for="password">ایڈمن پاس ورڈ</label>
 <input id="password" type="password" autocomplete="current-password" placeholder="Vercel میں محفوظ ایڈمن پاس ورڈ">
-<label for="topic">خبر کا موضوع / واقعہ</label>
-<textarea id="topic" placeholder="خبر کا موضوع اور بنیادی تفصیل لکھیں"></textarea>
-<label for="language">زبان</label>
+<label for="instruction">بلند کو اپنی ہدایت دیں</label>
+<textarea id="instruction" placeholder="مثلاً پاکستان کی آج کی اہم سیاسی، معاشی اور عوامی خبریں تلاش کرو، معتبر ذرائع سے تحقیق کرو اور اردو میں نیوز ڈرافٹ تیار کرو۔"></textarea>
+<label for="language">ڈرافٹ کی زبان</label>
 <select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
-<h3>اصل ماخذ (لازمی)</h3>
-<label for="sourceTitle">ماخذ کا عنوان</label>
-<input id="sourceTitle" placeholder="مثلاً سرکاری اعلامیہ یا خبر کا عنوان">
-<label for="sourceUrl">ماخذ کا HTTPS لنک</label>
-<input id="sourceUrl" type="url" placeholder="https://...">
-<label for="excerpt">ماخذ سے متعلقہ متن / اقتباس</label>
-<textarea id="excerpt" placeholder="اصل ماخذ سے متعلقہ حقائق یہاں پیسٹ کریں"></textarea>
-<button id="generate">26 AI ایجنٹس چلائیں</button>
+<button id="generate">بلند کو ہدایت دیں — کام شروع کریں</button>
 <div id="progress" class="status" aria-live="polite">26 الگ AI ایجنٹس کی تیاری مکمل ہونے پر یہاں پیش رفت نظر آئے گی۔</div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
@@ -93,29 +86,33 @@ async function callAgent(department,payload,password){
 
 button.addEventListener("click",async()=>{
   const password=document.getElementById("password").value;
-  const topic=document.getElementById("topic").value.trim();
-  const sourceTitle=document.getElementById("sourceTitle").value.trim();
-  const sourceUrl=document.getElementById("sourceUrl").value.trim();
-  const excerpt=document.getElementById("excerpt").value.trim();
+  const instruction=document.getElementById("instruction").value.trim();
   const language=document.getElementById("language").value;
-  if(!password||!topic||!sourceTitle||!sourceUrl||!excerpt){
-    statusBox.textContent="براہ کرم تمام فیلڈز مکمل کریں۔ اصل ماخذ اور اقتباس لازمی ہیں۔";return;
-  }
-  if(!/^https:\/\//i.test(sourceUrl)){
-    statusBox.textContent="ماخذ کا لنک HTTPS ہونا ضروری ہے۔";return;
+  if(!password||!instruction){
+    statusBox.textContent="براہ کرم ایڈمن پاس ورڈ اور بلند کے لیے ہدایت درج کریں۔";return;
   }
   button.disabled=true;
   outputPanel.hidden=true;
-  const payload={topic,language,sources:[{title:sourceTitle,url:sourceUrl,excerpt}]};
+  resultBox.textContent="";
+  const headers={"Content-Type":"application/json","Authorization":"Bearer "+password};
   const reviews={};
   const failures=[];
   let completed=0;
-  statusBox.textContent="نیوز روم لیڈ اپنا ابتدائی مسودہ تیار کر رہا ہے…";
-  progressBox.textContent="0 / 26 ایجنٹس مکمل";
   try{
+    statusBox.textContent="بلند آپ کی ہدایت سمجھ کر تازہ ویب ذرائع تلاش کر رہا ہے…";
+    progressBox.textContent="مرحلہ 1 / 3 — بلند تحقیق کر رہا ہے";
+    const researchResponse=await fetch("/api/admin/buland",{
+      method:"POST",headers,
+      body:JSON.stringify({instruction,language})
+    });
+    const research=await researchResponse.json();
+    if(!researchResponse.ok)throw new Error((research.error||"Buland research failed")+(research.detail?": "+research.detail:""));
+    progressBox.textContent="مرحلہ 2 / 3 — "+research.sourceCount+" ویب ذرائع مل گئے؛ نیوز روم ڈرافٹ تیار ہو رہا ہے";
+    statusBox.textContent="بلند نے تحقیق مکمل کر لی۔ اب 26 نیوز روم ایجنٹس کام کر رہے ہیں…";
+    const payload={topic:instruction+"\n\nBuland research brief:\n"+research.researchBrief,language,sources:research.sources};
     const draft=await callAgent("newsroom",payload,password);
     completed=1;
-    progressBox.textContent="1 / 26 مکمل — نیوز روم ڈرافٹ تیار";
+    progressBox.textContent="1 / 26 مکمل — ابتدائی ڈرافٹ تیار";
     const remaining=departments.slice(1);
     const batchSize=5;
     for(let i=0;i<remaining.length;i+=batchSize){
@@ -125,43 +122,33 @@ button.addEventListener("click",async()=>{
         return [key,result];
       }));
       for(let j=0;j<settled.length;j++){
-        const item=settled[j];
-        const key=batch[j][0];
-        if(item.status==="fulfilled"){
-          reviews[item.value[0]]=item.value[1];
-        }else{
-          failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Agent failed"});
-        }
+        const item=settled[j], key=batch[j][0];
+        if(item.status==="fulfilled")reviews[item.value[0]]=item.value[1];
+        else failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Agent failed"});
         completed++;
-        progressBox.textContent=completed+" / 26 مکمل — "+failures.length+" ناکام";
+        progressBox.textContent=completed+" / 26 ایجنٹس مکمل — "+failures.length+" ناکام";
       }
     }
     const held=Object.values(reviews).filter(x=>x.status==="HOLD").length;
     const revise=Object.values(reviews).filter(x=>x.status==="REVISE").length;
     const result={
+      buland:{instruction,researchBrief:research.researchBrief,sources:research.sources},
       draft,
       independentDepartmentReviews:reviews,
       executionSummary:{
-        requestedAgents:26,
-        completedAgents:completed-failures.length,
-        failedAgents:failures.length,
-        holdReviews:held,
-        reviseReviews:revise,
-        failures,
-        editorialStatus:"PENDING_ADMIN_APPROVAL",
-        publication:"DISABLED"
+        requestedAgents:26,completedAgents:completed-failures.length,failedAgents:failures.length,
+        holdReviews:held,reviseReviews:revise,failures,
+        editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"
       },
-      note:"Each department review was generated by a separate model request. These AI reviews are not external verification. Human admin approval remains mandatory."
+      note:"Buland researched the instruction using web search and supplied cited sources to 26 separate department model requests. This is not external fact verification. Results are temporary in this browser session. Admin approval remains mandatory; publishing is disabled."
     };
     resultBox.textContent=JSON.stringify(result,null,2);
     outputPanel.hidden=false;
-    if(failures.length){
-      statusBox.textContent="کام جزوی طور پر مکمل ہوا۔ کچھ ایجنٹس ناکام ہوئے؛ ڈرافٹ شائع نہیں ہوا اور منظوری درکار ہے۔";
-    }else{
-      statusBox.textContent="تمام 26 الگ AI ایجنٹس مکمل ہو گئے۔ ڈرافٹ غیر شائع شدہ ہے اور انسانی منظوری کا منتظر ہے۔";
-    }
+    statusBox.textContent=failures.length
+      ?"بلند کا کام جزوی طور پر مکمل ہوا۔ کچھ ایجنٹس ناکام ہوئے؛ ڈرافٹ غیر شائع شدہ ہے اور منظوری درکار ہے۔"
+      :"بلند نے تحقیق، ڈرافٹ اور 26 ایجنٹس کا جائزہ مکمل کر لیا۔ خبر غیر شائع شدہ ہے اور آپ کی منظوری کی منتظر ہے۔";
   }catch(error){
-    statusBox.textContent="خرابی: "+error.message;
+    statusBox.textContent="بلند کام مکمل نہ کر سکا: "+error.message;
   }finally{
     button.disabled=false;
   }
