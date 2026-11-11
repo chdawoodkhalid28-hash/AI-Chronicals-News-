@@ -165,7 +165,7 @@ test("routes all 26 configured department keys through the same five-role pipeli
         choices: [{ message: { content: JSON.stringify({"directorSummary":"Synthetic Director review only.","handoffChecks":["All five synthetic handoffs received."],"unresolvedIssues":[],"nextActions":["Continue controlled testing."],"recommendation":"REVISE"}) } }]
       }), { status: 200 });
     }
-    const roleIndex = (invocationCount - 2) % 5;
+    const roleIndex = (invocationCount - 2) % 7;
     return new Response(JSON.stringify({
       choices: [{ message: { content: JSON.stringify(roleOutputs[roleIndex]) } }]
     }), { status: 200 });
