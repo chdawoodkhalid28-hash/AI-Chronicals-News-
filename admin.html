@@ -366,6 +366,28 @@ const specialistRoles = [
   "Graphics & Visuals Designer",
   "Presentation & Distribution Producer"
 ];
+
+const masterTemplateByDepartment = {
+  politics_desk:["Politics & Government","p1"],
+  world_desk:["World & Foreign Affairs","p10"],
+  crime_desk:["Crime & Public Safety","p3"],
+  courts_legal_desk:["Courts & Judiciary","p2"],
+  business_economy_desk:["Business & Economy","p4"],
+  finance_markets_desk:["Business & Economy","p4"],
+  sports_desk:["Sports","p8"],
+  technology_ai_desk:["Health & Science","p6"],
+  science_health_desk:["Health & Science","p6"],
+  climate_environment_desk:["Weather & Disasters","p5"],
+  education_desk:["Education","p7"],
+  agriculture_desk:["Business & Economy (default); Weather & Disasters for weather/disaster coverage","p4"]
+};
+const inheritedTemplateDepartments = new Set([
+  "newsroom","assignment_desk","pakistan_desk","provincial_local_desk",
+  "research_desk","open_source_verification_desk","fact_check_desk",
+  "urdu_english_desk","copy_editing_desk","photo_visuals_desk",
+  "audience_social_desk","seo_distribution_desk","ethics_standards_desk",
+  "security_privacy_desk"
+]);
 function renderTeamRoster(){
   const root=document.getElementById("teamRosterGrid");
   if(!root)return;
@@ -379,6 +401,13 @@ function renderTeamRoster(){
     const state=document.createElement("small");
     state.textContent="HEAD AGENT + 5 SPECIALIST ROLES · ON-DEMAND";
     card.appendChild(state);
+    const master=masterTemplateByDepartment[key];
+    const templateLink=document.createElement("a");
+    templateLink.href="/graphics/department-templateflyers.html#"+(master?master[1]:"p1");
+    templateLink.textContent=master?"MASTER TEMPLATE · "+master[0]:(key==="agriculture_desk"?"MASTER TEMPLATE · "+masterTemplateByDepartment[key][0]:"MASTER TEMPLATE · STORY-BEAT ROUTING");
+    templateLink.style.cssText="display:block;margin:8px 0;padding:6px 8px;border:1px solid #3b829e;border-radius:6px;color:#62e8f2;font:800 10px Arial,sans-serif;text-decoration:none";
+    templateLink.setAttribute("aria-label","Open assigned department master template");
+    card.appendChild(templateLink);
     const team=document.createElement("p");
     team.textContent=specialistRoles.join(" · ");
     card.appendChild(team);
