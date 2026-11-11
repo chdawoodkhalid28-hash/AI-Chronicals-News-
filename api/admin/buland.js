@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
-  const supplied = (req.headers.authorization || "").replace(/^Bearer\\s+/i, "");
+  const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   const crypto = require("crypto");
   const safeEqual = (a, b) => {
     if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
