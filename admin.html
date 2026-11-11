@@ -16,7 +16,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 .status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
 #result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}.department-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}.department-state{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 11px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font-size:13px}.department-state small{color:#69778b}.state-running{border-color:#1264bd;background:#eef6ff}.state-success{border-color:#16834a;background:#effaf3}.state-failed{border-color:#d33b48;background:#fff1f2}
 .newsroom-nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 14px;background:#071a35;border-radius:12px;scrollbar-width:thin}.newsroom-nav a{flex:0 0 auto;color:#fff;text-decoration:none;border:1px solid #49617f;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700}.newsroom-nav a:focus,.newsroom-nav a:hover{background:#173b66;outline:2px solid #91bfff;outline-offset:1px}html{scroll-behavior:smooth}main section[id]{scroll-margin-top:76px}
-</style>
+.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}</style>
 </head>
 <body>
 <header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span></header>
@@ -63,11 +63,13 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <p class="muted">ہر ڈائریکٹر اپنی رپورٹ میں شعبہ جاتی نتائج، فیصلوں کی وجہ، ایکشن پلان، مسائل، مزید تصدیق کی ضرورت اور واضح سفارش دے گا۔</p>
 </details>
 </section>
+<section class="panel" id="teamRosterPanel"><h2>تمام 26 شعبہ جاتی Head Agents اور ان کی پانچ رکنی AI ٹیمیں</h2><p class="muted">ہر Head Agent کے تحت پانچ الگ specialist model roles موجود ہیں۔ یہ on-demand teams ہیں: Admin کی اسائنمنٹ پر چلتی ہیں، مسلسل پس منظر میں نہیں۔ رن کے دوران ہر شعبے کی live progress نیچے دکھائی جائے گی۔</p><div id="teamRosterGrid" class="team-roster-grid"></div></section>
 <section class="panel" id="assignmentPanel">
 <h2>اسائنمنٹ سینٹر — Buland Coordinator</h2>
 <p class="muted">یہاں سے مرکزی ہدایت دیں؛ Buland کے بعد 26 شعبہ جاتی ٹیمیں مرحلہ وار کام کریں گی۔ مکمل رن مہنگا ہو سکتا ہے، اس لیے صرف واضح Admin action پر شروع ہوگا۔</p>
 <label for="password">ایڈمن پاس ورڈ</label>
 <input id="password" type="password" autocomplete="current-password" placeholder="Vercel میں محفوظ ایڈمن پاس ورڈ">
+<div class="admin-tool-access"><button id="verifyAdminTools" type="button">Admin تصدیق کریں اور Connector Tools کھولیں</button><a id="connectorsAdminLink" href="/connectors.html" hidden>CONNECTORS & TOOLS — ADMIN ONLY ↗</a><div id="adminToolStatus" class="muted" role="status">Connector کا بٹن صرف درست Admin پاس ورڈ کی تصدیق کے بعد ظاہر ہوگا۔</div></div>
 <label for="instruction">بلند کو اپنی ہدایت دیں</label>
 <textarea id="instruction" placeholder="مثلاً پاکستان کی آج کی اہم سیاسی، معاشی اور عوامی خبریں تلاش کرو، معتبر ذرائع سے تحقیق کرو اور اردو میں نیوز ڈرافٹ تیار کرو۔"></textarea>
 <label for="language">ڈرافٹ کی زبان</label>
@@ -355,6 +357,53 @@ const departments=[
   ["ethics_standards_desk","اخلاقیات و ادارتی معیار"],
   ["security_privacy_desk","سکیورٹی و پرائیویسی"]
 ];
+
+const specialistRoles = [
+  "Research & Source Analyst",
+  "Storyline & News Writer",
+  "Fact-check & Evidence Auditor",
+  "Graphics & Visuals Designer",
+  "Presentation & Distribution Producer"
+];
+function renderTeamRoster(){
+  const root=document.getElementById("teamRosterGrid");
+  if(!root)return;
+  root.replaceChildren();
+  departments.forEach(([key,label],index)=>{
+    const card=document.createElement("article");
+    card.className="team-roster-card";
+    const title=document.createElement("b");
+    title.textContent=String(index+1).padStart(2,"0")+" · "+label;
+    card.appendChild(title);
+    const state=document.createElement("small");
+    state.textContent="HEAD AGENT + 5 SPECIALIST ROLES · ON-DEMAND";
+    card.appendChild(state);
+    const team=document.createElement("p");
+    team.textContent=specialistRoles.join(" · ");
+    card.appendChild(team);
+    root.appendChild(card);
+  });
+}
+renderTeamRoster();
+
+document.getElementById("verifyAdminTools").addEventListener("click",async()=>{
+  const password=document.getElementById("password").value;
+  const status=document.getElementById("adminToolStatus");
+  const button=document.getElementById("verifyAdminTools");
+  const link=document.getElementById("connectorsAdminLink");
+  link.hidden=true;
+  if(!password){status.textContent="پہلے Admin پاس ورڈ درج کریں۔";return;}
+  button.disabled=true;status.textContent="Admin اجازت کی تصدیق ہو رہی ہے…";
+  try{
+    const response=await fetch("/api/admin/access",{method:"POST",headers:{"Authorization":"Bearer "+password,"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||!data.ok)throw new Error(data.error||"Admin verification failed");
+    activeAdminPassword=password;
+    link.hidden=false;
+    status.textContent="Admin تصدیق کامیاب۔ Connector کا بٹن اب صرف اس Admin session میں ظاہر ہے۔";
+  }catch(error){status.textContent="تصدیق ناکام: "+error.message;}
+  finally{button.disabled=false;}
+});
 
 function renderDepartmentProgress(states){
   const root=document.getElementById("departmentProgress");root.replaceChildren();
