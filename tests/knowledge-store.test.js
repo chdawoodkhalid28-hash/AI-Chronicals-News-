@@ -67,7 +67,7 @@ test("knowledge store writes private records and retrieves approved department p
   assert.equal(global.department, "global");
   assert.equal(local.department, "agriculture_desk");
 
-  const matches = await store.search({ department: "agriculture_desk", query: "wheat district advisory", limit: 5 });
+  const matches = await store.search({ department: "agriculture_desk", query: "wheat district advisory approval", limit: 5 });
   assert.ok(matches.some(item => item.id === local.id));
   assert.ok(matches.some(item => item.id === global.id));
   assert.ok(matches.every(item => item.status === undefined));
