@@ -18,8 +18,21 @@ main{padding:25px 0 60px}.hero{display:grid;grid-template-columns:1.6fr .8fr;gap
 footer{padding:25px 0;background:#020812;border-top:1px solid #29435f;color:#8fa9c2;font-size:11px;text-align:center}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.steps{grid-template-columns:repeat(3,1fr)}}@media(max-width:580px){.grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.head h2{font-size:18px}.links a{padding:8px;font-size:11px}.status{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-</style></head>
-<body>
+body.admin-locked>.top,body.admin-locked>header,body.admin-locked>nav,body.admin-locked>main,body.admin-locked>footer{display:none!important}.admin-gate{display:none;position:fixed;inset:0;z-index:1000;background:radial-gradient(circle at 20% 10%,#16436a,#050b16 65%);align-items:center;justify-content:center;padding:22px}.admin-locked .admin-gate{display:flex}.gate-card{width:min(440px,100%);background:#0d1c30;border:1px solid #3a6688;border-radius:14px;padding:26px;box-shadow:0 20px 70px #0009}.gate-card h1{font-size:24px;margin:0 0 8px}.gate-card p{color:#a9bdd1;font-size:13px}.gate-card input{width:100%;padding:13px;border-radius:7px;border:1px solid #45617d;background:#061326;color:white;margin:10px 0}.gate-card button{width:100%;padding:12px;border:1px solid #59cce6;border-radius:7px;background:linear-gradient(110deg,#087da8,#3658bb);color:white;font-weight:bold;cursor:pointer}.gate-card #gateStatus{font-size:12px;color:#ffc96b;min-height:22px}</style></head>
+<body class="admin-locked">
+<section class="admin-gate" aria-label="Admin authentication">
+ <div class="gate-card">
+  <div class="eyebrow">PRIVATE ADMIN AREA</div>
+  <h1>Connector Control Centre</h1>
+  <p>یہ صفحہ صرف AI Chronicals News Admin کے لیے ہے۔ اپنا Admin password درج کریں؛ پاس ورڈ اس صفحے پر محفوظ نہیں کیا جائے گا۔</p>
+  <form id="connectorAdminForm">
+   <input id="connectorAdminPassword" type="password" autocomplete="current-password" placeholder="Admin password" required>
+   <button id="connectorAdminSubmit" type="submit">Verify Admin & Open Connectors</button>
+  </form>
+  <div id="gateStatus" role="status" aria-live="polite">Admin verification required.</div>
+  <p><a href="/" style="color:#45e6f2">← واپس Front Desk</a></p>
+ </div>
+</section>
 <div class="top"><div class="wrap"><span>AI CHRONICALS NEWS · CONNECTOR CONTROL CENTRE</span><span>VERIFIED STATUS ONLY · NO PUBLICATION WITHOUT ADMIN</span></div></div>
 <header><div class="wrap brand"><div><div class="wordmark">AI <span>CHRONICALS</span> NEWS</div><div class="sub">CONNECTORS · TOOLS · WORKFLOW CONTROL</div></div><div class="status">INTEGRATION DIRECTORY · REVIEW DRAFT</div></div></header>
 <nav><div class="wrap"><div class="links"><a href="#connectors">کنیکٹرز</a><a href="#tools">ٹول میپ</a><a href="#workflow">ورک فلو</a><a href="#security">سکیورٹی</a></div><a class="back" href="/">← FRONT DESK</a></div></nav>
@@ -50,4 +63,27 @@ footer{padding:25px 0;background:#020812;border-top:1px solid #29435f;color:#8fa
 </div></div></section>
 <section id="security" class="section"><div class="head"><div><h2>Security & Approval Rules</h2><p>کنیکٹرز کو محفوظ طریقے سے استعمال کرنے کے اصول</p></div><small>SECURITY FIRST</small></div><div class="notice"><b>اہم:</b> یہ ڈائریکٹری موجودہ ٹولز اور مطلوبہ integrations کی فہرست ہے، کسی connector secret یا API key کا ذخیرہ نہیں۔ API keys صرف Vercel Environment Variables میں server-side رکھی جائیں؛ browser HTML/JavaScript میں کبھی نہیں۔ ہر connector کو کم سے کم مطلوبہ permissions دی جائیں۔</div><div class="notice"><b>اشاعت کا اصول:</b> کوئی connector، AI director یا workflow خودکار طور پر خبر شائع نہیں کرے گا۔ Fact-check PASS صرف ادارتی سفارش ہے؛ Admin کی واضح منظوری کے بغیر Production publish ممنوع ہے۔</div><div class="notice"><b>حیثیت کی وضاحت:</b> “ChatGPT Connected” کا مطلب ہے کہ اس گفتگو میں متعلقہ connector tools دستیاب ہیں؛ اس کا مطلب یہ نہیں کہ وہ پہلے ہی ویب سائٹ کے backend سے OAuth/API کے ذریعے جڑ چکے ہیں۔ Vercel project connector check میں اس وقت صفر connectors ملے۔</div></section>
 </main><footer><div class="wrap">AI CHRONICALS NEWS · CONNECTOR DIRECTORY · REVIEW DRAFT · PRODUCTION UNCHANGED</div></footer>
+<script>
+(function(){
+ const form=document.getElementById("connectorAdminForm");
+ const passwordInput=document.getElementById("connectorAdminPassword");
+ const button=document.getElementById("connectorAdminSubmit");
+ const status=document.getElementById("gateStatus");
+ form.addEventListener("submit",async function(event){
+  event.preventDefault();
+  const password=passwordInput.value;
+  if(!password){status.textContent="Admin password درج کریں۔";return;}
+  button.disabled=true;status.textContent="Admin permission verify ہو رہی ہے…";
+  try{
+   const response=await fetch("/api/admin/access",{method:"POST",headers:{"Authorization":"Bearer "+password,"Accept":"application/json"},cache:"no-store"});
+   const data=await response.json();
+   if(!response.ok||!data.ok)throw new Error(data.error||"Access denied");
+   document.body.classList.remove("admin-locked");
+   passwordInput.value="";
+   status.textContent="";
+  }catch(error){status.textContent="Access denied: "+error.message;}
+  finally{button.disabled=false;}
+ });
+})();
+</script>
 </body></html>
