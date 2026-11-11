@@ -67,7 +67,7 @@ export default async function handler(req, res) {
   }
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
-  const supplied = (req.headers.authorization || "").replace(/^Bearer\\s+/i, "");
+  const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
   if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
 
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
         },
         {
           role: "user",
-          content: "Assignment: " + instruction + "\\nDepartment: " + title + "\\nBuland central context (not a substitute for independent research): " + centralBrief
+          content: "Assignment: " + instruction + "\nDepartment: " + title + "\nBuland central context (not a substitute for independent research): " + centralBrief
         }
       ]
     });
@@ -104,7 +104,7 @@ export default async function handler(req, res) {
     const annotations = Array.isArray(searchMessage.annotations) ? searchMessage.annotations : [];
     const seen = new Set();
     const sources = annotations
-      .filter(item => item && item.url_citation && /^https:\\/\\//i.test(item.url_citation.url || ""))
+      .filter(item => item && item.url_citation && /^https:\/\//i.test(item.url_citation.url || ""))
       .map(item => ({
         title: String(item.url_citation.title || "Web source").slice(0, 240),
         url: item.url_citation.url
