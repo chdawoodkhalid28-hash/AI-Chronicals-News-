@@ -131,3 +131,16 @@ Working branch: `ai-newsroom-foundation`
 - Routing commit: `50072f43fda4f4d1706558365cebf5b9675a8b11`; Vercel Preview deployment READY; GitHub combined status success. TinyFish verified the 10 flyer page and the Admin workspace link.
 - Canva design generation, MagicPath project creation, and fal image generation were unavailable due to previously exhausted credits/quota/balance; connected GitHub + Vercel + TinyFish fallback delivered the editable HTML/CSS/SVG design system.
 - Production remains untouched. Publishing remains disabled and every story remains pending admin approval.
+
+## 2026-11-11 — Ten rights-checked editorial reference photos added
+
+- Added one free-to-reuse reference photograph to each of the 10 department Master TemplateFlyers. Images are sourced from Wikimedia Commons and each card displays its creator/source and license link.
+- Photo subjects: parliament building; courtroom gavel; police patrol car; historic stock-exchange trading floor; NOAA storm/lightning; U.S. Navy CPR training; classroom learning; football match action; live concert; NASA Apollo 17 Earth photograph.
+- Added layered photo treatment to the flyers: full-bleed crop, saturated editorial grading, dark gradient overlay for legible headlines, retained original SVG motif foreground, and responsive image framing.
+- Added graphics/image-credits.json with image file names, creators, source pages, license links, and modification notes.
+- Photo licensing mix includes public-domain/CC0 and attribution-required Creative Commons licenses (CC BY 2.0, CC BY-SA 3.0, CC BY-SA 4.0). Follow the per-image attribution and share-alike requirements where applicable. These are reference photos, not current-event evidence; replace with a story-specific verified image before publication and check any model/property/trademark rights.
+- GitHub image update commit: 5769c5d285d23fc2956e4e769b588a64edf4be68; image-credit register commit: 592d1cc24a5008e81d4bd90a5f366e0dc6afbcf3.
+- Vercel Preview for the image update is READY: https://ai-chronicals-news-jtf4eflmi-chdawoodkhalid28-5713.vercel.app/graphics/department-templateflyers.html
+- TinyFish browser QA verified all 10 reference photos visible and loaded, all source and license links present, and no broken images or desktop layout problems. Full narrow-mobile viewport test remains pending.
+- Canva media-library imports were attempted for all 10 photos but failed because Canva returned HTTP non-200 on the public Wikimedia image URLs. MagicPath project listing was unavailable because its external API quota is exhausted. GitHub, Vercel, TinyFish and Dropbox were used as fallback connectors; the deployed website templates contain the photos successfully.
+- Production remains untouched. Publishing remains disabled and all story publication requires administrator approval.
