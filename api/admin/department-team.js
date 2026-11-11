@@ -1,4 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
+import { knowledgeStore } from "../_lib/knowledge-store.js";
 
 const DEPARTMENTS = {
   newsroom: "Newsroom / Editor-in-Chief",
@@ -133,6 +134,30 @@ export default async function handler(req, res) {
 
   const languageName = language === "en" ? "English" : "clear Pakistani Urdu";
   try {
+    // Retrieve only Admin-approved internal knowledge. Retrieved records are context, never proof.
+    let retrievedKnowledge = [];
+    let memoryRetrievalStatus = process.env.BLOB_READ_WRITE_TOKEN ? "AVAILABLE" : "NOT_CONFIGURED";
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      try {
+        retrievedKnowledge = await knowledgeStore.search({
+          department,
+          query: instruction + " " + centralBrief,
+          limit: 5
+        });
+      } catch {
+        memoryRetrievalStatus = "TEMPORARILY_UNAVAILABLE";
+      }
+    }
+    const knowledgeContext = retrievedKnowledge.length
+      ? JSON.stringify(retrievedKnowledge.map(item => ({
+          title: item.title,
+          department: item.department,
+          content: item.content.slice(0, 1500),
+          sourceUrl: item.sourceUrl,
+          createdAt: item.createdAt
+        })))
+      : "No matching Admin-approved internal knowledge records were retrieved.";
+
     // Each department performs its own web-search request; Buland's central brief is context only.
     const searchMessage = await openAIChat({
       model: "gpt-5-search-api",
@@ -145,7 +170,7 @@ export default async function handler(req, res) {
         },
         {
           role: "user",
-          content: "Assignment: " + instruction + "\nDepartment: " + title + "\nBuland central context (not a substitute for independent research): " + centralBrief
+          content: "Assignment: " + instruction + "\nDepartment: " + title + "\nBuland central context (not a substitute for independent research): " + centralBrief + "\nAdmin-approved internal knowledge (historical context only; not proof and must not replace current source verification): " + knowledgeContext
         }
       ]
     });
@@ -177,7 +202,7 @@ export default async function handler(req, res) {
     }
 
     // Five specialist roles run as separate model invocations under this department Director.
-    const dossierContext = JSON.stringify({ department, title, instruction, researchBrief, sources });
+    const dossierContext = JSON.stringify({ department, title, instruction, researchBrief, sources, adminApprovedInternalKnowledge: retrievedKnowledge });
     const roleSpecs = [
       {
         key: "researchTeam",
@@ -246,7 +271,7 @@ export default async function handler(req, res) {
         },
         {
           role: "user",
-          content: JSON.stringify({ department, focus: DEPARTMENT_FOCUS[department], instruction, sources, specialistHandoffs: team })
+          content: JSON.stringify({ department, focus: DEPARTMENT_FOCUS[department], instruction, sources, adminApprovedInternalKnowledge: retrievedKnowledge, specialistHandoffs: team })
         }
       ]
     });
@@ -310,6 +335,13 @@ export default async function handler(req, res) {
         "Do not publish until listed evidence gaps and editorial issues are resolved.",
       editorialStatus: "PENDING_ADMIN_APPROVAL",
       publication: "DISABLED",
+      memoryRetrieval: {
+        status: memoryRetrievalStatus,
+        mode: "private-blob-keyword-rag",
+        vectorEmbeddings: false,
+        recordsRetrieved: retrievedKnowledge.length,
+        recordIds: retrievedKnowledge.map(item => item.id)
+      },
       searchResearch: {
         independentSearchPerformed: true,
         sourceCount: sources.length,
