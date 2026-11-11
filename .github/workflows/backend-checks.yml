@@ -29,6 +29,9 @@ jobs:
       - name: Install runtime dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
+      - name: Run approval queue validation tests
+        run: npm test
+
       - name: Check ES module syntax and API route files
         shell: bash
         run: |
