@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
-  const supplied = (req.headers.authorization || "").replace(/^Bearer\\s+/i, "");
+  const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
   if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
 
