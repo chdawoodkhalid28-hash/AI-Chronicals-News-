@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { resolveTemplate } from "../api/admin/templateflyer-routing.js";
 import graphicsHandler from "../api/admin/graphics.js";
+import { readFile } from "node:fs/promises";
 
 test("fixed directors retain their approved master", async () => {
   const result = await resolveTemplate("Director Politics", "sports");
@@ -87,6 +88,51 @@ test("graphics API rejects unmapped routing before any image-generation request"
     assert.equal(response.statusCode, 422);
     assert.equal(response.body.status, "HOLD");
     assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalPassword === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = originalPassword;
+    if (originalKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = originalKey;
+  }
+});
+
+test("all 26 configured directors resolve to one of the ten approved masters", async () => {
+  const config = JSON.parse(await readFile(new URL("../graphics/templateflyer-routing.json", import.meta.url), "utf8"));
+  for (const item of config.directors) {
+    const result = await resolveTemplate(item.director, "politics");
+    assert.equal(result.status, "ROUTED", item.director + " should resolve for a mapped politics beat");
+    assert.ok(config.masters.includes(result.template), item.director + " resolved outside the approved master list");
+  }
+});
+
+test("graphics API passes assigned desk routing and preserves the response contract using a mocked provider", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalPassword = process.env.ADMIN_PASSWORD;
+  const originalKey = process.env.OPENAI_API_KEY;
+  let providerPrompt = "";
+  globalThis.fetch = async (_url, options) => {
+    providerPrompt = JSON.parse(options.body).prompt;
+    return { ok: true, json: async () => ({ data: [{ b64_json: "dGVzdA==" }] }) };
+  };
+  process.env.ADMIN_PASSWORD = "unit-test-admin";
+  process.env.OPENAI_API_KEY = "unit-test-placeholder";
+  const response = {
+    statusCode: 200,
+    headers: {},
+    setHeader(name, value) { this.headers[name] = value; },
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; return this; }
+  };
+  try {
+    await graphicsHandler({
+      method: "POST",
+      headers: { authorization: "Bearer unit-test-admin" },
+      body: { prompt: "A sufficiently long test prompt for a graphics request", director: "Research", assignedDesk: "Politics", storyBeat: "" }
+    }, response);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.templateName, "Politics & Government");
+    assert.equal(response.body.director, "Research");
+    assert.equal(response.body.assignedDesk, "Politics");
+    assert.match(providerPrompt, /Politics & Government/);
   } finally {
     globalThis.fetch = originalFetch;
     if (originalPassword === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = originalPassword;
