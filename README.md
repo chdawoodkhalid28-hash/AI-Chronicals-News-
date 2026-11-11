@@ -67,7 +67,7 @@ The five specialist roles are separate model invocations coordinated by the depa
 - The older public Blob store (`ai-chronicals-news-media`, region `bom1`) is retained as a legacy store and must not be used for private newsroom drafts or approval decisions.
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows. Department runs are throttled in batches of two, with a short pause between batches; transient upstream failures receive one retry and requests have a timeout. These safeguards reduce but do not eliminate rate-limit failures.
-- Public Vercel Blob storage is intentionally deferred and is not used for draft persistence.
+- The legacy public Blob store is not used for draft persistence.
 - No news is automatically published. Do not enable publishing or production deployment without explicit admin approval.
 
 ## Required Vercel environment variables
