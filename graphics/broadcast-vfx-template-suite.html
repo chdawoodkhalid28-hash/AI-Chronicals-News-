@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Broadcast VFX Template Suite | AI Chronicals News</title>
+<style>
+:root{--bg:#050914;--cyan:#35e7ff;--blue:#287bff;--violet:#9b55ff;--red:#ff3159;--white:#f5fbff;--muted:#9bb0c7}
+*{box-sizing:border-box}body{margin:0;background:#030711;color:var(--white);font-family:Arial,Helvetica,sans-serif}
+header{padding:34px clamp(18px,5vw,76px) 28px;background:radial-gradient(ellipse at 78% 0%,#163d70 0,transparent 40%),linear-gradient(115deg,#070d1b,#0b1022 65%,#11102b);border-bottom:1px solid #1c3b60}
+.kicker{font-size:10px;letter-spacing:.28em;font-weight:800;color:var(--cyan);text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,68px);line-height:.91;letter-spacing:-.055em;margin:13px 0 12px;text-transform:uppercase}
+header p{max-width:740px;color:#afc0d4;line-height:1.55;font-size:14px}
+main{max-width:1600px;margin:auto;padding:30px clamp(12px,3vw,42px) 72px}
+.notice{border:1px solid #244c73;background:#0a1628;padding:14px 17px;margin-bottom:28px;color:#c3d5e8;font-size:12px;line-height:1.55}
+.notice b{color:var(--cyan)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 24px}
+.item{min-width:0}.meta{display:flex;justify-content:space-between;gap:10px;margin:0 0 10px;font-size:10px;letter-spacing:.17em;font-weight:800;color:#9fb5cc;text-transform:uppercase}
+.scene{position:relative;aspect-ratio:16/9;overflow:hidden;isolation:isolate;background:#071329;border:1px solid #244c70;box-shadow:0 18px 55px #0009}
+.scene [contenteditable=true]{cursor:text;outline:none}.scene [contenteditable=true]:focus{outline:1px dashed var(--cyan);outline-offset:3px}
+.scene:before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:repeating-linear-gradient(0deg,#bdeaff05 0 1px,transparent 1px 4px);mix-blend-mode:screen}
+.gridbg{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(#3adfff13 1px,transparent 1px),linear-gradient(90deg,#3adfff13 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(90deg,black,transparent 95%)}
+.orb{position:absolute;width:42%;aspect-ratio:1;border:1px solid #35dfff42;border-radius:50%;right:8%;top:4%;box-shadow:0 0 45px #287bff35,inset 0 0 45px #287bff25}
+.orb:before,.orb:after{content:"";position:absolute;inset:12%;border:1px solid #9b55ff55;border-radius:50%;transform:rotateX(68deg) rotateZ(28deg)}
+.orb:after{inset:27%;border-color:#35e7ff66;transform:rotateX(68deg) rotateZ(-35deg)}
+.streak{position:absolute;z-index:1;left:-15%;top:31%;width:130%;height:3px;transform:rotate(-13deg);background:linear-gradient(90deg,transparent,#35e7ff,#fff,#9b55ff,transparent);filter:drop-shadow(0 0 7px #35e7ff) drop-shadow(0 0 17px #287bff);opacity:.8}
+.streak.two{top:34%;height:1px;opacity:.45;transform:rotate(-12deg)}
+.hud{position:absolute;inset:5%;border:1px solid #35e7ff38;clip-path:polygon(0 0,16% 0,16% 1px,84% 1px,84% 0,100% 0,100% 100%,80% 100%,80% calc(100% - 1px),20% calc(100% - 1px),20% 100%,0 100%);pointer-events:none}
+.hud:before,.hud:after{content:"";position:absolute;width:12%;height:14%;border-color:var(--cyan);border-style:solid;filter:drop-shadow(0 0 6px var(--cyan))}
+.hud:before{left:0;top:0;border-width:2px 0 0 2px}.hud:after{right:0;bottom:0;border-width:0 2px 2px 0}
+.micro{font-size:8px;letter-spacing:.2em;color:#a8c5de;text-transform:uppercase;font-weight:700}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.16em;font-weight:900;color:#fff}
+.live:before{content:"";width:7px;height:7px;background:var(--red);border-radius:50%;box-shadow:0 0 10px var(--red)}
+/* A: breaking lower-third */
+.lower{background:radial-gradient(ellipse at 72% 35%,#183f75 0,transparent 38%),linear-gradient(120deg,#061020,#0b1430 70%,#080b1a)}
+.lower .world{position:absolute;inset:0;z-index:-3;background:radial-gradient(ellipse at center,#102e52 0,#071124 55%,#030713 100%)}
+.lower .topline{position:absolute;top:8%;left:6%;right:6%;display:flex;justify-content:space-between;align-items:center}
+.lower .headline{position:absolute;left:6%;top:26%;font-size:clamp(19px,3.3vw,48px);font-weight:950;line-height:.95;letter-spacing:-.045em;text-transform:uppercase;text-shadow:0 0 18px #35e7ff66}
+.lower .strap{position:absolute;left:6%;right:7%;bottom:15%;height:21%;display:flex;align-items:stretch;filter:drop-shadow(0 0 16px #ff315955)}
+.lower .strap .red{width:18%;background:linear-gradient(135deg,#ff3159,#9f163d);display:flex;align-items:center;justify-content:center;font-size:clamp(9px,1.25vw,16px);font-weight:1000;letter-spacing:.12em;clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
+.lower .strap .copy{flex:1;padding:2% 4%;background:linear-gradient(100deg,#0b2a4cdd,#07182ddd);border-top:1px solid #35e7ff;border-bottom:1px solid #287bff;display:flex;flex-direction:column;justify-content:center}
+.lower .strap h2{font-size:clamp(12px,2vw,26px);line-height:1;margin:0 0 5px;text-transform:uppercase;letter-spacing:-.02em}
+.lower .strap p{margin:0;color:#a9cce5;font-size:clamp(7px,.9vw,12px)}
+/* B: dimensional headline */
+.hero{background:radial-gradient(ellipse at 50% 48%,#174b83 0,transparent 50%),linear-gradient(140deg,#030817,#0a1630 52%,#140b2b)}
+.hero .orb{width:48%;right:27%;top:12%;border-color:#43eaff55;box-shadow:0 0 70px #287bff66,inset 0 0 55px #35e7ff22}
+.hero .topline{position:absolute;top:8%;left:6%;right:6%;display:flex;justify-content:space-between}
+.hero .depth{position:absolute;left:9%;right:8%;top:33%;text-align:center;transform:perspective(700px) rotateX(10deg)}
+.hero .depth h2{margin:0;font-size:clamp(29px,5.4vw,78px);line-height:.86;letter-spacing:-.07em;font-weight:1000;text-transform:uppercase;color:#f6fdff;text-shadow:1px 1px 0 #a7f6ff,3px 3px 0 #2079bb,6px 6px 0 #103d79,9px 9px 0 #081c45,0 0 25px #35e7ff,0 0 55px #287bff;filter:drop-shadow(0 14px 16px #000b)}
+.hero .depth p{margin:17px auto 0;max-width:65%;font-size:clamp(8px,1vw,13px);letter-spacing:.14em;color:#c8eaff;text-transform:uppercase}
+.hero .side{position:absolute;bottom:9%;left:6%;right:6%;display:flex;justify-content:space-between;align-items:end}
+/* C: HUD / data explainer */
+.hudscene{background:radial-gradient(ellipse at 50% 45%,#12365b 0,transparent 55%),#040a17}
+.hudscene .topline{position:absolute;left:6%;right:6%;top:8%;display:flex;justify-content:space-between}
+.hudscene .title{position:absolute;left:7%;top:24%;width:42%}
+.hudscene .title h2{font-size:clamp(20px,3.2vw,45px);line-height:.91;letter-spacing:-.05em;margin:12px 0;text-transform:uppercase}
+.hudscene .metric{color:var(--cyan);font-size:clamp(27px,4.5vw,62px);font-weight:1000;text-shadow:0 0 22px #35e7ff88}
+.hudscene .chart{position:absolute;right:8%;top:27%;width:39%;height:49%;border:1px solid #35e7ff66;background:linear-gradient(145deg,#0b2340cc,#081226cc);box-shadow:0 0 25px #287bff33,inset 0 0 25px #35e7ff13;padding:5%;transform:perspective(600px) rotateY(-10deg) rotateX(3deg)}
+.hudscene .chart:before{content:"";position:absolute;inset:0;background:linear-gradient(#35e7ff18 1px,transparent 1px),linear-gradient(90deg,#35e7ff18 1px,transparent 1px);background-size:20% 20%}
+.hudscene .bars{height:100%;display:flex;align-items:end;gap:8%;position:relative}
+.hudscene .bars i{display:block;flex:1;background:linear-gradient(0deg,#287bff,#35e7ff);box-shadow:0 0 14px #35e7ff66}
+.hudscene .bars i:nth-child(1){height:32%}.hudscene .bars i:nth-child(2){height:56%}.hudscene .bars i:nth-child(3){height:46%}.hudscene .bars i:nth-child(4){height:82%}.hudscene .bars i:nth-child(5){height:68%}
+.hudscene .bottom{position:absolute;bottom:9%;left:7%;right:7%;display:flex;justify-content:space-between;border-top:1px solid #35e7ff55;padding-top:2%}
+/* D: full-screen cinematic bulletin */
+.cine{background:radial-gradient(ellipse at 65% 45%,#263b70 0,transparent 36%),linear-gradient(120deg,#040711,#0b1021 55%,#160a22)}
+.cine .beam{position:absolute;inset:-40% -10%;background:conic-gradient(from 220deg at 60% 50%,transparent 0 22%,#35e7ff12 23%,transparent 27% 44%,#9b55ff22 45%,transparent 52%);filter:blur(10px)}
+.cine .topline{position:absolute;top:9%;left:7%;right:7%;display:flex;justify-content:space-between}
+.cine .copy{position:absolute;left:8%;bottom:20%;max-width:77%}
+.cine .copy .tag{font-size:9px;letter-spacing:.22em;color:var(--cyan);font-weight:900}
+.cine .copy h2{font-size:clamp(27px,5.2vw,76px);line-height:.87;letter-spacing:-.06em;margin:13px 0;text-transform:uppercase;text-shadow:0 0 30px #287bff66}
+.cine .copy p{font-size:clamp(8px,1.05vw,14px);color:#bfd3e7;max-width:70%;line-height:1.45}
+.cine .ticker{position:absolute;bottom:7%;left:0;right:0;height:9%;display:flex;align-items:center;background:linear-gradient(90deg,#b7183c,#ef3159 25%,#7a173d 100%);box-shadow:0 0 24px #ff315955}
+.cine .ticker b{padding:0 4%;font-size:clamp(9px,1.2vw,15px);letter-spacing:.14em}
+.cine .ticker span{font-size:clamp(8px,1vw,12px);color:#fff}
+.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;color:#91a9c2;font-size:11px}
+.controls button{border:1px solid #2a739b;background:#0b1b31;color:#e9f9ff;padding:8px 12px;font-weight:800;cursor:pointer}
+.controls button:hover{background:#123a5c}
+.note{font-size:11px;color:#8da5bf;line-height:1.5;margin:8px 0 0}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.scene{aspect-ratio:16/9}.lower .headline{font-size:clamp(22px,6vw,48px)}}
+@media print{body{background:#fff}.grid{display:block}.item{break-after:page;margin:0 0 14mm}.controls,.note,.notice,header{display:none!important}.scene{box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style></head>
+<body>
+<header><div class="kicker">Original broadcast graphics system / 2026</div><h1>Newsroom VFX<br>Template Suite</h1><p>Four fresh 16:9 broadcast compositions for breaking coverage, dimensional headlines, data explainers and cinematic bulletins. Built as editable HTML/CSS scenes with live text fields and print-to-PDF review output.</p></header>
+<main>
+<div class="notice"><b>DESIGN STATUS — NEW CONCEPT SET.</b> These layouts are separate from the rejected flyer collection. Click any text to edit. All figures and headlines are placeholders; replace with verified reporting, source credits and cleared imagery before use. The scenes use CSS-generated VFX and abstract backplates, not fabricated event photographs.</div>
+<section class="grid">
+<article class="item"><div class="meta"><span>01 / BREAKING LOWER-THIRD</span><span>16:9 · LIVE NEWS</span></div>
+<div class="scene lower"><div class="world"></div><div class="gridbg"></div><div class="orb"></div><div class="streak"></div><div class="streak two"></div><div class="hud"></div>
+<div class="topline"><span class="live" contenteditable="true">LIVE / NEWS DESK</span><span class="micro" contenteditable="true">ISLAMABAD · 11 NOV 2026</span></div>
+<div class="headline" contenteditable="true">DEVELOPING STORY<br>THE LATEST UPDATE</div>
+<div class="strap"><div class="red" contenteditable="true">BREAKING</div><div class="copy"><h2 contenteditable="true">Major development — verified headline goes here</h2><p contenteditable="true">Add the confirmed detail · location · latest update time · source</p></div></div></div>
+<div class="controls"><span>Breaking banner / layered glow / light sweep</span><button onclick="window.print()">Print / PDF</button></div><p class="note">Designed for lower-third overlay, with a clear alert tab, high-contrast headline rail and safe text margins.</p></article>
+<article class="item"><div class="meta"><span>02 / 3D HEADLINE PANEL</span><span>16:9 · TOP STORY</span></div>
+<div class="scene hero"><div class="gridbg"></div><div class="orb"></div><div class="streak"></div><div class="streak two"></div><div class="hud"></div>
+<div class="topline"><span class="micro" contenteditable="true">AI CHRONICALS / SPECIAL COVERAGE</span><span class="live" contenteditable="true">TOP STORY</span></div>
+<div class="depth"><h2 contenteditable="true">THE BIG<br>DEVELOPMENT</h2><p contenteditable="true">A verified one-line explainer · date · location</p></div>
+<div class="side"><span class="micro" contenteditable="true">EXCLUSIVE / VERIFIED REPORTING</span><span class="micro" contenteditable="true">01 — 04</span></div></div>
+<div class="controls"><span>Extruded type / perspective / neon rim glow</span><button onclick="window.print()">Print / PDF</button></div><p class="note">Dimensional headline treatment uses stacked text shadows and perspective; replace copy before export.</p></article>
+<article class="item"><div class="meta"><span>03 / HUD DATA EXPLAINER</span><span>16:9 · DATA DESK</span></div>
+<div class="scene hudscene"><div class="gridbg"></div><div class="orb"></div><div class="hud"></div>
+<div class="topline"><span class="micro" contenteditable="true">THE DATA DESK / EXPLAINER</span><span class="micro" contenteditable="true">SOURCE REQUIRED</span></div>
+<div class="title"><span class="micro" contenteditable="true">THE NUMBERS</span><h2 contenteditable="true">WHAT THE<br>DATA SHOWS</h2><div class="metric" contenteditable="true">+00.0%</div><p class="micro" contenteditable="true">Metric + unit + comparison period</p></div>
+<div class="chart"><div class="bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+<div class="bottom"><span class="micro" contenteditable="true">PERIOD 01 — 05 / LABELS TO UPDATE</span><span class="micro" contenteditable="true">SOURCE: PRIMARY DATA</span></div></div>
+<div class="controls"><span>HUD grid / holographic chart / cyan glow</span><button onclick="window.print()">Print / PDF</button></div><p class="note">Chart bars are decorative placeholders, not real statistics. Replace with checked data and labels.</p></article>
+<article class="item"><div class="meta"><span>04 / CINEMATIC BULLETIN</span><span>16:9 · SPECIAL REPORT</span></div>
+<div class="scene cine"><div class="beam"></div><div class="gridbg"></div><div class="streak"></div><div class="hud"></div>
+<div class="topline"><span class="micro" contenteditable="true">AI CHRONICALS NEWS / NEWSROOM</span><span class="live" contenteditable="true">SPECIAL REPORT</span></div>
+<div class="copy"><span class="tag" contenteditable="true">THE STORY IN FOCUS / VERIFIED</span><h2 contenteditable="true">WHEN THE<br>STORY BREAKS</h2><p contenteditable="true">A concise verified summary. Name the place, explain what is confirmed and identify what remains unknown.</p></div>
+<div class="ticker"><b contenteditable="true">NEWS ALERT</b><span contenteditable="true">Replace with a confirmed ticker line · source and update time required</span></div></div>
+<div class="controls"><span>Light streaks / cinematic beam / alert ticker</span><button onclick="window.print()">Print / PDF</button></div><p class="note">Use for special coverage openers and studio wall graphics; keep the ticker factual and timestamped.</p></article>
+</section></main></body></html>

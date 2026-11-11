@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Newsroom Admin | AI Chronicals News</title>
+<style>
+:root{--navy:#071a35;--blue:#1264bd;--red:#e33445;--bg:#f2f5fa;--ink:#182338}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Nastaliq Urdu",sans-serif}
+header{background:var(--navy);color:white;padding:22px 4%}header strong{font:900 22px Arial;direction:ltr;display:block}header span{color:#ff9aa5}
+main{width:min(900px,94%);margin:28px auto}.panel{background:white;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #071a3510}
+h1{font-size:25px;margin-top:0}label{display:block;font-weight:bold;margin:13px 0 6px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:7px;font:inherit;background:white}
+textarea{min-height:110px;resize:vertical}button{border:0;border-radius:7px;padding:12px 18px;background:var(--blue);color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:16px}
+button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-height:1.8}
+.status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
+#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}.department-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}.department-state{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 11px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font-size:13px}.department-state small{color:#69778b}.state-running{border-color:#1264bd;background:#eef6ff}.state-success{border-color:#16834a;background:#effaf3}.state-failed{border-color:#d33b48;background:#fff1f2}
+.newsroom-nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 14px;background:#071a35;border-radius:12px;scrollbar-width:thin}.newsroom-nav a{flex:0 0 auto;color:#fff;text-decoration:none;border:1px solid #49617f;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700}.newsroom-nav a:focus,.newsroom-nav a:hover{background:#173b66;outline:2px solid #91bfff;outline-offset:1px}html{scroll-behavior:smooth}main section[id]{scroll-margin-top:76px}
+.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-vector-icon{float:left;width:44px;height:44px;margin:0 0 8px 10px;padding:8px;border:1px solid #3b829e;border-radius:10px;background:linear-gradient(145deg,#0c2941,#25204a);stroke:#45ddec;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #45ddec66)}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}</style>
+</head>
+<body>
+<header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span></header>
+<main>
+<nav class="newsroom-nav" aria-label="Newsroom sections">
+<a href="#dashboardPanel">مرکزی ڈیش بورڈ</a>
+<a href="#assignmentPanel">اسائنمنٹ سینٹر</a>
+<a href="#researchPanel">ریسرچ و فیکٹ چیک</a>
+<a href="#graphicsPanel">گرافکس و پریزنٹیشن</a>
+<a href="#queuePanel">ایڈیٹوریل منظوری</a>
+</nav>
+<section class="panel" id="dashboardPanel">
+<h1>نیوز روم — مرکزی ڈیش بورڈ</h1>
+<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج نجی Vercel Blob سرور اور مقامی بیک اپ دونوں میں محفوظ ہوں گے۔ ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
+<details class="panel"><summary style="font-weight:bold;cursor:pointer">26 شعبہ جاتی ڈائریکٹرز — ذمہ داریاں دیکھیں</summary>
+<ol style="line-height:2.1">
+<li><b>Director Newsroom / Editor-in-Chief:</b> ادارتی قیادت، خبر کا زاویہ، مسودہ اور اشاعت کی تیاری کی سفارش۔</li>
+<li><b>Director Assignment Desk:</b> خبروں کی ترجیح، اسائنمنٹس، اہمیت اور مزید رپورٹنگ کا منصوبہ۔</li>
+<li><b>Director Pakistan:</b> قومی خبریں، وفاقی ادارے، پارلیمنٹ اور ملکی پالیسی۔</li>
+<li><b>Director Provincial & Local:</b> صوبے، اضلاع، شہر اور مقامی عوامی مسائل۔</li>
+<li><b>Director Politics:</b> سیاست، انتخابات، جماعتیں، بیانات اور غیر جانب دار تجزیہ۔</li>
+<li><b>Director World:</b> عالمی واقعات، سفارت کاری اور بین الاقوامی تناظر۔</li>
+<li><b>Director Crime & Public Safety:</b> جرائم، پولیس، حادثات اور متاثرین کا تحفظ۔</li>
+<li><b>Director Courts & Legal Affairs:</b> عدالتی کارروائی، فیصلے، قانونی اصطلاحات اور due process۔</li>
+<li><b>Director Business & Economy:</b> تجارت، صنعت، مہنگائی، روزگار اور معیشت۔</li>
+<li><b>Director Finance & Markets:</b> اسٹاک، کرنسی، بینکنگ، شرحِ سود اور مارکیٹ ڈیٹا۔</li>
+<li><b>Director Sports:</b> کھیل، ٹیمیں، کھلاڑی، مقابلے، اسکور اور ریکارڈ۔</li>
+<li><b>Director Technology & AI:</b> ٹیکنالوجی، AI، سافٹ ویئر، ٹیلی کام اور سائبر سکیورٹی۔</li>
+<li><b>Director Science & Health:</b> سائنسی تحقیق، طب، صحتِ عامہ اور شواہد کا معیار۔</li>
+<li><b>Director Climate & Environment:</b> موسم، آفات، آلودگی اور ماحولیات۔</li>
+<li><b>Director Education:</b> اسکول، جامعات، امتحانات اور تعلیمی پالیسیاں۔</li>
+<li><b>Director Agriculture & Rural Affairs:</b> فصلیں، کسان، زرعی منڈیاں، آبپاشی اور دیہی معیشت۔</li>
+<li><b>Director Research:</b> پس منظر، دستاویزات، اعدادوشمار اور بنیادی ذرائع۔</li>
+<li><b>Director Open-Source Verification:</b> آن لائن ذرائع اور ڈیجیٹل مواد کی تصدیقی حدود۔</li>
+<li><b>Director Fact-Check:</b> دعووں کی جانچ، تضادات اور ثبوت کی درجہ بندی۔</li>
+<li><b>Director Urdu & English:</b> ترجمہ، ناموں کا درست املا اور دو لسانی معیار۔</li>
+<li><b>Director Copy Editing:</b> سرخیاں، زبان، ساخت، وضاحت اور پروف ریڈنگ۔</li>
+<li><b>Director Photo & Visuals:</b> تصاویر، کیپشن، گرافکس، حقوق اور بصری صداقت۔</li>
+<li><b>Director Audience & Social Media:</b> قارئین کی ضرورت اور ذمہ دار سوشل میڈیا مواد۔</li>
+<li><b>Director SEO & Distribution:</b> سرچ، میٹا ڈیٹا اور تقسیم کی منصوبہ بندی۔</li>
+<li><b>Director Ethics & Standards:</b> غیر جانب داری، رازداری، انصاف اور نقصان سے بچاؤ۔</li>
+<li><b>Director Security & Privacy:</b> ذرائع کا تحفظ، ڈیٹا کی حفاظت اور اکاؤنٹ سکیورٹی۔</li>
+</ol>
+<p class="muted">ہر ڈائریکٹر اپنی رپورٹ میں شعبہ جاتی نتائج، فیصلوں کی وجہ، ایکشن پلان، مسائل، مزید تصدیق کی ضرورت اور واضح سفارش دے گا۔</p>
+</details>
+</section>
+<section class="panel" id="teamRosterPanel"><h2>تمام 26 شعبہ جاتی Head Agents اور ان کی پانچ رکنی AI ٹیمیں</h2><p class="muted">ہر Head Agent کے تحت پانچ الگ specialist model roles موجود ہیں۔ یہ on-demand teams ہیں: Admin کی اسائنمنٹ پر چلتی ہیں، مسلسل پس منظر میں نہیں۔ رن کے دوران ہر شعبے کی live progress نیچے دکھائی جائے گی۔</p><div id="teamRosterGrid" class="team-roster-grid"></div></section>
+<section class="panel" id="assignmentPanel">
+<h2>اسائنمنٹ سینٹر — Buland Coordinator</h2>
+<p class="muted">یہاں سے مرکزی ہدایت دیں؛ Buland کے بعد 26 شعبہ جاتی ٹیمیں مرحلہ وار کام کریں گی۔ مکمل رن مہنگا ہو سکتا ہے، اس لیے صرف واضح Admin action پر شروع ہوگا۔</p>
+<label for="password">ایڈمن پاس ورڈ</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Vercel میں محفوظ ایڈمن پاس ورڈ">
+<div class="admin-tool-access"><button id="verifyAdminTools" type="button">Admin تصدیق کریں اور Connector Tools کھولیں</button><a id="connectorsAdminLink" href="/connectors.html" hidden>CONNECTORS & TOOLS — ADMIN ONLY ↗</a><div id="adminToolStatus" class="muted" role="status">Connector کا بٹن صرف درست Admin پاس ورڈ کی تصدیق کے بعد ظاہر ہوگا۔</div></div>
+<label for="instruction">بلند کو اپنی ہدایت دیں</label>
+<textarea id="instruction" placeholder="مثلاً پاکستان کی آج کی اہم سیاسی، معاشی اور عوامی خبریں تلاش کرو، معتبر ذرائع سے تحقیق کرو اور اردو میں نیوز ڈرافٹ تیار کرو۔"></textarea>
+<label for="language">ڈرافٹ کی زبان</label>
+<select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
+<button id="generate">بلند کو ہدایت دیں — کام شروع کریں</button>
+<div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div><div id="departmentProgress" class="department-progress" aria-live="polite"></div>
+<div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
+</section>
+<section class="panel" id="researchPanel">
+<h2>ریسرچ اور فیکٹ چیک — Research & Fact-check</h2>
+<p class="muted">ہر شعبے کے نتائج، ذرائع، ثبوت، تضادات اور مزید تصدیق کی ضرورت کو رپورٹ میں دیکھیں۔ سرچ citation خود بخود اس بات کا ثبوت نہیں کہ اصل صفحہ آزادانہ طور پر verify کیا گیا ہے۔</p>
+<section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
+<section class="panel" id="outputPanel" hidden>
+<h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
+<div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
+</section>
+</section>
+<section class="panel" id="graphicsPanel">
+<h2>گرافکس اور پریزنٹیشن اسٹوڈیو — Graphics & Presentation</h2>
+<p class="muted">ہر ڈپارٹمنٹ رپورٹ میں Graphics Designer کا visual brief اور presentation plan شامل ہوگا۔ اصل تصویر صرف متعلقہ رپورٹ کے Generate Graphics بٹن پر Admin کی کارروائی سے بنے گی؛ کوئی تصویر یا ویڈیو خودکار طور پر شائع نہیں ہوگی۔</p>
+<p class="muted">پہلے Assignment Center سے نیوز روم رن مکمل کریں، پھر Research رپورٹ میں مطلوبہ شعبے کا graphics action استعمال کریں۔ استعمال شدہ تصویر، ماخذ اور حقوق کی حیثیت کی جانچ اشاعت سے پہلے لازم ہے۔</p>
+<p><a href="/graphics/department-templateflyers.html" target="_blank" rel="noopener">10 Department Master TemplateFlyers — تمام شعبہ جاتی ماسٹر گرافکس کھولیں</a></p><p><a href="/graphics/drafts/newsroom-layout-final-review.html" target="_blank" rel="noopener">Newsroom Layout — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/departmental-templates-final-review.html" target="_blank" rel="noopener">Departmental Templates — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/breaking-news-final-review.html" target="_blank" rel="noopener">Breaking News Graphics — Final Review Draft کھولیں</a></p><p><a href="/graphics/broadcast-vfx-template-suite.html" target="_blank" rel="noopener">Broadcast VFX Template Suite کھولیں</a></p><p class="muted">یہ تمام لنکس review/preview assets ہیں؛ اشاعت سے پہلے ایڈمن کی منظوری، story-specific verified copy اور image rights check لازم ہے۔</p><p class="muted">اس Draft میں newsroom dashboard، Breaking News، lower-third، social card، vertical story، data explainer اور editorial status slate شامل ہیں۔ متن براہ راست تبدیل اور Print / Save PDF کیا جا سکتا ہے۔</p>
+<a href="#researchPanel">تازہ Research Report دیکھیں</a>
+</section>
+<section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
+
+</main>
+<script>
+const button=document.getElementById("generate");
+const statusBox=document.getElementById("status");
+const progressBox=document.getElementById("progress");
+const outputPanel=document.getElementById("outputPanel");
+const resultBox=document.getElementById("result");
+const reportView=document.getElementById("reportView");
+let currentReport=null;
+let activeAdminPassword="";
+function addText(parent,tag,textValue,className){const el=document.createElement(tag);el.textContent=textValue==null?"":String(textValue);if(className)el.className=className;parent.appendChild(el);return el;}
+function renderReport(data){
+  currentReport=data;reportView.replaceChildren();
+  const summary=data.executionSummary||{};
+  const top=document.createElement("article");top.className="report-card";
+  addText(top,"h3","نیوز روم رن کا خلاصہ");
+  addText(top,"p",(summary.completedDepartments||0)+"/"+(summary.requestedDepartments||26)+" شعبے مکمل | PASS: "+(summary.passRecommendations||0)+" | REVISE: "+(summary.reviseRecommendations||0)+" | HOLD: "+(summary.holdRecommendations||0)+" | ناکام: "+(summary.failedDepartments||0));
+  addText(top,"p","اشاعتی حالت: "+(summary.editorialStatus||"PENDING_ADMIN_APPROVAL")+" — اشاعت مکمل طور پر بند ہے۔","report-meta");
+  const retryableFailures=Array.isArray(summary.failures)?summary.failures:[];
+  if(retryableFailures.length){
+    const retryButton=document.createElement("button");retryButton.type="button";retryButton.textContent="ناکام شعبوں کو دوبارہ چلائیں ("+retryableFailures.length+")";
+    retryButton.addEventListener("click",async()=>{
+      if(!activeAdminPassword){statusBox.textContent="دوبارہ کوشش کے لیے ایڈمن سیشن درکار ہے۔";return;}
+      retryButton.disabled=true;statusBox.textContent="صرف ناکام شعبہ جاتی ٹیموں کو دوبارہ چلایا جا رہا ہے…";
+      const retryPayload={instruction:data.buland&&data.buland.instruction||"",centralBrief:data.buland&&data.buland.centralResearchBrief||"",language:data.language||"ur"};
+      const remaining=[];
+      for(let i=0;i<retryableFailures.length;i+=2){
+        const batch=retryableFailures.slice(i,i+2);
+        const settled=await Promise.allSettled(batch.map(f=>callDepartmentTeam(f.department,retryPayload,activeAdminPassword)));
+        settled.forEach((result,index)=>{
+          const key=batch[index].department;
+          if(result.status==="fulfilled")data.departmentTeams[key]=result.value;
+          else remaining.push({department:key,error:result.reason&&result.reason.message||"Retry failed"});
+        });
+      }
+      summary.failures=remaining;
+      summary.completedDepartments=Object.keys(data.departmentTeams||{}).length;
+      summary.failedDepartments=remaining.length;
+      const teams=Object.values(data.departmentTeams||{});
+      summary.passRecommendations=teams.filter(x=>x.status==="PASS").length;
+      summary.reviseRecommendations=teams.filter(x=>x.status==="REVISE").length;
+      summary.holdRecommendations=teams.filter(x=>x.status==="HOLD").length;
+      renderReport(data);
+      try{saveRunToQueue(data);}catch(error){statusBox.textContent="دوبارہ کوشش مکمل، مگر مقامی Queue محفوظ نہیں ہو سکی۔ JSON Export کریں۔";}
+      statusBox.textContent=remaining.length?"کچھ شعبے اب بھی ناکام ہیں؛ انہیں دوبارہ چلایا جا سکتا ہے۔":"تمام سابقہ ناکام شعبے کامیابی سے دوبارہ مکمل ہو گئے۔ اب مکمل رپورٹ کا ادارتی جائزہ لیں۔";
+    });
+    top.appendChild(retryButton);
+  }
+  reportView.appendChild(top);
+  Object.entries(data.departmentTeams||{}).forEach(([key,team])=>{
+    const card=document.createElement("article");card.className="report-card";
+    addText(card,"h3",team.directorTitle||key);
+    addText(card,"p","Director recommendation: "+(team.status||"HOLD"),"report-meta");
+    const story=team.storylineTeam||{};
+    addText(card,"h4",story.headline||"سرخی دستیاب نہیں");
+    if(story.dek)addText(card,"p",story.dek);
+    if(story.article)addText(card,"p",story.article);
+    const research=team.researchTeam||{};
+    if(Array.isArray(research.keyFacts)&&research.keyFacts.length){addText(card,"h4","اہم حقائق");research.keyFacts.forEach(x=>addText(card,"p",typeof x==="string"?x:JSON.stringify(x)));}
+    const fact=team.factCheckTeam||{};
+    if(fact.overallStatus)addText(card,"p","Evidence audit: "+fact.overallStatus,"report-meta");
+    if(Array.isArray(fact.missingEvidence)&&fact.missingEvidence.length){addText(card,"h4","مزید تصدیق درکار");fact.missingEvidence.forEach(x=>addText(card,"p",typeof x==="string"?x:JSON.stringify(x)));}
+    const graphic=team.graphicsTeam||{};
+    if(graphic.visualConcept)addText(card,"h4","Graphics concept");
+    if(graphic.visualConcept)addText(card,"p",graphic.visualConcept);
+    if(graphic.imagePrompt){
+       addText(card,"p","Image prompt: "+graphic.imagePrompt);
+       const graphicButton=document.createElement("button");
+       graphicButton.type="button";
+       graphicButton.textContent="اصل گرافک تیار کریں";
+       const graphicStatus=addText(card,"p","Approved master template اس شعبے اور خبر کے موضوع کے مطابق منتخب ہوگا۔","report-meta");
+       graphicButton.addEventListener("click",async()=>{
+         if(!activeAdminPassword){graphicStatus.textContent="ایڈمن سیشن دستیاب نہیں؛ دوبارہ لاگ اِن کریں۔";return;}
+         graphicButton.disabled=true;graphicStatus.textContent="گرافک تیار ہو رہا ہے…";
+         try{
+           const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:(team.directorTitle||key).replace(/^Director\s+/,""),storyBeat:story.category||story.desk||""})});
+           const result=await response.json();
+           if(!response.ok)throw new Error(result.detail||result.error||"Graphics request failed");
+           graphicStatus.textContent="Selected master: "+result.templateName+" — "+(result.storyBeat||"fixed department mapping");
+           const image=document.createElement("img");
+           image.src="data:"+result.mimeType+";base64,"+result.imageData;
+           image.alt=graphic.altText||"AI-generated editorial graphic";
+           image.style.cssText="display:block;width:100%;max-width:640px;height:auto;border-radius:12px;margin:12px 0;";
+           card.insertBefore(image,graphicButton);
+           const download=document.createElement("a");
+           download.href=image.src;download.download=(key||"newsroom")+".png";download.textContent="گرافک ڈاؤن لوڈ کریں";
+           card.insertBefore(download,graphicButton);
+           graphicStatus.textContent="گرافک تیار ہے۔ اسے دیکھ کر اور حقوق/درستگی جانچ کر استعمال کریں۔";
+         }catch(error){graphicStatus.textContent="گرافک نہیں بن سکا: "+error.message;}
+         finally{graphicButton.disabled=false;}
+       });
+       card.appendChild(graphicButton);
+     }
+    const present=team.presentationTeam||{};
+    if(present.seoTitle)addText(card,"p","SEO: "+present.seoTitle);
+    const sources=(team.searchResearch&&team.searchResearch.sources)||team.searchTeam?.sources||[];
+    if(sources.length){addText(card,"h4","ذرائع");sources.forEach(s=>{if(/^https:\/\//i.test(s.url||"")){const a=document.createElement("a");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=s.title||s.url;card.appendChild(a);}});}
+    reportView.appendChild(card);
+  });
+  resultBox.textContent=JSON.stringify(data,null,2);
+}
+function exportJson(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download=name;link.click();URL.revokeObjectURL(url);}
+document.getElementById("exportCurrent").addEventListener("click",()=>{if(currentReport)exportJson(currentReport,"ai-chronicals-news-run.json");});
+const queueList=document.getElementById("queueList");
+const queueSyncStatus=document.getElementById("queueSyncStatus");
+const QUEUE_KEY="aiChronicalsNewsApprovalQueueV1";
+let latestRun=null;
+function readQueue(){try{const value=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]");return Array.isArray(value)?value:[]}catch{return []}}
+function writeQueue(items){localStorage.setItem(QUEUE_KEY,JSON.stringify(items.slice(0,20)));}
+function queuePassword(){const value=document.getElementById("password").value.trim();if(value)activeAdminPassword=value;return activeAdminPassword;}
+async function queueApi(method,body){
+  const password=queuePassword();
+  if(!password)throw new Error("سرور Queue کے لیے ایڈمن پاس ورڈ درج کریں۔");
+  const options={method,headers:{"Authorization":"Bearer "+password,"Accept":"application/json"}};
+  if(body){options.headers["Content-Type"]="application/json";options.body=JSON.stringify(body);}
+  const response=await fetch("/api/admin/queue",options);
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.error||"Private approval queue request failed");
+  return data;
+}
+async function persistQueueItem(item){return queueApi("POST",{item});}
+async function syncServerQueue(){
+  const button=document.getElementById("syncServerQueue");
+  button.disabled=true;queueSyncStatus.textContent="نجی سرور سے ریکارڈ لوڈ اور مقامی تبدیلیاں محفوظ کی جا رہی ہیں…";
+  try{
+    const stamp=item=>Math.max(Date.parse(item.savedAt||"")||0,Date.parse(item.decisionAt||"")||0);
+    const remote=await queueApi("GET");
+    const remoteById=new Map((remote.items||[]).map(item=>[item.id,item]));
+    const localItems=readQueue();
+    let uploaded=0;
+    for(const item of localItems){
+      const serverItem=remoteById.get(item.id);
+      if(!serverItem||stamp(item)>stamp(serverItem)){
+        await persistQueueItem(item);
+        uploaded++;
+      }
+    }
+    const refreshed=await queueApi("GET");
+    const merged=new Map();
+    [...(refreshed.items||[]),...localItems].forEach(item=>{
+      const previous=merged.get(item.id);
+      if(!previous||stamp(item)>=stamp(previous))merged.set(item.id,item);
+    });
+    const items=[...merged.values()].sort((a,b)=>stamp(b)-stamp(a)).slice(0,20);
+    writeQueue(items);renderQueue();
+    queueSyncStatus.textContent="نجی سرور سے "+(refreshed.count||0)+" ریکارڈ موصول ہوئے؛ "+uploaded+" مقامی ریکارڈ سرور پر محفوظ ہوئے۔ Sync مکمل۔";
+  }catch(error){queueSyncStatus.textContent="سرور Sync نامکمل: "+error.message+" — مقامی بیک اپ برقرار ہے۔";}
+  finally{button.disabled=false;}
+}
+function renderQueue(){
+  const items=readQueue();queueList.replaceChildren();
+  if(!items.length){queueList.textContent="ابھی کوئی ڈرافٹ محفوظ نہیں۔";return;}
+  items.forEach(item=>{
+    const card=document.createElement("article");card.className="panel";
+    const heading=document.createElement("h3");heading.textContent=item.instruction||"Newsroom run";card.appendChild(heading);
+    const meta=document.createElement("p");meta.className="muted";meta.textContent=new Date(item.savedAt).toLocaleString()+" | "+(item.completedDepartments||0)+"/26 شعبے | "+item.decision;card.appendChild(meta);
+    const view=document.createElement("button");view.type="button";view.textContent="مکمل رپورٹ دیکھیں";view.addEventListener("click",()=>{renderReport(item.payload);outputPanel.hidden=false;outputPanel.scrollIntoView({behavior:"smooth"});});card.appendChild(view);
+    const approve=document.createElement("button");approve.type="button";approve.textContent="Admin review: Approved";approve.addEventListener("click",()=>updateDecision(item.id,"APPROVED_BY_ADMIN — NOT PUBLISHED"));card.appendChild(approve);
+    const revise=document.createElement("button");revise.type="button";revise.textContent="Revision درکار";revise.addEventListener("click",()=>updateDecision(item.id,"REVISION_REQUIRED"));card.appendChild(revise);
+    const remove=document.createElement("button");remove.type="button";remove.textContent="Queue سے حذف کریں";remove.style.background="#69778b";remove.addEventListener("click",async()=>{
+      if(!confirm("اس نیوز روم ریکارڈ کو مقامی اور نجی سرور Queue سے حذف کریں؟"))return;
+      writeQueue(readQueue().filter(x=>x.id!==item.id));renderQueue();
+      try{await queueApi("DELETE",{id:item.id});queueSyncStatus.textContent="ریکارڈ مقامی اور نجی سرور Queue سے حذف کر دیا گیا۔";}
+      catch(error){queueSyncStatus.textContent="مقامی ریکارڈ حذف ہوا، مگر سرور حذف ناکام: "+error.message;}
+    });card.appendChild(remove);
+    queueList.appendChild(card);
+  });
+}
+function updateDecision(id,decision){
+  const items=readQueue().map(x=>x.id===id?{...x,decision,decisionAt:new Date().toISOString()}:x);
+  writeQueue(items);renderQueue();
+  queueApi("PATCH",{id,decision}).then(()=>{queueSyncStatus.textContent="ایڈمن فیصلہ نجی سرور پر محفوظ ہو گیا؛ اشاعت بند ہے۔";})
+    .catch(error=>{queueSyncStatus.textContent="فیصلہ مقامی طور پر محفوظ ہوا، سرور Sync ناکام: "+error.message;});
+}
+function saveRunToQueue(payload){
+  const items=readQueue();
+  let item;
+  if(payload.queueId&&items.some(x=>x.id===payload.queueId)){
+    const updated=items.map(x=>x.id===payload.queueId?{...x,savedAt:new Date().toISOString(),completedDepartments:payload.executionSummary.completedDepartments,payload}:x);
+    writeQueue(updated);item=updated.find(x=>x.id===payload.queueId);
+  }else{
+    item={id:"run-"+Date.now(),savedAt:new Date().toISOString(),instruction:payload.buland.instruction,completedDepartments:payload.executionSummary.completedDepartments,decision:"PENDING_ADMIN_REVIEW",payload};
+    payload.queueId=item.id;writeQueue([item,...items]);
+  }
+  renderQueue();
+  if(queuePassword()){
+    persistQueueItem(item).then(()=>{queueSyncStatus.textContent="نیوز روم رن نجی سرور Approval Queue میں محفوظ ہو گیا؛ اشاعت بند ہے。";})
+      .catch(error=>{queueSyncStatus.textContent="مقامی بیک اپ محفوظ ہے، مگر سرور پر محفوظ نہیں ہو سکا: "+error.message;});
+  }
+  return item;
+}
+document.getElementById("syncServerQueue").addEventListener("click",syncServerQueue);
+document.getElementById("exportQueue").addEventListener("click",()=>{const data=JSON.stringify(readQueue(),null,2);const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="ai-chronicals-news-approval-queue.json";link.click();URL.revokeObjectURL(url);});
+document.getElementById("importQueue").addEventListener("change",async(event)=>{
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    if(!Array.isArray(parsed)||parsed.length>100)throw new Error("Queue JSON کی ساخت درست نہیں یا 100 سے زیادہ ریکارڈ ہیں۔");
+    const valid=parsed.filter(item=>item&&typeof item==="object"&&item.payload&&item.payload.executionSummary&&item.payload.buland&&typeof item.id==="string");
+    if(!valid.length)throw new Error("کوئی قابلِ درآمد نیوز روم ریکارڈ نہیں ملا۔");
+    const merged=[...valid,...readQueue()];
+    const unique=Array.from(new Map(merged.map(item=>[item.id,item])).values()).slice(0,20);
+    writeQueue(unique);renderQueue();
+    if(queuePassword()){
+      const results=await Promise.allSettled(valid.map(persistQueueItem));
+      const failed=results.filter(x=>x.status==="rejected").length;
+      queueSyncStatus.textContent=(valid.length-failed)+" درآمد شدہ ریکارڈ نجی سرور پر محفوظ؛ ناکام: "+failed;
+    }
+    statusBox.textContent=valid.length+" ریکارڈ Queue میں درآمد ہو گئے۔";
+  }catch(error){statusBox.textContent="Queue درآمد نہیں ہو سکی: "+error.message;}
+  finally{event.target.value="";}
+});
+renderQueue();
+document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
+  const button=document.getElementById("diagnosticsButton");
+  const output=document.getElementById("diagnosticsResult");
+  button.disabled=true;output.textContent="سسٹم کنفیگریشن چیک ہو رہی ہے…";
+  try{
+    const response=await fetch("/api/health",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||!data||!data.capabilities)throw new Error(data&&data.error||"Health endpoint returned an invalid response");
+    const c=data.capabilities;
+    output.textContent=[
+      "API status: "+(data.status||"unknown"),
+      "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
+      "OpenAI API key: "+(c.openAIKeyConfigured?"configured":"MISSING"),
+      "Blob token (presence only): "+(c.blobTokenConfigured?"configured — private server queue available":"not configured"),
+      "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
+      "Publishing: "+(data.publishing||"unknown"),
+      "Checked: "+(data.checkedAt||"unknown")
+    ].join("\\n");
+  }catch(error){output.textContent="تشخیص ناکام: "+error.message;}
+  finally{button.disabled=false;}
+});
+const departments=[
+  ["newsroom","Director Newsroom"],
+  ["assignment_desk","Director Assignment Desk"],
+  ["pakistan_desk","Director Pakistan"],
+  ["provincial_local_desk","Director Provincial & Local"],
+  ["politics_desk","Director Politics"],
+  ["world_desk","Director World"],
+  ["crime_desk","جرائم و عوامی تحفظ"],
+  ["courts_legal_desk","عدالتی و قانونی امور"],
+  ["business_economy_desk","کاروبار و معیشت"],
+  ["finance_markets_desk","مالیاتی مارکیٹس"],
+  ["sports_desk","کھیل"],
+  ["technology_ai_desk","ٹیکنالوجی و AI"],
+  ["science_health_desk","سائنس و صحت"],
+  ["climate_environment_desk","ماحول و آب و ہوا"],
+  ["education_desk","تعلیم"],
+  ["agriculture_desk","زراعت و دیہی امور"],
+  ["research_desk","تحقیق"],
+  ["open_source_verification_desk","اوپن سورس تصدیق"],
+  ["fact_check_desk","فیکٹ چیک"],
+  ["urdu_english_desk","اردو و انگریزی"],
+  ["copy_editing_desk","کاپی ایڈیٹنگ"],
+  ["photo_visuals_desk","تصاویر و بصری مواد"],
+  ["audience_social_desk","آڈینس و سوشل میڈیا"],
+  ["seo_distribution_desk","SEO و تقسیم"],
+  ["ethics_standards_desk","اخلاقیات و ادارتی معیار"],
+  ["security_privacy_desk","سکیورٹی و پرائیویسی"]
+];
+
+const specialistRoles = [
+  "Research & Source Analyst",
+  "Storyline & News Writer",
+  "Fact-check & Evidence Auditor",
+  "Graphics & Visuals Designer",
+  "Presentation & Distribution Producer"
+];
+
+const masterTemplateByDepartment = {
+  politics_desk:["Politics & Government","p1"],
+  world_desk:["World & Foreign Affairs","p10"],
+  crime_desk:["Crime & Public Safety","p3"],
+  courts_legal_desk:["Courts & Judiciary","p2"],
+  business_economy_desk:["Business & Economy","p4"],
+  finance_markets_desk:["Business & Economy","p4"],
+  sports_desk:["Sports","p8"],
+  technology_ai_desk:["Health & Science","p6"],
+  science_health_desk:["Health & Science","p6"],
+  climate_environment_desk:["Weather & Disasters","p5"],
+  education_desk:["Education","p7"],
+  agriculture_desk:["Business & Economy (default); Weather & Disasters for weather/disaster coverage","p4"]
+};
+const inheritedTemplateDepartments = new Set([
+  "newsroom","assignment_desk","pakistan_desk","provincial_local_desk",
+  "research_desk","open_source_verification_desk","fact_check_desk",
+  "urdu_english_desk","copy_editing_desk","photo_visuals_desk",
+  "audience_social_desk","seo_distribution_desk","ethics_standards_desk",
+  "security_privacy_desk"
+]);
+function renderTeamRoster(){
+  const root=document.getElementById("teamRosterGrid");
+  if(!root)return;
+  root.replaceChildren();
+  departments.forEach(([key,label],index)=>{
+    const card=document.createElement("article");
+    card.className="team-roster-card";
+    const icon=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    icon.setAttribute("viewBox","0 0 64 64");icon.setAttribute("class","team-vector-icon");icon.setAttribute("aria-hidden","true");
+    const use=document.createElementNS("http://www.w3.org/2000/svg","use");use.setAttribute("href","/graphics/newsroom-vector-sprite.svg#d"+String(index+1).padStart(2,"0"));icon.appendChild(use);card.appendChild(icon);
+    const title=document.createElement("b");
+    title.textContent=String(index+1).padStart(2,"0")+" · "+label;
+    card.appendChild(title);
+    const state=document.createElement("small");
+    state.textContent="HEAD AGENT + 5 SPECIALIST ROLES · ON-DEMAND";
+    card.appendChild(state);
+    const master=masterTemplateByDepartment[key];
+    const templateLink=document.createElement("a");
+    templateLink.href=master?"/graphics/department-templateflyers.html#"+master[1]:"/graphics/department-templateflyers.html";
+    templateLink.textContent=master?"MASTER TEMPLATE · "+master[0]:(inheritedTemplateDepartments.has(key)?"MASTER TEMPLATE · STORY-BEAT ROUTING":"MASTER TEMPLATE · ASSIGNMENT DESK ROUTING");
+    templateLink.style.cssText="display:block;margin:8px 0;padding:6px 8px;border:1px solid #3b829e;border-radius:6px;color:#62e8f2;font:800 10px Arial,sans-serif;text-decoration:none";
+    templateLink.setAttribute("aria-label","Open assigned department master template");
+    card.appendChild(templateLink);
+    const team=document.createElement("p");
+    team.textContent=specialistRoles.join(" · ");
+    card.appendChild(team);
+    root.appendChild(card);
+  });
+}
+renderTeamRoster();
+
+document.getElementById("verifyAdminTools").addEventListener("click",async()=>{
+  const password=document.getElementById("password").value;
+  const status=document.getElementById("adminToolStatus");
+  const button=document.getElementById("verifyAdminTools");
+  const link=document.getElementById("connectorsAdminLink");
+  link.hidden=true;
+  if(!password){status.textContent="پہلے Admin پاس ورڈ درج کریں۔";return;}
+  button.disabled=true;status.textContent="Admin اجازت کی تصدیق ہو رہی ہے…";
+  try{
+    const response=await fetch("/api/admin/access",{method:"POST",headers:{"Authorization":"Bearer "+password,"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||!data.ok)throw new Error(data.error||"Admin verification failed");
+    activeAdminPassword=password;
+    link.hidden=false;
+    status.textContent="Admin تصدیق کامیاب۔ Connector کا بٹن اب صرف اس Admin session میں ظاہر ہے۔";
+  }catch(error){status.textContent="تصدیق ناکام: "+error.message;}
+  finally{button.disabled=false;}
+});
+
+function renderDepartmentProgress(states){
+  const root=document.getElementById("departmentProgress");root.replaceChildren();
+  departments.forEach(([key,label])=>{
+    const state=states[key]||"QUEUED";
+    const item=document.createElement("div");item.className="department-state "+(state==="RUNNING"?"state-running":state==="SUCCESS"?"state-success":state==="FAILED"?"state-failed":"");
+    const name=document.createElement("span");name.textContent=label;item.appendChild(name);
+    const value=document.createElement("small");value.textContent=state==="SUCCESS"?"مکمل":state==="RUNNING"?"کام جاری":state==="FAILED"?"ناکام":"قطار میں";item.appendChild(value);
+    root.appendChild(item);
+  });
+}
+
+async function callDepartmentTeam(department,payload,password){
+  let lastError;
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const response=await fetch("/api/admin/department-team",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},
+        body:JSON.stringify({...payload,department})
+      });
+      let data;
+      try{data=await response.json();}catch{throw new Error("سرور نے قابلِ مطالعہ JSON جواب نہیں دیا۔");}
+      if(!response.ok){const error=new Error((data.error||"Department team failed")+(data.detail?": "+data.detail:""));error.status=response.status;throw error;}
+      if(!data||!data.result||typeof data.result!=="object")throw new Error("Department response schema is incomplete.");
+      return data.result;
+    }catch(error){
+      lastError=error;
+      const retryable=!error.status||error.status===429||error.status>=500;
+      if(attempt===0&&retryable){await new Promise(resolve=>setTimeout(resolve,1400));continue;}
+      throw error;
+    }
+  }
+  throw lastError||new Error("Department team failed");
+}
+
+button.addEventListener("click",async()=>{
+  const password=document.getElementById("password").value;
+  activeAdminPassword=password;
+  const instruction=document.getElementById("instruction").value.trim();
+  const language=document.getElementById("language").value;
+  if(!password||!instruction){
+    statusBox.textContent="براہ کرم ایڈمن پاس ورڈ اور بلند کے لیے ہدایت درج کریں۔";return;
+  }
+  button.disabled=true;
+  outputPanel.hidden=true;
+  resultBox.textContent="";
+  const headers={"Content-Type":"application/json","Authorization":"Bearer "+password};
+  const departmentTeams={};
+  const failures=[];
+  const departmentStates=Object.fromEntries(departments.map(([key])=>[key,"QUEUED"]));
+  let completed=0;
+  let research=null;
+  renderDepartmentProgress(departmentStates);
+  try{
+    statusBox.textContent="بلند مرکزی اسائنمنٹ تیار کر رہا ہے…";
+    progressBox.textContent="مرحلہ 1 / 3 — بلند مرکزی تحقیق اور assignment brief تیار کر رہا ہے";
+    const researchResponse=await fetch("/api/admin/buland",{
+      method:"POST",headers,
+      body:JSON.stringify({instruction,language})
+    });
+    research=await researchResponse.json();
+    if(!researchResponse.ok)throw new Error((research.error||"Buland research failed")+(research.detail?": "+research.detail:""));
+    progressBox.textContent="مرحلہ 2 / 3 — 26 ڈائریکٹرز اپنی الگ سرچ و ریسرچ ٹیمیں چلا رہے ہیں";
+    statusBox.textContent="بلند کا مرکزی brief تیار ہے۔ اب ہر شعبہ اپنی تازہ ویب سرچ، تحقیق، اسٹوری لائن، گرافکس اور پریزنٹیشن تیار کرے گا…";
+    const payload={instruction,centralBrief:research.researchBrief,language};
+    const batchSize=2;
+    for(let i=0;i<departments.length;i+=batchSize){
+      const batch=departments.slice(i,i+batchSize);
+      batch.forEach(([key])=>{departmentStates[key]="RUNNING";});
+      renderDepartmentProgress(departmentStates);
+      const settled=await Promise.allSettled(batch.map(async([key])=>{
+        const result=await callDepartmentTeam(key,payload,password);
+        return [key,result];
+      }));
+      for(let j=0;j<settled.length;j++){
+        const item=settled[j], key=batch[j][0];
+        if(item.status==="fulfilled"){departmentTeams[item.value[0]]=item.value[1];departmentStates[key]="SUCCESS";}
+        else{departmentStates[key]="FAILED";failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Department team failed"});}
+        completed++;
+        progressBox.textContent=completed+" / 26 شعبہ جاتی ٹیمیں مکمل — "+failures.length+" ناکام";
+        renderDepartmentProgress(departmentStates);
+      }
+      if(i+batchSize<departments.length)await new Promise(resolve=>setTimeout(resolve,650));
+    }
+    const allTeams=Object.values(departmentTeams);
+    const held=allTeams.filter(x=>x.status==="HOLD").length;
+    const revise=allTeams.filter(x=>x.status==="REVISE").length;
+    const pass=allTeams.filter(x=>x.status==="PASS").length;
+    const result={
+      buland:{instruction,centralResearchBrief:research.researchBrief,sources:research.sources},
+      language,
+      departmentTeams,
+      executionSummary:{
+        requestedDepartments:26,completedDepartments:allTeams.length,failedDepartments:failures.length,
+        passRecommendations:pass,reviseRecommendations:revise,holdRecommendations:held,failures,
+        editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"
+      },
+      limitations:[
+        "Each department makes its own web-search request and produces a structured package through Search, Research, Storyline, Graphics and Presentation workstreams.",
+        "The team roles are coordinated stages in the department workflow, not separate persistent hosted services.",
+        "Graphics briefs are generated by the department workflow; an actual image is generated only when an admin clicks the per-department graphics button.",
+        "Search citations do not prove that every linked page was opened or independently authenticated.",
+        "The approval queue uses private server-side Vercel Blob storage when authenticated; browser localStorage is a local fallback and can be synchronized with the server. Export JSON backups regularly."
+      ],
+      note:"No story is published. All packages remain PENDING_ADMIN_APPROVAL and publishing is disabled."
+    };
+    renderReport(result);
+    outputPanel.hidden=false;
+    try{saveRunToQueue(result);statusBox.textContent+=" ڈرافٹ اس براؤزر کی مقامی Approval Queue میں محفوظ کر دیا گیا ہے۔"}catch(storageError){statusBox.textContent+=" مقامی اسٹوریج دستیاب نہیں؛ براہ کرم رپورٹ فوراً JSON میں محفوظ کریں۔";}
+    statusBox.textContent=failures.length
+      ?"شعبہ جاتی کام جزوی طور پر مکمل ہوا۔ کچھ ٹیمیں ناکام ہوئیں؛ تمام نتائج غیر شائع شدہ ہیں اور ایڈمن منظوری درکار ہے۔"
+      :"بلند اور 26 شعبہ جاتی ٹیموں کا کام مکمل ہو گیا۔ تمام نیوز پیکجز غیر شائع شدہ ہیں اور آپ کی منظوری کے منتظر ہیں۔";
+  }catch(error){
+    statusBox.textContent="بلند/نیوز روم کام مکمل نہ کر سکا: "+error.message;
+    if(Object.keys(departmentTeams).length){
+      const partial={buland:{instruction,centralResearchBrief:research&&research.researchBrief||"",sources:research&&research.sources||[]},language,departmentTeams,executionSummary:{requestedDepartments:26,completedDepartments:Object.keys(departmentTeams).length,failedDepartments:failures.length,passRecommendations:Object.values(departmentTeams).filter(x=>x.status==="PASS").length,reviseRecommendations:Object.values(departmentTeams).filter(x=>x.status==="REVISE").length,holdRecommendations:Object.values(departmentTeams).filter(x=>x.status==="HOLD").length,failures,editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"},partial:true,limitations:["This is a partial newsroom run. Missing departments must be retried before editorial assessment.","No story is published; admin approval remains mandatory."]};
+      renderReport(partial);outputPanel.hidden=false;
+      try{saveRunToQueue(partial);}catch(storageError){statusBox.textContent+=" جزوی رپورٹ مقامی طور پر محفوظ نہیں ہو سکی؛ فوراً JSON Export کریں۔";}
+    }
+  }finally{
+    button.disabled=false;
+  }
+});
+</script>
+</body>
+</html>

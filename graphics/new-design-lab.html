@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New Newsroom Design Lab | AI Chronicals News</title>
+<style>
+:root{--ink:#171a20;--paper:#f4f0e8;--white:#fffdf8;--orange:#ff5b24;--blue:#2355d8;--lime:#d6f04a;--muted:#77756f}
+*{box-sizing:border-box}body{margin:0;background:#d9d8d3;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{padding:34px clamp(18px,5vw,72px);background:var(--ink);color:white;display:flex;justify-content:space-between;gap:24px;align-items:end;flex-wrap:wrap}
+.eyebrow{font:700 11px/1.2 Arial;letter-spacing:.2em;text-transform:uppercase;color:var(--lime)}
+h1{font-size:clamp(30px,5vw,64px);line-height:.92;letter-spacing:-.06em;margin:12px 0 0;max-width:780px}
+header p{max-width:330px;color:#c9c8c3;line-height:1.5;font-size:13px}
+main{max-width:1500px;margin:auto;padding:30px clamp(14px,3vw,42px) 70px}
+.notice{border-left:5px solid var(--orange);background:var(--white);padding:14px 18px;margin-bottom:26px;font-size:13px;line-height:1.5}
+.lab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+article{min-width:0}.meta{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.meta span:last-child{color:var(--muted)}
+.artboard{aspect-ratio:1.414/1;position:relative;overflow:hidden;box-shadow:0 16px 36px #171a2022;isolation:isolate}
+.artboard [contenteditable=true]{outline:none;cursor:text}.artboard [contenteditable=true]:focus{outline:2px dashed currentColor;outline-offset:3px}
+.artboard small{font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.artboard .tag{display:inline-block;padding:7px 9px;font-size:9px;font-weight:900;letter-spacing:.12em}
+.artboard .foot{position:absolute;left:5%;right:5%;bottom:4%;display:flex;justify-content:space-between;gap:10px;font-size:8px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.artboard .headline{font-weight:950;letter-spacing:-.065em;line-height:.86}
+.artboard .sub{font-size:clamp(8px,.8vw,12px);line-height:1.35;max-width:75%}
+.artboard .photo{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center;filter:grayscale(1) contrast(1.1)}
+.artboard .photo:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#111c 0%,#1115 55%,transparent 100%)}
+.artboard .placeholder{position:absolute;inset:0;z-index:-3;background:repeating-linear-gradient(135deg,#444 0 2px,#555 2px 4px)}
+/* 01: high-contrast editorial cover */
+.signal{background:var(--paper);padding:5%;display:flex;flex-direction:column}
+.signal .top{display:flex;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:3%;font-size:8px;font-weight:900;letter-spacing:.12em}
+.signal .split{display:grid;grid-template-columns:1.1fr .9fr;gap:4%;flex:1;align-items:center}
+.signal .headline{font-size:clamp(24px,4vw,54px);color:var(--ink);position:relative;z-index:1}
+.signal .headline em{font-style:normal;color:var(--orange)}
+.signal .image-block{height:82%;background:var(--ink);position:relative;overflow:hidden;transform:rotate(2deg)}
+.signal .image-block .photo{background-image:linear-gradient(135deg,#303947,#7c817f 45%,#d2a17b)}
+.signal .image-block:after{content:"FIELD IMAGE / REPLACE";position:absolute;bottom:10px;left:10px;color:white;font-size:8px;letter-spacing:.15em}
+.signal .bottom{border-top:1px solid #999;padding-top:3%;display:flex;justify-content:space-between;font-size:8px;font-weight:800;letter-spacing:.1em}
+/* 02: data desk / modular chart */
+.datadesk{background:var(--ink);color:#fff;padding:5%;display:grid;grid-template-rows:auto 1fr auto;gap:5%}
+.datadesk .top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff55;padding-bottom:3%;font-size:8px;letter-spacing:.13em}
+.datadesk .body{display:grid;grid-template-columns:1.15fr .85fr;gap:5%;align-items:center}
+.datadesk .headline{font-size:clamp(23px,3.5vw,48px);color:var(--lime)}
+.datadesk .stat{font-size:clamp(30px,5vw,66px);font-weight:950;letter-spacing:-.08em;color:var(--orange);line-height:.9}
+.datadesk .bars{height:100%;min-height:100px;display:flex;align-items:end;gap:7%;border-bottom:1px solid #ffffff66;padding:0 4%}
+.datadesk .bars i{display:block;flex:1;background:var(--lime);min-height:12%;position:relative}
+.datadesk .bars i:nth-child(2){height:72%;background:#fff}.datadesk .bars i:nth-child(3){height:48%;background:var(--orange)}.datadesk .bars i:nth-child(4){height:90%;background:var(--blue)}
+.datadesk .bars i:first-child{height:35%}
+.datadesk .source{font-size:8px;color:#c8c8c8;line-height:1.4}
+.datadesk .foot{border-top:1px solid #ffffff55;padding-top:3%;position:static}
+/* 03: field report / image-led */
+.field{background:#e8e5dc;color:#16191e}
+.field .photo{background-image:linear-gradient(135deg,#45535b,#9c9b8a 45%,#292f36)}
+.field .photo:after{background:linear-gradient(0deg,#111e 0%,#1117 40%,#1112 100%)}
+.field .top{position:absolute;top:5%;left:5%;right:5%;display:flex;justify-content:space-between;color:white;font-size:8px;letter-spacing:.14em}
+.field .label{position:absolute;left:5%;top:20%;background:var(--lime);color:var(--ink);padding:8px 10px;font-size:9px;font-weight:900;letter-spacing:.1em}
+.field .copy{position:absolute;left:5%;right:5%;bottom:13%;color:white}
+.field .headline{font-size:clamp(27px,4.3vw,58px);max-width:85%;text-shadow:0 2px 20px #0008}
+.field .sub{margin-top:12px;color:#f0eee8}
+.field .foot{color:white;border-top:1px solid #ffffff88;padding-top:3%}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11px;color:#333}
+.actions button{border:1px solid #222;background:transparent;padding:8px 12px;font-weight:800;cursor:pointer}
+.actions button:hover{background:#222;color:white}
+.caption{font-size:11px;color:#555;line-height:1.45;margin-top:8px}
+@media(max-width:900px){.lab-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.lab-grid{grid-template-columns:1fr}.artboard{max-width:100%}.artboard .headline{font-size:clamp(32px,9vw,58px)}}
+@media print{body{background:white}header,.notice,.actions,.caption{display:none!important}main{padding:0}.lab-grid{display:block}article{break-after:page;margin:0 0 15mm}.artboard{box-shadow:none;width:100%}}
+</style>
+</head>
+<body>
+<header><div><div class="eyebrow">Independent design direction / 2026</div><h1>THE NEW NEWSROOM<br>DESIGN LAB</h1></div><p>Three original editorial systems. Built from a blank page — not copied from the rejected template collection.</p></header>
+<main>
+<div class="notice"><strong>Prototype status:</strong> These are fresh concept directions, not approved publication assets. Click any headline or copy area to edit text. Replace image fields with verified story photography and update every source, date and figure before publication. Use Print to export a review PDF.</div>
+<section class="lab-grid">
+<article><div class="meta"><span>01 / SIGNAL EDITORIAL</span><span>Breaking • Politics • World</span></div>
+<div class="artboard signal">
+<div class="top"><span contenteditable="true">THE DAILY BRIEF / NEWSROOM</span><span contenteditable="true">11 NOV 2026 · 09:40 PKT</span></div>
+<div class="split"><div><span class="tag" style="background:var(--orange);color:white" contenteditable="true">BREAKING / TOP STORY</span><h2 class="headline" contenteditable="true">A NEW<br><em>CHAPTER</em><br>BEGINS.</h2><p class="sub" contenteditable="true">A concise two-line verified summary goes here. Lead with the confirmed development, then explain why it matters.</p></div><div class="image-block"><div class="photo"></div></div></div>
+<div class="bottom"><span contenteditable="true">REPORTING THAT MOVES THE STORY</span><span contenteditable="true">SOURCE: ADD VERIFIED SOURCE</span></div>
+</div><div class="actions"><span>Editable text · print-ready concept</span><button onclick="window.print()">Print / PDF</button></div><p class="caption">Asymmetric newspaper-cover composition, warm paper, signal-orange alert, oversized editorial type.</p></article>
+<article><div class="meta"><span>02 / DATA DESK</span><span>Business • Economy • Science</span></div>
+<div class="artboard datadesk">
+<div class="top"><span contenteditable="true">THE DATA DESK / EXPLAINER</span><span contenteditable="true">ISSUE 001</span></div>
+<div class="body"><div><span class="tag" style="background:var(--blue);color:white" contenteditable="true">NUMBERS THAT MATTER</span><h2 class="headline" contenteditable="true">THE<br>BIG<br>PICTURE.</h2><div class="stat" contenteditable="true">+24.8%</div><p class="sub" contenteditable="true">One verified headline metric, with its unit and comparison period clearly stated.</p></div><div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div><p class="source" contenteditable="true">CHART LABELS: PERIOD 1 / 2 / 3 / 4 / 5<br>Source: replace with primary data source. Values shown are layout placeholders only.</p></div></div>
+<div class="foot"><span contenteditable="true">DATA EXPLAINED / NOT JUST DISPLAYED</span><span contenteditable="true">AI CHRONICALS NEWS</span></div>
+</div><div class="actions"><span>Editable text · print-ready concept</span><button onclick="window.print()">Print / PDF</button></div><p class="caption">Dark data-journalism canvas, chart-led hierarchy, acid-lime and orange accents, clear source discipline.</p></article>
+<article><div class="meta"><span>03 / FIELD REPORT</span><span>Crime • Weather • Public interest</span></div>
+<div class="artboard field">
+<div class="photo"></div><div class="top"><span contenteditable="true">ON THE GROUND / SPECIAL REPORT</span><span contenteditable="true">LOCATION · TIME</span></div><span class="label" contenteditable="true">FIELD REPORT</span>
+<div class="copy"><h2 class="headline" contenteditable="true">BEYOND<br>THE HEADLINES.</h2><p class="sub" contenteditable="true">A strong image-led report. Add the verified location, what happened, who is affected and what is confirmed.</p></div>
+<div class="foot"><span contenteditable="true">IMAGE: VERIFIED / RIGHTS CLEARED</span><span contenteditable="true">SOURCE + UPDATE TIME</span></div>
+</div><div class="actions"><span>Editable text · print-ready concept</span><button onclick="window.print()">Print / PDF</button></div><p class="caption">Full-bleed field-photo treatment, lime location marker, restrained metadata and cinematic but readable type.</p></article>
+</section>
+</main>
+</body></html>

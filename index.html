@@ -1,499 +1,132 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ur" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="AI Chronicals News - Be Informed. Be Ahead. پاکستان اور دنیا کی تازہ خبریں۔">
-<title>AI Chronicals News | Be Informed. Be Ahead.</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06101f">
+<meta name="description" content="AI Chronicals News — 26 AI ڈائریکٹرز، 10 مرکزی نیوز ڈیسک، تحقیق، تصدیق اور انسانی ادارتی منظوری کے ساتھ۔">
+<title>AI Chronicals News | Newsroom Front Desk</title>
 <style>
-:root {
-  --navy:#071a35;
-  --blue:#1264bd;
-  --red:#e33445;
-  --white:#ffffff;
-  --light:#f2f5fa;
-  --text:#182338;
-  --muted:#6c7788;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  font-family:Arial,"Noto Nastaliq Urdu",sans-serif;
-  background:var(--light);
-  color:var(--text);
-}
-a { text-decoration:none; color:inherit; }
-.container { width:min(1180px,94%); margin:auto; }
-
-.topbar {
-  background:var(--navy);
-  color:white;
-  padding:9px 0;
-  font-size:13px;
-}
-.topbar .container {
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.header {
-  background:white;
-  padding:20px 0;
-}
-.brand {
-  display:flex;
-  align-items:center;
-  gap:13px;
-}
-.logo {
-  width:68px;
-  height:68px;
-  flex-shrink:0;
-}
-.brand-name {
-  font-family:Arial,sans-serif;
-  font-size:clamp(19px,4vw,29px);
-  font-weight:900;
-  color:var(--navy);
-  direction:ltr;
-}
-.tagline {
-  color:var(--red);
-  font-size:13px;
-  direction:ltr;
-  text-align:left;
-  margin-top:5px;
-}
-.nav {
-  background:var(--navy);
-  color:white;
-}
-.nav-inner {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.nav a {
-  display:inline-block;
-  padding:15px 12px;
-  font-size:14px;
-}
-.nav a:hover,.nav a.active {
-  background:var(--red);
-}
-.search {
-  display:flex;
-  gap:5px;
-  padding:8px 0;
-}
-.search input {
-  width:145px;
-  padding:9px;
-  border:0;
-  border-radius:5px;
-}
-.search button {
-  border:0;
-  background:var(--red);
-  color:white;
-  border-radius:5px;
-  padding:8px 12px;
-  cursor:pointer;
-}
-.ticker {
-  display:flex;
-  background:white;
-  margin:18px 0;
-  border-right:5px solid var(--red);
-  align-items:center;
-  overflow:hidden;
-}
-.ticker strong {
-  background:var(--red);
-  color:white;
-  padding:12px;
-  white-space:nowrap;
-}
-.ticker span {
-  padding:10px 14px;
-  font-size:14px;
-}
-.section-title {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:2px solid var(--navy);
-  margin:25px 0 16px;
-  padding-bottom:9px;
-}
-.section-title h2 {
-  margin:0;
-  font-size:22px;
-}
-.section-title a {
-  color:var(--blue);
-  font-size:13px;
-}
-.hero {
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:18px;
-}
-.lead {
-  background:white;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 3px 15px #071a3510;
-}
-.lead-image {
-  min-height:310px;
-  background:
-    linear-gradient(0deg,#071a35cc,transparent 75%),
-    linear-gradient(135deg,#1264bd,#071a35);
-  display:flex;
-  align-items:end;
-  padding:25px;
-  color:white;
-  position:relative;
-}
-.lead-image:before {
-  content:"AI CHRONICALS NEWS";
-  position:absolute;
-  top:25px;
-  left:25px;
-  font:bold 16px Arial;
-  opacity:.8;
-  direction:ltr;
-}
-.lead-image h1 {
-  font-size:clamp(24px,4vw,38px);
-  margin:0;
-}
-.lead-content { padding:20px; }
-.category {
-  color:var(--red);
-  font-size:13px;
-  font-weight:bold;
-}
-.lead-content p,.card p {
-  color:var(--muted);
-  line-height:1.9;
-}
-.side-list {
-  display:grid;
-  gap:12px;
-}
-.side-item {
-  background:white;
-  padding:17px;
-  border-radius:9px;
-  border-right:4px solid var(--blue);
-}
-.side-item h3 { margin:8px 0; font-size:17px; }
-.cards {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-.card {
-  background:white;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 3px 12px #071a3510;
-}
-.card-image {
-  height:165px;
-  background:linear-gradient(135deg,#0c3264,#2584ce);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:30px;
-  font-weight:bold;
-}
-.card-body { padding:17px; }
-.card h3 { margin:9px 0; font-size:18px; }
-.meta {
-  color:var(--muted);
-  font-size:12px;
-}
-.card p {
-  font-size:14px;
-  margin-bottom:12px;
-}
-.read-more {
-  color:var(--blue);
-  font-weight:bold;
-  font-size:14px;
-}
-.empty {
-  background:white;
-  border-radius:8px;
-  padding:25px;
-  text-align:center;
-  color:var(--muted);
-}
-.newsletter {
-  background:var(--navy);
-  color:white;
-  padding:28px;
-  margin:35px 0;
-  border-radius:10px;
-  text-align:center;
-}
-.newsletter h2 { margin-top:0; }
-.newsletter input {
-  padding:12px;
-  width:min(300px,65%);
-  border:0;
-  border-radius:5px;
-}
-.newsletter button {
-  padding:12px 18px;
-  border:0;
-  border-radius:5px;
-  background:var(--red);
-  color:white;
-  cursor:pointer;
-}
-footer {
-  background:#041124;
-  color:white;
-  padding:30px 0;
-  margin-top:35px;
-}
-.footer-grid {
-  display:grid;
-  grid-template-columns:2fr 1fr 1fr;
-  gap:25px;
-}
-footer p,footer a {
-  color:#c5d1e1;
-  line-height:2;
-  font-size:14px;
-}
-footer h3 { color:white; }
-.copyright {
-  border-top:1px solid #ffffff22;
-  padding-top:15px;
-  margin-top:20px;
-  text-align:center;
-  font-size:12px;
-  color:#aab6c8;
-}
-@media(max-width:800px) {
-  .hero { grid-template-columns:1fr; }
-  .cards { grid-template-columns:repeat(2,1fr); }
-  .nav-inner { justify-content:center; }
-  .nav a { padding:12px 8px; }
-}
-@media(max-width:520px) {
-  .cards { grid-template-columns:1fr; }
-  .footer-grid { grid-template-columns:1fr; }
-  .lead-image { min-height:230px; }
-  .brand-name { font-size:18px; }
-  .logo { width:55px;height:55px; }
-}
+:root{--bg:#050b16;--panel:#0b192b;--panel2:#10243c;--line:#254562;--white:#f4f8ff;--muted:#a9bbd0;--cyan:#45e6f2;--blue:#397eff;--violet:#a58aff;--pink:#ff5c91;--gold:#ffc96b;--green:#65e0ad;--red:#ff526b}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}body{margin:0;background:radial-gradient(ellipse at 8% 0%,#173d68 0,transparent 31%),radial-gradient(ellipse at 92% 12%,#42245266 0,transparent 28%),var(--bg);color:var(--white);font-family:Arial,"Noto Nastaliq Urdu",sans-serif;line-height:1.75}a{color:inherit;text-decoration:none}button,input{font:inherit}.container{width:min(1480px,92%);margin:auto}
+.topbar{background:#020711;border-bottom:1px solid #28435f;color:#d6e5f5;font-size:12px}.topbar .container{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:7px 0}
+header{position:relative;overflow:hidden;padding:28px 0 24px;background:linear-gradient(110deg,#071426,#10365a 58%,#291b43);border-bottom:1px solid #416587}header:before{content:"";position:absolute;width:500px;height:500px;border:1px solid #55eaff35;border-radius:50%;left:-90px;top:-350px;box-shadow:0 0 0 38px #55eaff09,0 0 0 85px #55eaff07,0 0 0 135px #55eaff05}.brand{position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.wordmark{direction:ltr;text-align:left;font:900 clamp(25px,3.5vw,42px)/1 Arial,sans-serif;letter-spacing:.055em}.wordmark span{color:var(--cyan)}.tagline{direction:ltr;text-align:left;color:#d3e7fa;font:11px Arial,sans-serif;letter-spacing:.28em;margin-top:10px}.brand-status{border:1px solid #5c83a6;background:#07182bbd;border-radius:30px;padding:9px 16px;color:#d6efff;font-size:12px}
+nav{position:sticky;top:0;z-index:20;background:#071426ed;border-bottom:1px solid #284966;backdrop-filter:blur(14px)}.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.navlinks{display:flex;gap:4px;flex-wrap:wrap}.navlinks a{padding:13px 14px;color:#e4effb;font-size:13px;border-radius:6px}.navlinks a:hover,.navlinks a:focus{background:#173a5d;color:var(--cyan);outline:1px solid #3e8bb3}.nav-action{background:linear-gradient(110deg,#087da8,#3658bb);border:1px solid #58c6e4;border-radius:7px;padding:9px 15px;font-weight:bold;font-size:13px}
+main{padding:25px 0 65px}.ticker{display:flex;align-items:center;overflow:hidden;border:1px solid #75374c;background:#10192a;margin:0 0 22px;border-radius:7px;box-shadow:0 0 26px #ff405d13}.ticker b{background:linear-gradient(110deg,#b51e3e,#f43d59);padding:9px 17px;white-space:nowrap;font:900 12px Arial;letter-spacing:.08em;direction:ltr}.ticker span{padding:8px 15px;color:#e4edf8;font-size:13px}
+.hero{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(280px,.8fr);gap:18px}.hero-main,.hero-side,.metric,.director-card,.desk-card,.workflow-card,.structure-panel,.broadcast{background:linear-gradient(145deg,#10243c,#091525);border:1px solid var(--line);border-radius:13px;box-shadow:0 14px 36px #0004}.hero-main{position:relative;overflow:hidden;min-height:390px;display:flex;align-items:end;padding:clamp(24px,4vw,48px);background:radial-gradient(circle at 78% 20%,#39e8ff45,transparent 18%),radial-gradient(circle at 15% 80%,#9b72ff28,transparent 30%),linear-gradient(125deg,#071426,#153e67 55%,#3b2354)}.hero-main:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#050b16 0%,transparent 78%),repeating-linear-gradient(0deg,transparent 0 35px,#6adfff0b 36px),repeating-linear-gradient(90deg,transparent 0 48px,#6adfff08 49px)}.hero-main:after{content:"";position:absolute;top:0;bottom:0;left:-35%;width:24%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,#8cf5ff35,transparent);animation:sweep 8s linear infinite}@keyframes sweep{to{left:130%}}.hero-copy{position:relative;z-index:1;max-width:850px}.eyebrow{direction:ltr;text-align:left;color:var(--cyan);font:800 10px Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase}.hero h1{font-size:clamp(30px,4.4vw,54px);line-height:1.5;margin:12px 0}.hero p{color:#d1e0ef;font-size:15px;max-width:760px;margin:0}.hero-ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.cta{display:inline-block;padding:10px 16px;border-radius:7px;border:1px solid #65cde5;background:linear-gradient(110deg,#087da8,#3156b7);font-size:13px;font-weight:bold}.cta.secondary{background:#0a1a2dbb;border-color:#59748f}.hero-side{padding:20px;display:grid;gap:13px;align-content:stretch}.side-stat{padding:15px;border:1px solid #294c6c;border-radius:10px;background:#07172a}.side-stat strong{display:block;direction:ltr;text-align:left;font:900 28px Arial;color:var(--cyan)}.side-stat span{display:block;color:#e1edf9;font-size:13px}.side-stat small{color:var(--muted);font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:17px}.metric{padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.metric b{display:block;font:900 26px Arial;color:var(--cyan);direction:ltr}.metric span{color:#d8e6f5;font-size:12px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:38px 0 15px;border-bottom:1px solid #3a5875;padding-bottom:10px}.section-head h2{font-size:23px;margin:0}.section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}.section-head em{direction:ltr;text-align:left;color:var(--cyan);font:800 10px Arial;letter-spacing:.16em;font-style:normal;white-space:nowrap}
+.structure-panel{padding:22px;overflow:hidden}.org-top{max-width:620px;margin:0 auto 18px;text-align:center;padding:17px;border:1px solid #3c83a0;border-radius:10px;background:linear-gradient(100deg,#0d3150,#25204a);box-shadow:0 0 28px #46e4f214}.org-top b{display:block;font:800 16px Arial;direction:ltr;color:var(--cyan)}.org-top span{font-size:13px}.org-top small{display:block;color:var(--muted);font-size:11px}.org-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.org-branch{border:1px solid #2d4c69;border-radius:10px;padding:15px;background:#09192b}.org-branch h3{margin:0 0 5px;font-size:16px}.org-branch p{color:var(--muted);font-size:12px;margin:0}.branch-count{display:inline-block;direction:ltr;font:900 12px Arial;color:var(--cyan);margin-top:9px}.branch-flow{text-align:center;color:#4b92b7;font:900 20px Arial;margin:7px 0}
+.director-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px}.director-tools input{flex:1;min-width:210px;padding:11px 13px;border:1px solid #385a79;background:#071628;color:white;border-radius:8px}.director-tools input::placeholder{color:#91a7bd}.filter-note{font-size:11px;color:var(--muted)}.director-group{margin:17px 0 24px}.group-title{display:flex;align-items:center;gap:10px;margin:0 0 10px;color:#eaf5ff;font-size:16px}.group-title span{font:800 10px Arial;color:var(--cyan);direction:ltr;letter-spacing:.12em}.director-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.director-card{padding:14px;position:relative;overflow:hidden;min-height:130px;transition:transform .2s,border-color .2s,box-shadow .2s}.director-card:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--cyan),var(--violet),var(--pink))}.director-card:hover{transform:translateY(-3px);border-color:#58cde7;box-shadow:0 12px 28px #0005,0 0 20px #46e4f216}.director-vector-wrap{float:left;width:62px;height:62px;margin:0 0 9px 12px;display:grid;place-items:center;border:1px solid #3e718d;border-radius:14px;background:radial-gradient(circle at 28% 22%,#45e6f233,transparent 48%),linear-gradient(145deg,#0c2941,#201b3d);box-shadow:inset 0 0 18px #45e6f20c,0 0 18px #a58aff12;position:relative;overflow:hidden}.director-vector-wrap:after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,#45e6f2,#a58aff,#ff5c91)}.director-vector-wrap svg{width:40px;height:40px;stroke:#68e8f4;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #45e6f277)}.director-card{min-height:156px}.director-card:after{content:"DIGITAL VECTOR · DIRECTOR ID";position:absolute;right:12px;bottom:9px;color:#77cce0;font:700 8px Arial;letter-spacing:.08em;opacity:.65}.director-card .director-no{font:900 20px Arial;color:#53d9ee88;direction:ltr;text-align:left}.director-card h3{font:800 13px/1.45 Arial,sans-serif;direction:ltr;text-align:left;margin:4px 0 7px;color:#f4f8ff}.director-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}.director-card small{display:block;margin-top:8px;color:#74cce1;font:10px Arial;direction:ltr;text-align:left;letter-spacing:.05em}
+.director-card small:after{content:"TEAM OF 5 · RESEARCH · STORYLINE · FACT-CHECK · GRAPHICS · PRESENTATION";display:block;margin-top:7px;padding-top:6px;border-top:1px solid #294966;color:#9ecce0;font:700 9px/1.6 Arial;letter-spacing:.025em;white-space:normal}.no-results{display:none;border:1px dashed #45617d;border-radius:8px;padding:15px;color:var(--muted);text-align:center}
+.desk-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.desk-card{padding:15px;min-height:126px;position:relative;overflow:hidden}.desk-card:after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))}.desk-card .desk-index{font:900 20px Arial;color:#4ddded88}.desk-card b{display:block;font-size:14px;margin:3px 0}.desk-card small{display:block;color:var(--muted);font:10px Arial;direction:ltr;text-align:left;letter-spacing:.04em}.desk-card p{color:#bdcde0;font-size:11px;line-height:1.6;margin:7px 0 0}.desk-template-link{display:inline-block;margin-top:9px;padding:5px 9px;border:1px solid #3c829c;border-radius:6px;color:var(--cyan);font:800 9px Arial,sans-serif;letter-spacing:.04em;background:linear-gradient(110deg,#0b263b,#211c3d)}.desk-template-link:hover{border-color:var(--pink);box-shadow:0 0 14px #45e6f233;color:#fff}
+.workflow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.workflow-card{padding:15px;min-height:145px}.workflow-card .step{font:900 24px Arial;color:#55dff0}.workflow-card h3{font-size:14px;margin:6px 0}.workflow-card p{font-size:11px;color:var(--muted);margin:0;line-height:1.7}
+.broadcast{display:grid;grid-template-columns:1.2fr 1fr;gap:0;overflow:hidden}.breaking{padding:26px;background:linear-gradient(115deg,#1a0e20,#1c2039 60%,#102e48);position:relative}.alert{display:inline-block;background:var(--red);padding:4px 9px;font:900 10px Arial;letter-spacing:.14em;direction:ltr}.breaking h3{font:900 clamp(30px,4vw,52px)/1 Arial;margin:18px 0;color:white;text-shadow:0 0 20px #ff405d66;direction:ltr}.breaking p{color:#d6e1ee;font-size:13px}.lower-third{margin-top:18px;padding:12px 15px;background:linear-gradient(90deg,#b51e3e,#183f70);font-weight:bold;font-size:13px}.vfx{padding:25px;background:radial-gradient(circle at 90% 10%,#5b54a455,transparent 35%),#0c192b}.vfx h3{font-size:18px;margin:0 0 7px}.vfx p{color:var(--muted);font-size:12px}.vfx-graphic{height:100px;border:1px solid #39728a66;background:linear-gradient(120deg,transparent 20%,#39e8ff20 50%,transparent 70%),repeating-linear-gradient(90deg,transparent 0 28px,#5dd9f315 29px);position:relative;overflow:hidden}.vfx-graphic:after{content:"";position:absolute;left:-20%;top:48%;width:140%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:rotate(-12deg);box-shadow:0 0 12px var(--cyan)}
+.empty{border:1px dashed #3b5876;border-radius:10px;padding:22px;text-align:center;color:var(--muted);background:#091728;font-size:13px}.safety-strip{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:16px 18px;border:1px solid #5a754e;background:linear-gradient(100deg,#122c2c,#102138);border-radius:10px;margin-top:18px}.safety-strip b{color:var(--green)}.safety-strip span{font-size:12px;color:#d4e5ee}
+footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d0e1}.footgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:28px}.footgrid h3{color:white}.footgrid p,.footgrid a{font-size:12px;color:#b6c8db;line-height:2}.footgrid a:hover{color:var(--cyan)}.copyright{text-align:center;border-top:1px solid #ffffff18;padding-top:14px;margin-top:20px;font-size:11px;color:#91a5bc}
+@media(max-width:1050px){.director-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.desk-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.workflow{grid-template-columns:repeat(3,minmax(0,1fr))}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero-main{min-height:330px}.org-branches{grid-template-columns:1fr}.broadcast{grid-template-columns:1fr}.director-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.desk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-inner{justify-content:center}.navlinks{justify-content:center}.navlinks a{padding:9px 8px;font-size:12px}.footgrid{grid-template-columns:1fr}}
+@media(max-width:480px){.container{width:94%}.brand{justify-content:center}.brand>div:first-child{width:100%}.brand-status{font-size:10px}.hero-main{min-height:300px;padding:22px}.hero h1{font-size:28px}.hero p{font-size:13px}.metrics{gap:7px}.metric{padding:11px}.metric b{font-size:21px}.metric span{font-size:10px}.section-head h2{font-size:19px}.section-head em{font-size:9px}.director-grid{grid-template-columns:1fr}.desk-grid{grid-template-columns:1fr 1fr}.workflow{grid-template-columns:1fr 1fr}.director-card{min-height:0}.ticker span{font-size:11px}.nav-action{padding:7px 10px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+@media print{body{background:#fff;color:#111}.topbar,nav,.hero-ctas,.director-tools,.nav-action{display:none!important}header,.hero-main,.hero-side,.metric,.director-card,.desk-card,.workflow-card,.structure-panel,.broadcast,.org-branch{background:#fff!important;color:#111!important;box-shadow:none!important;border:1px solid #aaa}.hero p,.director-card p,.desk-card p,.workflow-card p,.org-branch p{color:#333!important}.director-grid{grid-template-columns:repeat(3,1fr)}.desk-grid{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
-
 <body>
-
-<div class="topbar">
-  <div class="container">
-    <span id="today">AI Chronicals News</span>
-    <span>مستند خبریں — ذمہ دارانہ صحافت</span>
-  </div>
-</div>
-
-<header class="header">
-  <div class="container brand">
-    <svg class="logo" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="34" fill="#1264bd" stroke="#d8f3ff" stroke-width="2"/>
-      <path d="M18 50h64M50 16c-17 17-17 51 0 68M50 16c17 17 17 51 0 68"
-        fill="none" stroke="#d8f3ff" stroke-width="2"/>
-      <path d="M8 57C20 5 85 4 94 39c6 25-35 43-67 30"
-        fill="none" stroke="#e33445" stroke-width="6" stroke-linecap="round"/>
-    </svg>
-    <div>
-      <div class="brand-name">AI CHRONICALS NEWS</div>
-      <div class="tagline">Be Informed. Be Ahead.</div>
-    </div>
-  </div>
-</header>
-
-<nav class="nav">
-  <div class="container nav-inner">
-    <div>
-      <a class="active" href="#home">صفحۂ اول</a>
-      <a href="#pakistan">پاکستان</a>
-      <a href="#world">دنیا</a>
-      <a href="#politics">سیاست</a>
-      <a href="#business">کاروبار</a>
-      <a href="#sports">کھیل</a>
-      <a href="#technology">ٹیکنالوجی</a>
-      <a href="#weather">موسم</a>
-    </div>
-    <form class="search" id="searchForm">
-      <input id="searchInput" placeholder="خبر تلاش کریں">
-      <button type="submit">تلاش</button>
-    </form>
-  </div>
-</nav>
-
+<div class="topbar"><div class="container"><span id="today">AI Chronicals Newsroom</span><span>VERIFIED FIRST · HUMAN APPROVAL REQUIRED · PUBLISHING DISABLED</span></div></div>
+<header><div class="container brand"><div><div class="wordmark">AI <span>CHRONICALS</span> NEWS</div><div class="tagline">INDEPENDENT NEWSROOM · VERIFIED FIRST</div></div><div class="brand-status">26 DIRECTORS · 10 EDITORIAL DESKS · ONE NEWSROOM</div></div></header>
+<nav><div class="container nav-inner"><div class="navlinks"><a href="#home">فرنٹ ڈیسک</a><a href="#structure">ادارہ جاتی ڈھانچہ</a><a href="#directors">26 ڈائریکٹرز</a><a href="#desks">10 مرکزی ڈیسک</a><a href="#workflow">نیوز ورک فلو</a><a href="#broadcast">گرافکس</a><a href="/graphics/department-templateflyers.html">10 ڈیجیٹل ٹیمپلیٹس</a></div><a class="nav-action" href="/admin.html">ADMIN NEWSROOM ↗</a></div></nav>
 <main class="container" id="home">
-
-  <div class="ticker">
-    <strong>اہم خبر</strong>
-    <span>AI Chronicals News میں خوش آمدید — باخبر رہیں، آگے رہیں۔</span>
-  </div>
-
-  <section class="hero">
-    <article class="lead">
-      <div class="lead-image">
-        <h1>پاکستان اور دنیا کی اہم خبریں، ایک ہی جگہ</h1>
-      </div>
-      <div class="lead-content">
-        <span class="category">AI CHRONICALS NEWS</span>
-        <p>
-          عوامی دلچسپی کی خبریں، سیاست، معیشت، کھیل، ٹیکنالوجی
-          اور اہم قومی و بین الاقوامی واقعات۔
-        </p>
-      </div>
-    </article>
-
-    <aside class="side-list">
-      <div class="side-item">
-        <span class="category">تازہ اپ ڈیٹس</span>
-        <h3>اہم خبریں جلد یہاں شائع ہوں گی</h3>
-        <p>ہر خبر کے ساتھ اصل ماخذ اور تاریخ درج کی جائے گی۔</p>
-      </div>
-      <div class="side-item">
-        <span class="category">پاکستان</span>
-        <h3>قومی اور عوامی معاملات</h3>
-        <p>تصدیق شدہ معلومات ہماری اولین ترجیح ہیں۔</p>
-      </div>
-      <div class="side-item">
-        <span class="category">دنیا</span>
-        <h3>بین الاقوامی حالات</h3>
-        <p>اہم عالمی واقعات کی ذمہ دارانہ کوریج۔</p>
-      </div>
-    </aside>
-  </section>
-
-  <section id="latest">
-    <div class="section-title">
-      <h2>تازہ ترین خبریں</h2>
-      <a href="#latest">تمام خبریں</a>
-    </div>
-    <div class="cards" id="newsCards">
-      <div class="empty">فی الحال کوئی خبر شائع نہیں کی گئی۔</div>
-    </div>
-  </section>
-
-  <section id="pakistan">
-    <div class="section-title"><h2>پاکستان</h2></div>
-    <div class="empty">پاکستان کی تصدیق شدہ خبریں یہاں دکھائی جائیں گی۔</div>
-  </section>
-
-  <section id="world">
-    <div class="section-title"><h2>دنیا</h2></div>
-    <div class="empty">بین الاقوامی خبریں یہاں دکھائی جائیں گی۔</div>
-  </section>
-
-  <section id="politics">
-    <div class="section-title"><h2>سیاست</h2></div>
-    <div class="empty">سیاسی خبریں اور حکومتی اپ ڈیٹس۔</div>
-  </section>
-
-  <section id="business">
-    <div class="section-title"><h2>کاروبار اور معیشت</h2></div>
-    <div class="empty">کاروباری اور معاشی خبریں۔</div>
-  </section>
-
-  <section id="sports">
-    <div class="section-title"><h2>کھیل</h2></div>
-    <div class="empty">کھیلوں کی تازہ خبریں۔</div>
-  </section>
-
-  <section id="technology">
-    <div class="section-title"><h2>ٹیکنالوجی</h2></div>
-    <div class="empty">ٹیکنالوجی اور مصنوعی ذہانت کی خبریں۔</div>
-  </section>
-
-  <section id="weather">
-    <div class="section-title"><h2>موسم</h2></div>
-    <div class="empty">موسم کی تصدیق شدہ اپ ڈیٹس۔</div>
-  </section>
-
-  <section class="newsletter">
-    <h2>AI Chronicals News</h2>
-    <p>Be Informed. Be Ahead.</p>
-    <p>ہماری ویب سائٹ پر تازہ خبریں پڑھتے رہیے۔</p>
-  </section>
-
+<div class="ticker"><b>NEWS DESK</b><span>مستند معلومات، اصل ذرائع، واضح ادارتی ذمہ داری اور ہر خبر پر انسانی نگرانی۔</span></div>
+<section class="hero"><article class="hero-main"><div class="hero-copy"><div class="eyebrow">THE NEWSROOM CONTROL TOWER</div><h1>خبر کی تلاش سے اشاعت کی منظوری تک — ایک مربوط AI نیوز روم</h1><p>AI Chronicals News میں 26 مخصوص ڈائریکٹرز، اپنی اپنی تحقیق اور ماہر ٹیموں کے ساتھ، 10 مرکزی کوریج ڈیسک کے تحت کام کرتے ہیں۔ ہر خبر کی جانچ، ادارتی نظرثانی اور حتمی فیصلہ انسانی ایڈمن کے اختیار میں رہتا ہے۔</p><div class="hero-ctas"><a class="cta" href="#directors">26 ڈائریکٹرز دیکھیں</a><a class="cta secondary" href="/admin.html">ایڈمن کنٹرول روم کھولیں</a></div></div></article><aside class="hero-side"><div class="side-stat"><strong>26</strong><span>AI Department Directors</span><small>ہر ڈائریکٹر کی مخصوص ذمہ داری اور ٹیم ورک فلو</small></div><div class="side-stat"><strong>10</strong><span>Core Editorial Desks</span><small>یکساں کوریج معیار اور مرکزی TemplateFlyer نظام</small></div><div class="side-stat"><strong>5</strong><span>Specialist Roles / Team</span><small>Research · Storyline · Fact-check · Graphics · Presentation</small></div><div class="side-stat"><strong>01</strong><span>Human Admin Approval Gate</span><small>منظوری کے بغیر اشاعت نہیں</small></div></aside></section>
+<div class="metrics"><div class="metric"><div><b>26/26</b><span>Director roles defined</span></div><span>●</span></div><div class="metric"><div><b>10/10</b><span>Master editorial desks</span></div><span>●</span></div><div class="metric"><div><b>5×26</b><span>Specialist role structure</span></div><span>●</span></div><div class="metric"><div><b>OFF</b><span>Auto-publishing</span></div><span>●</span></div></div>
+<section id="structure"><div class="section-head"><div><h2>ادارہ جاتی ڈھانچہ — Newsroom Organization</h2><p>مرکزی قیادت، کوریج ڈائریکٹرز اور مشترکہ ادارتی/پروڈکشن یونٹس</p></div><em>OPERATING MODEL</em></div><div class="structure-panel"><div class="org-top"><b>BULAND · CENTRAL COORDINATOR</b><span>مرکزی اسائنمنٹ، ترجیح، ٹاسک تقسیم اور رن کی نگرانی</span><small>Editor-in-Chief کی ادارتی نگرانی اور Admin کی حتمی منظوری برقرار</small></div><div class="branch-flow">↓ &nbsp; ↓ &nbsp; ↓</div><div class="org-branches"><article class="org-branch"><h3>01 · قیادت و اسائنمنٹ</h3><p>Newsroom / Editor-in-Chief، Assignment Desk، Pakistan، Provincial & Local — ادارتی سمت، ترجیح اور جغرافیائی کوریج۔</p><span class="branch-count">4 DIRECTORS</span></article><article class="org-branch"><h3>02 · موضوعاتی کوریج</h3><p>Politics، World، Crime، Courts، Business، Finance، Sports، Technology، Science، Climate، Education اور Agriculture۔</p><span class="branch-count">12 DIRECTORS</span></article><article class="org-branch"><h3>03 · ادارتی معیار و پروڈکشن</h3><p>Research، OSV، Fact-check، زبان، Copy Editing، Visuals، Audience، SEO، Ethics اور Security۔</p><span class="branch-count">10 DIRECTORS</span></article></div><div class="safety-strip"><b>ADMIN CONTROL GATE</b><span>AI ٹیمیں تحقیق اور ڈرافٹ تیار کرتی ہیں؛ PASS سفارش بھی خودکار اشاعت نہیں۔ ایڈمن کی منظوری الگ اور لازمی ہے۔</span></div></div></section>
+<section id="directors"><div class="section-head"><div><h2>تمام 26 AI ڈائریکٹرز اور ان کی ذمہ داریاں</h2><p>ہر ڈائریکٹر اپنی مخصوص ڈومین میں سرچ، تحقیق، اسٹوری لائن، گرافکس اور پریزنٹیشن کے مراحل چلاتا ہے۔</p></div><em>26 DIRECTOR UNITS</em></div><div class="director-tools"><input id="directorSearch" type="search" placeholder="ڈائریکٹر یا ذمہ داری تلاش کریں…" aria-label="ڈائریکٹر تلاش کریں"><span class="filter-note" id="directorCount">26 میں سے 26 ڈائریکٹرز</span></div>
+<div class="director-group"><h3 class="group-title">قیادت اور اسائنمنٹ <span>01–04 · 4 UNITS</span></h3><div class="director-grid">
+<article class="director-card" data-search="newsroom editor in chief ادارتی قیادت"><div class="director-no">01</div><h3>Director Newsroom / Editor-in-Chief</h3><p>ادارتی قیادت، خبر کا زاویہ، مسودے کا معیار اور اشاعت کی سفارش۔</p><small>EDITORIAL LEADERSHIP</small></article>
+<article class="director-card" data-search="assignment desk اسائنمنٹ ترجیح"><div class="director-no">02</div><h3>Director Assignment Desk</h3><p>خبروں کی ترجیح، اسائنمنٹس، اہمیت اور مزید رپورٹنگ کا منصوبہ۔</p><small>ASSIGNMENT & PRIORITY</small></article>
+<article class="director-card" data-search="pakistan قومی وفاقی پارلیمنٹ"><div class="director-no">03</div><h3>Director Pakistan</h3><p>قومی خبریں، وفاقی ادارے، پارلیمنٹ اور ملکی پالیسی۔</p><small>NATIONAL COVERAGE</small></article>
+<article class="director-card" data-search="provincial local صوبے اضلاع شہر"><div class="director-no">04</div><h3>Director Provincial & Local</h3><p>صوبے، اضلاع، شہر اور مقامی عوامی مسائل۔</p><small>REGIONAL & LOCAL</small></article>
+</div></div>
+<div class="director-group"><h3 class="group-title">موضوعاتی کوریج ڈائریکٹرز <span>05–16 · 12 UNITS</span></h3><div class="director-grid">
+<article class="director-card" data-search="politics سیاست انتخابات جماعتیں"><div class="director-no">05</div><h3>Director Politics</h3><p>سیاست، انتخابات، جماعتیں، بیانات اور غیر جانب دار تجزیہ۔</p><small>POLITICS DESK</small></article>
+<article class="director-card" data-search="world عالمی سفارت کاری بین الاقوامی"><div class="director-no">06</div><h3>Director World</h3><p>عالمی واقعات، سفارت کاری اور بین الاقوامی تناظر۔</p><small>WORLD AFFAIRS</small></article>
+<article class="director-card" data-search="crime public safety جرائم پولیس حادثات"><div class="director-no">07</div><h3>Director Crime & Public Safety</h3><p>جرائم، پولیس، حادثات اور متاثرین کا تحفظ۔</p><small>PUBLIC SAFETY</small></article>
+<article class="director-card" data-search="courts legal affairs عدالتی قانونی فیصلے"><div class="director-no">08</div><h3>Director Courts & Legal Affairs</h3><p>عدالتی کارروائی، فیصلے، قانونی اصطلاحات اور due process۔</p><small>COURTS & JUSTICE</small></article>
+<article class="director-card" data-search="business economy تجارت صنعت مہنگائی روزگار"><div class="director-no">09</div><h3>Director Business & Economy</h3><p>تجارت، صنعت، مہنگائی، روزگار اور معیشت۔</p><small>BUSINESS & ECONOMY</small></article>
+<article class="director-card" data-search="finance markets اسٹاک کرنسی بینکنگ شرح سود"><div class="director-no">10</div><h3>Director Finance & Markets</h3><p>اسٹاک، کرنسی، بینکنگ، شرحِ سود اور مارکیٹ ڈیٹا۔</p><small>FINANCE & MARKETS</small></article>
+<article class="director-card" data-search="sports کھیل ٹیمیں کھلاڑی مقابلے"><div class="director-no">11</div><h3>Director Sports</h3><p>کھیل، ٹیمیں، کھلاڑی، مقابلے، اسکور اور ریکارڈ۔</p><small>SPORTS COVERAGE</small></article>
+<article class="director-card" data-search="technology ai ٹیکنالوجی سافٹ ویئر ٹیلی کام سائبر"><div class="director-no">12</div><h3>Director Technology & AI</h3><p>ٹیکنالوجی، AI، سافٹ ویئر، ٹیلی کام اور سائبر سکیورٹی۔</p><small>TECHNOLOGY & AI</small></article>
+<article class="director-card" data-search="science health سائنس طب صحت"><div class="director-no">13</div><h3>Director Science & Health</h3><p>سائنسی تحقیق، طب، صحتِ عامہ اور شواہد کا معیار۔</p><small>SCIENCE & HEALTH</small></article>
+<article class="director-card" data-search="climate environment موسم آفات آلودگی ماحولیات"><div class="director-no">14</div><h3>Director Climate & Environment</h3><p>موسم، آفات، آلودگی اور ماحولیات۔</p><small>CLIMATE & ENVIRONMENT</small></article>
+<article class="director-card" data-search="education اسکول جامعات امتحانات پالیسیاں"><div class="director-no">15</div><h3>Director Education</h3><p>اسکول، جامعات، امتحانات اور تعلیمی پالیسیاں۔</p><small>EDUCATION DESK</small></article>
+<article class="director-card" data-search="agriculture rural affairs فصلیں کسان زرعی منڈیاں آبپاشی"><div class="director-no">16</div><h3>Director Agriculture & Rural Affairs</h3><p>فصلیں، کسان، زرعی منڈیاں، آبپاشی اور دیہی معیشت۔</p><small>AGRICULTURE & RURAL</small></article>
+</div></div>
+<div class="director-group"><h3 class="group-title">ادارتی معیار، تحقیق اور پروڈکشن <span>17–26 · 10 UNITS</span></h3><div class="director-grid">
+<article class="director-card" data-search="research پس منظر دستاویزات اعدادوشمار بنیادی ذرائع"><div class="director-no">17</div><h3>Director Research</h3><p>پس منظر، دستاویزات، اعدادوشمار اور بنیادی ذرائع کی تلاش۔</p><small>RESEARCH UNIT</small></article>
+<article class="director-card" data-search="open source verification osint آن لائن ذرائع ڈیجیٹل مواد"><div class="director-no">18</div><h3>Director Open-Source Verification</h3><p>آن لائن ذرائع اور ڈیجیٹل مواد کی تصدیقی حدود اور اصل ماخذ۔</p><small>OSV / SOURCE CHECK</small></article>
+<article class="director-card" data-search="fact check دعوے تضادات ثبوت"><div class="director-no">19</div><h3>Director Fact-Check</h3><p>دعویٰ بہ دعویٰ جانچ، تضادات اور ثبوت کی درجہ بندی۔</p><small>EVIDENCE AUDIT</small></article>
+<article class="director-card" data-search="urdu english ترجمہ املا دو لسانی"><div class="director-no">20</div><h3>Director Urdu & English</h3><p>ترجمہ، ناموں کا درست املا اور دو لسانی معیار۔</p><small>LANGUAGE DESK</small></article>
+<article class="director-card" data-search="copy editing سرخیاں زبان ساخت پروف ریڈنگ"><div class="director-no">21</div><h3>Director Copy Editing</h3><p>سرخیاں، زبان، ساخت، وضاحت اور پروف ریڈنگ۔</p><small>COPY DESK</small></article>
+<article class="director-card" data-search="photo visuals تصاویر کیپشن گرافکس حقوق"><div class="director-no">22</div><h3>Director Photo & Visuals</h3><p>تصاویر، کیپشن، گرافکس، حقوق اور بصری صداقت۔</p><small>VISUAL PRODUCTION</small></article>
+<article class="director-card" data-search="audience social media قارئین سوشل میڈیا"><div class="director-no">23</div><h3>Director Audience & Social Media</h3><p>قارئین کی ضرورت اور ذمہ دار سوشل میڈیا مواد۔</p><small>AUDIENCE & SOCIAL</small></article>
+<article class="director-card" data-search="seo distribution سرچ میٹا ڈیٹا تقسیم"><div class="director-no">24</div><h3>Director SEO & Distribution</h3><p>سرچ، میٹا ڈیٹا اور تقسیم کی منصوبہ بندی۔</p><small>SEO & DISTRIBUTION</small></article>
+<article class="director-card" data-search="ethics standards غیر جانب داری رازداری انصاف نقصان"><div class="director-no">25</div><h3>Director Ethics & Standards</h3><p>غیر جانب داری، رازداری، انصاف اور نقصان سے بچاؤ۔</p><small>ETHICS & STANDARDS</small></article>
+<article class="director-card" data-search="security privacy ذرائع تحفظ ڈیٹا اکاؤنٹ سکیورٹی"><div class="director-no">26</div><h3>Director Security & Privacy</h3><p>ذرائع کا تحفظ، ڈیٹا کی حفاظت اور اکاؤنٹ سکیورٹی۔</p><small>SECURITY & PRIVACY</small></article>
+</div></div><div class="no-results" id="noDirectors">اس تلاش کے مطابق کوئی ڈائریکٹر نہیں ملا۔</div></section>
+<section id="desks"><div class="section-head"><div><h2>10 مرکزی کوریج ڈیسک اور Master TemplateFlyers</h2><p>تمام 26 ڈائریکٹرز ہر اسٹوری کے بنیادی موضوع کے مطابق انہی منظور شدہ ماسٹر ڈیزائنز کو استعمال کریں گے۔</p></div><em>10 EDITORIAL MASTERS</em></div><div class="desk-grid">
+<article class="desk-card"><div class="desk-index">01</div><b>سیاست و حکومت</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p1">MASTER FLYER دیکھیں ↗</a><small>POLITICS & GOVERNMENT</small><p>حکومت، پارلیمنٹ، انتخابات اور پالیسی۔</p></article>
+<article class="desk-card"><div class="desk-index">02</div><b>عدالت و عدلیہ</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p2">MASTER FLYER دیکھیں ↗</a><small>COURTS & JUDICIARY</small><p>عدالتی فیصلے، قانون اور انصاف۔</p></article>
+<article class="desk-card"><div class="desk-index">03</div><b>جرائم و عوامی تحفظ</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p3">MASTER FLYER دیکھیں ↗</a><small>CRIME & PUBLIC SAFETY</small><p>جرائم، پولیس، حادثات اور تحفظ۔</p></article>
+<article class="desk-card"><div class="desk-index">04</div><b>کاروبار و معیشت</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p4">MASTER FLYER دیکھیں ↗</a><small>BUSINESS & ECONOMY</small><p>کاروبار، مارکیٹس، مالیات اور زراعت۔</p></article>
+<article class="desk-card"><div class="desk-index">05</div><b>موسم و آفات</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p5">MASTER FLYER دیکھیں ↗</a><small>WEATHER & DISASTERS</small><p>موسم، ماحول، موسمیاتی خطرات اور آفات۔</p></article>
+<article class="desk-card"><div class="desk-index">06</div><b>صحت و سائنس</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p6">MASTER FLYER دیکھیں ↗</a><small>HEALTH & SCIENCE</small><p>صحتِ عامہ، تحقیق، سائنس اور ٹیکنالوجی۔</p></article>
+<article class="desk-card"><div class="desk-index">07</div><b>تعلیم</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p7">MASTER FLYER دیکھیں ↗</a><small>EDUCATION</small><p>اسکول، جامعات، امتحانات اور پالیسی۔</p></article>
+<article class="desk-card"><div class="desk-index">08</div><b>کھیل</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p8">MASTER FLYER دیکھیں ↗</a><small>SPORTS</small><p>مقابلے، نتائج، کھلاڑی اور تجزیہ۔</p></article>
+<article class="desk-card"><div class="desk-index">09</div><b>تفریح و ثقافت</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p9">MASTER FLYER دیکھیں ↗</a><small>ENTERTAINMENT & CULTURE</small><p>فن، ثقافت، میڈیا اور تخلیقی صنعتیں۔</p></article>
+<article class="desk-card"><div class="desk-index">10</div><b>دنیا و خارجہ امور</b><a class="desk-template-link" href="/graphics/department-templateflyers.html#p10">MASTER FLYER دیکھیں ↗</a><small>WORLD & FOREIGN AFFAIRS</small><p>عالمی خبریں، سفارت کاری اور تعلقات۔</p></article>
+</div><p style="color:var(--muted);font-size:12px;margin-top:12px">ہر کراس فنکشنل ڈائریکٹر اسٹوری کے اصل موضوع کے مطابق ماسٹر منتخب کرے گا؛ مبہم موضوع Assignment Desk کو واپس جائے گا۔ تفصیلی ٹیمپلیٹس: <a href="/graphics/department-templateflyers.html" style="color:var(--cyan)">Department Master Flyers ↗</a> · <a href="/graphics/ready-made-flyer-library.html" style="color:var(--cyan)">Ready-made Flyer Library ↗</a></p></section>
+<section id="workflow"><div class="section-head"><div><h2>خبر کی تیاری — مکمل ادارتی ورک فلو</h2><p>ہر ڈپارٹمنٹ میں پانچ specialist مراحل؛ ہر مرحلے کا نتیجہ اگلے مرحلے کے لیے واضح ہو۔</p></div><em>EDITORIAL GATE</em></div><div class="workflow">
+<article class="workflow-card"><div class="step">01</div><h3>Search & Research</h3><p>آزادانہ تلاش، بنیادی ذرائع، تاریخ، مقام اور ثبوت کا ریکارڈ۔</p></article>
+<article class="workflow-card"><div class="step">02</div><h3>Storyline</h3><p>سرخی، خلاصہ، متوازن خبر اور دعووں کی نسبت۔</p></article>
+<article class="workflow-card"><div class="step">03</div><h3>Fact-check</h3><p>دعویٰ بہ دعویٰ جانچ؛ PASS، REVISE یا HOLD کی سفارش۔</p></article>
+<article class="workflow-card"><div class="step">04</div><h3>Graphics & Visuals</h3><p>متعلقہ ماسٹر ٹیمپلیٹ، تصویر کے حقوق اور ڈیٹا کی درستگی۔</p></article>
+<article class="workflow-card"><div class="step">05</div><h3>Presentation & SEO</h3><p>ویب، سوشل، زبان، میٹا ڈیٹا اور تقسیم کا مسودہ۔</p></article>
+<article class="workflow-card"><div class="step">06</div><h3>Admin Approval</h3><p>انسانی ایڈمن کا فیصلہ، محفوظ Queue اور منظوری کے بعد ہی اگلا قدم۔</p></article>
+</div><div class="safety-strip"><b>PASS ≠ PUBLISH</b><span>AI کی PASS سفارش صرف ادارتی جائزے کے لیے ہے۔ کوئی آٹو پبلشنگ، خودکار لائیو نیوز فیڈ یا انسانی منظوری کے بغیر اشاعت فعال نہیں۔</span></div></section>
+<section id="latest"><div class="section-head"><div><h2>تازہ ترین خبریں</h2><p>صرف تصدیق شدہ اور منظور شدہ خبر یہاں ظاہر ہوگی۔</p></div><em>LIVE FEED NOT CONNECTED</em></div><div class="empty">اس وقت کوئی منظور شدہ خبر شائع نہیں کی گئی۔ لائیو نیوز فیڈ ابھی منسلک نہیں؛ اس لیے یہاں کوئی فرضی خبر یا مصنوعی LIVE اپ ڈیٹ نہیں دکھائی جا رہی۔</div></section>
+<section id="broadcast"><div class="section-head"><div><h2>Broadcast Graphics & VFX Studio</h2><p>نیوز پیکیج، بریکنگ گرافکس اور پریزنٹیشن کے لیے مرکزی بصری نظام۔</p></div><em>VISUAL SYSTEM</em></div><div class="broadcast"><div class="breaking"><span class="alert">DESIGN PREVIEW · NOT LIVE</span><h3>BREAKING<br>NEWS</h3><p>یہ صرف ڈیزائن پری ویو ہے، حقیقی بریکنگ نیوز یا لائیو نشریات نہیں۔ حقیقی استعمال سے پہلے تصدیق شدہ خبر، وقت، مقام اور ماخذ شامل کریں۔</p><div class="lower-third">VERIFIED STORY COPY · SOURCE CREDIT · ADMIN REVIEW</div></div><div class="vfx"><div class="eyebrow">CINEMATIC VFX / HUD</div><h3>ایک مستقل، جدید اور ذمہ دارانہ براڈکاسٹ شناخت</h3><p>نیون HUD لائنز، گرڈ، لائٹ سویپ، ڈیٹا ماڈیولز اور ڈیسک کے مطابق بصری ترتیب۔ آرائشی ڈیٹا کو حقیقی اعدادوشمار کے طور پر پیش نہیں کیا جائے گا۔</p><div class="vfx-graphic" aria-hidden="true"></div><p><a href="/graphics/broadcast-vfx-template-suite.html" style="color:var(--cyan)">Broadcast VFX Template Suite کھولیں ↗</a></p></div></div></section>
 </main>
-
-<footer id="about">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h3>AI CHRONICALS NEWS</h3>
-        <p>مستند معلومات، غیر جانب دار صحافت اور عوامی دلچسپی کی خبریں۔</p>
-        <p><b>Be Informed. Be Ahead.</b></p>
-      </div>
-      <div>
-        <h3>اہم لنکس</h3>
-        <p><a href="#pakistan">پاکستان</a></p>
-        <p><a href="#world">دنیا</a></p>
-        <p><a href="#sports">کھیل</a></p>
-      </div>
-      <div>
-        <h3>ادارتی اصول</h3>
-        <p>خبر کی تصدیق</p>
-        <p>اصل ماخذ کا حوالہ</p>
-        <p>درستگی اور اصلاح</p>
-      </div>
-    </div>
-    <div class="copyright">
-      © <span id="year"></span> AI Chronicals News. All rights reserved.
-    </div>
-  </div>
-</footer>
-
+<footer id="about"><div class="container"><div class="footgrid"><div><h3>AI CHRONICALS NEWS</h3><p>آزادانہ تحقیق، اصل ذرائع، غیر جانب دار صحافت اور واضح ادارتی جواب دہی۔</p><p>INDEPENDENT NEWSROOM · VERIFIED FIRST</p></div><div><h3>نیوز روم</h3><p><a href="#directors">تمام 26 ڈائریکٹرز</a></p><p><a href="#desks">10 مرکزی ڈیسک</a></p><p><a href="#workflow">ادارتی ورک فلو</a></p></div><div><h3>آپریشنز</h3><p><a href="/admin.html">Admin Control Room</a></p><p><a href="/graphics/department-templateflyers.html">Department Master Flyers</a></p><p><a href="/graphics/ready-made-flyer-library.html">Ready-made Flyer Library</a></p></div></div><div class="copyright">© <span id="year"></span> AI Chronicals News. All rights reserved. · Publication requires human admin approval.</div></div></footer>
 <script>
-document.getElementById("year").textContent =
-  new Date().getFullYear();
-
-document.getElementById("today").textContent =
-  new Date().toLocaleDateString("ur-PK", {
-    weekday:"long", year:"numeric",
-    month:"long", day:"numeric"
-  });
-
-document.getElementById("searchForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const query = document.getElementById("searchInput").value.trim();
-  if (!query) return;
-
-  const cards = document.querySelectorAll(".card");
-  let found = false;
-
-  cards.forEach(card => {
-    const match = card.textContent.toLowerCase().includes(query.toLowerCase());
-    card.style.display = match ? "" : "none";
-    if (match) found = true;
-  });
-
-  document.getElementById("newsCards").scrollIntoView({behavior:"smooth"});
-  if (!found) alert("اس تلاش سے مطابقت رکھنے والی خبر موجود نہیں۔");
+document.getElementById("year").textContent=new Date().getFullYear();
+document.getElementById("today").textContent=new Date().toLocaleDateString("ur-PK",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+const directorCards=[...document.querySelectorAll(".director-card")];
+const vectorSprite="/graphics/newsroom-vector-sprite.svg";
+directorCards.forEach(card=>{
+ const no=String(card.querySelector(".director-no")?.textContent||"").trim().padStart(2,"0");
+ if(no.length!==2||Number(no)<1||Number(no)>26)return;
+ const wrap=document.createElement("span");wrap.className="director-vector-wrap";wrap.setAttribute("aria-hidden","true");
+ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 64 64");svg.setAttribute("focusable","false");
+ const use=document.createElementNS("http://www.w3.org/2000/svg","use");use.setAttribute("href",vectorSprite+"#d"+no);svg.appendChild(use);wrap.appendChild(svg);
+ card.insertBefore(wrap,card.querySelector(".director-no"));
+ card.dataset.vectorIcon="d"+no;
+});
+const search=document.getElementById("directorSearch");
+const count=document.getElementById("directorCount");
+const noResults=document.getElementById("noDirectors");
+search.addEventListener("input",()=>{
+ const q=search.value.trim().toLocaleLowerCase();
+ let visible=0;
+ directorCards.forEach(card=>{
+  const match=(card.textContent+" "+(card.dataset.search||"")).toLocaleLowerCase().includes(q);
+  card.hidden=!match;
+  if(match)visible++;
+ });
+ document.querySelectorAll(".director-group").forEach(group=>{
+  group.hidden=!group.querySelector(".director-card:not([hidden])");
+ });
+ count.textContent=visible+" میں سے 26 ڈائریکٹرز";
+ noResults.style.display=visible?"none":"block";
 });
 </script>
-
-</body>
-</html>
+</body></html>
