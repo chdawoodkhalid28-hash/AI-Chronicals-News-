@@ -14,7 +14,7 @@ input,textarea,select{width:100%;padding:12px;border:1px solid #ccd5e2;border-ra
 textarea{min-height:110px;resize:vertical}button{border:0;border-radius:7px;padding:12px 18px;background:var(--blue);color:white;font-weight:bold;font-size:15px;cursor:pointer;margin-top:16px}
 button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-height:1.8}
 .status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
-#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}
+#result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}.department-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}.department-state{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 11px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font-size:13px}.department-state small{color:#69778b}.state-running{border-color:#1264bd;background:#eef6ff}.state-success{border-color:#16834a;background:#effaf3}.state-failed{border-color:#d33b48;background:#fff1f2}
 </style>
 </head>
 <body>
@@ -61,7 +61,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 <label for="language">ڈرافٹ کی زبان</label>
 <select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
 <button id="generate">بلند کو ہدایت دیں — کام شروع کریں</button>
-<div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div>
+<div id="progress" class="status" aria-live="polite">بلند اور 26 شعبہ جاتی AI ٹیموں کی پیش رفت یہاں نظر آئے گی۔</div><div id="departmentProgress" class="department-progress" aria-live="polite"></div>
 <div id="status" class="status" role="status">سسٹم تیار ہے۔</div>
 </section>
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">یہ ریکارڈ صرف اسی براؤزر/ڈیوائس میں محفوظ رہیں گے۔ کسی خبر کی اشاعت اس صفحے سے نہیں ہوتی۔</p><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
@@ -209,15 +209,39 @@ const departments=[
   ["security_privacy_desk","سکیورٹی و پرائیویسی"]
 ];
 
-async function callDepartmentTeam(department,payload,password){
-  const response=await fetch("/api/admin/department-team",{
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},
-    body:JSON.stringify({...payload,department})
+function renderDepartmentProgress(states){
+  const root=document.getElementById("departmentProgress");root.replaceChildren();
+  departments.forEach(([key,label])=>{
+    const state=states[key]||"QUEUED";
+    const item=document.createElement("div");item.className="department-state "+(state==="RUNNING"?"state-running":state==="SUCCESS"?"state-success":state==="FAILED"?"state-failed":"");
+    const name=document.createElement("span");name.textContent=label;item.appendChild(name);
+    const value=document.createElement("small");value.textContent=state==="SUCCESS"?"مکمل":state==="RUNNING"?"کام جاری":state==="FAILED"?"ناکام":"قطار میں";item.appendChild(value);
+    root.appendChild(item);
   });
-  const data=await response.json();
-  if(!response.ok)throw new Error((data.error||"Department team failed")+(data.detail?": "+data.detail:""));
-  return data.result;
+}
+
+async function callDepartmentTeam(department,payload,password){
+  let lastError;
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const response=await fetch("/api/admin/department-team",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},
+        body:JSON.stringify({...payload,department})
+      });
+      let data;
+      try{data=await response.json();}catch{throw new Error("سرور نے قابلِ مطالعہ JSON جواب نہیں دیا۔");}
+      if(!response.ok){const error=new Error((data.error||"Department team failed")+(data.detail?": "+data.detail:""));error.status=response.status;throw error;}
+      if(!data||!data.result||typeof data.result!=="object")throw new Error("Department response schema is incomplete.");
+      return data.result;
+    }catch(error){
+      lastError=error;
+      const retryable=!error.status||error.status===429||error.status>=500;
+      if(attempt===0&&retryable){await new Promise(resolve=>setTimeout(resolve,1400));continue;}
+      throw error;
+    }
+  }
+  throw lastError||new Error("Department team failed");
 }
 
 button.addEventListener("click",async()=>{
@@ -234,7 +258,10 @@ button.addEventListener("click",async()=>{
   const headers={"Content-Type":"application/json","Authorization":"Bearer "+password};
   const departmentTeams={};
   const failures=[];
+  const departmentStates=Object.fromEntries(departments.map(([key])=>[key,"QUEUED"]));
   let completed=0;
+  let research=null;
+  renderDepartmentProgress(departmentStates);
   try{
     statusBox.textContent="بلند مرکزی اسائنمنٹ تیار کر رہا ہے…";
     progressBox.textContent="مرحلہ 1 / 3 — بلند مرکزی تحقیق اور assignment brief تیار کر رہا ہے";
@@ -242,7 +269,7 @@ button.addEventListener("click",async()=>{
       method:"POST",headers,
       body:JSON.stringify({instruction,language})
     });
-    const research=await researchResponse.json();
+    research=await researchResponse.json();
     if(!researchResponse.ok)throw new Error((research.error||"Buland research failed")+(research.detail?": "+research.detail:""));
     progressBox.textContent="مرحلہ 2 / 3 — 26 ڈائریکٹرز اپنی الگ سرچ و ریسرچ ٹیمیں چلا رہے ہیں";
     statusBox.textContent="بلند کا مرکزی brief تیار ہے۔ اب ہر شعبہ اپنی تازہ ویب سرچ، تحقیق، اسٹوری لائن، گرافکس اور پریزنٹیشن تیار کرے گا…";
@@ -250,16 +277,19 @@ button.addEventListener("click",async()=>{
     const batchSize=2;
     for(let i=0;i<departments.length;i+=batchSize){
       const batch=departments.slice(i,i+batchSize);
+      batch.forEach(([key])=>{departmentStates[key]="RUNNING";});
+      renderDepartmentProgress(departmentStates);
       const settled=await Promise.allSettled(batch.map(async([key])=>{
         const result=await callDepartmentTeam(key,payload,password);
         return [key,result];
       }));
       for(let j=0;j<settled.length;j++){
         const item=settled[j], key=batch[j][0];
-        if(item.status==="fulfilled")departmentTeams[item.value[0]]=item.value[1];
-        else failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Department team failed"});
+        if(item.status==="fulfilled"){departmentTeams[item.value[0]]=item.value[1];departmentStates[key]="SUCCESS";}
+        else{departmentStates[key]="FAILED";failures.push({department:key,error:item.reason&&item.reason.message?item.reason.message:"Department team failed"});}
         completed++;
         progressBox.textContent=completed+" / 26 شعبہ جاتی ٹیمیں مکمل — "+failures.length+" ناکام";
+        renderDepartmentProgress(departmentStates);
       }
       if(i+batchSize<departments.length)await new Promise(resolve=>setTimeout(resolve,650));
     }
@@ -292,6 +322,11 @@ button.addEventListener("click",async()=>{
       :"بلند اور 26 شعبہ جاتی ٹیموں کا کام مکمل ہو گیا۔ تمام نیوز پیکجز غیر شائع شدہ ہیں اور آپ کی منظوری کے منتظر ہیں۔";
   }catch(error){
     statusBox.textContent="بلند/نیوز روم کام مکمل نہ کر سکا: "+error.message;
+    if(Object.keys(departmentTeams).length){
+      const partial={buland:{instruction,centralResearchBrief:research&&research.researchBrief||"",sources:research&&research.sources||[]},departmentTeams,executionSummary:{requestedDepartments:26,completedDepartments:Object.keys(departmentTeams).length,failedDepartments:failures.length,passRecommendations:Object.values(departmentTeams).filter(x=>x.status==="PASS").length,reviseRecommendations:Object.values(departmentTeams).filter(x=>x.status==="REVISE").length,holdRecommendations:Object.values(departmentTeams).filter(x=>x.status==="HOLD").length,failures,editorialStatus:"PENDING_ADMIN_APPROVAL",publication:"DISABLED"},partial:true,limitations:["This is a partial newsroom run. Missing departments must be retried before editorial assessment.","No story is published; admin approval remains mandatory."]};
+      renderReport(partial);outputPanel.hidden=false;
+      try{saveRunToQueue(partial);}catch(storageError){statusBox.textContent+=" جزوی رپورٹ مقامی طور پر محفوظ نہیں ہو سکی؛ فوراً JSON Export کریں۔";}
+    }
   }finally{
     button.disabled=false;
   }
