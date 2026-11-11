@@ -284,7 +284,7 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
       "API status: "+(data.status||"unknown"),
       "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
       "OpenAI API key: "+(c.openAIKeyConfigured?"configured":"MISSING"),
-      "Blob token (presence only): "+(c.blobTokenConfigured?"configured — app storage not enabled":"not configured"),
+      "Blob token (presence only): "+(c.blobTokenConfigured?"configured — private server queue available":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
       "Checked: "+(data.checkedAt||"unknown")
