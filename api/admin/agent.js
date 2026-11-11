@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "node:crypto";
+
 const DEPARTMENTS = {
   "newsroom": {
     "title": "Director Newsroom / Editor-in-Chief",
@@ -368,10 +370,9 @@ const DEPARTMENTS = {
 
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
-  const crypto = require("crypto");
   const left = Buffer.from(a);
   const right = Buffer.from(b);
-  return left.length === right.length && crypto.timingSafeEqual(left, right);
+  return left.length === right.length && timingSafeEqual(left, right);
 }
 
 export default async function handler(req, res) {
