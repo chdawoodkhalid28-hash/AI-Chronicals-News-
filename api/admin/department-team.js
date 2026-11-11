@@ -195,11 +195,28 @@ export default async function handler(req, res) {
     }));
 
     const team = Object.fromEntries(roleResults);
-    const factStatus = String(team.factCheckTeam.overallStatus || "HOLD").toUpperCase();
-    const hasMaterialGaps = Array.isArray(team.researchTeam.claimsNeedingVerification) &&
-      team.researchTeam.claimsNeedingVerification.length > 0;
-    const status = factStatus === "PASS" && !hasMaterialGaps ? "PASS" :
-      factStatus === "HOLD" ? "HOLD" : "REVISE";
+    const malformedRole = roleSpecs.find(role =>
+      !team[role.key] || typeof team[role.key] !== "object" || Array.isArray(team[role.key])
+    );
+    if (malformedRole) {
+      const error = new Error(malformedRole.name + " returned an invalid structured result");
+      error.status = 502;
+      throw error;
+    }
+
+    const researchTeam = team.researchTeam;
+    const factCheckTeam = team.factCheckTeam;
+    const factStatus = String(factCheckTeam.overallStatus || "HOLD").toUpperCase();
+    const validFactStatus = ["PASS", "REVISE", "HOLD"].includes(factStatus);
+    const hasValidAudit = Array.isArray(researchTeam.claimsNeedingVerification) &&
+      Array.isArray(factCheckTeam.claimChecks) &&
+      factCheckTeam.claimChecks.length > 0 &&
+      Array.isArray(factCheckTeam.missingEvidence);
+    const hasMaterialGaps = researchTeam.claimsNeedingVerification.length > 0 ||
+      factCheckTeam.missingEvidence.length > 0;
+    // PASS is reserved for a structurally complete evidence audit with no declared gaps.
+    const status = !validFactStatus || !hasValidAudit || factStatus === "HOLD" ? "HOLD" :
+      factStatus === "PASS" && !hasMaterialGaps ? "PASS" : "REVISE";
     const result = {
       department,
       directorTitle: "Director " + title,
