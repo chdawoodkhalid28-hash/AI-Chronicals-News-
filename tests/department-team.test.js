@@ -121,3 +121,56 @@ test("runs five separate specialist invocations and keeps the package unpublishe
   assert.equal(res.body.result.publication, "DISABLED");
   assert.equal(res.body.result.executionModel.specialistRoles, 5);
 });
+
+
+test("routes all 26 configured department keys through the same five-role pipeline", async () => {
+  const departmentKeys = [
+    "newsroom", "assignment_desk", "pakistan_desk", "provincial_local_desk",
+    "politics_desk", "world_desk", "crime_desk", "courts_legal_desk",
+    "business_economy_desk", "finance_markets_desk", "sports_desk",
+    "technology_ai_desk", "science_health_desk", "climate_environment_desk",
+    "education_desk", "agriculture_desk", "research_desk",
+    "open_source_verification_desk", "fact_check_desk", "urdu_english_desk",
+    "copy_editing_desk", "photo_visuals_desk", "audience_social_desk",
+    "seo_distribution_desk", "ethics_standards_desk", "security_privacy_desk"
+  ];
+  const roleOutputs = [
+    { keyFacts: [], timeline: [], context: "Synthetic only", claimsNeedingVerification: [], sourceLimitations: [] },
+    { headline: "Synthetic headline", dek: "Synthetic department test", article: "Not for publication." },
+    { overallStatus: "PASS", claimChecks: [{ claim: "Synthetic test", evidence: "Synthetic test source", status: "SUPPORTED_FOR_TEST" }], missingEvidence: [], riskNotes: [] },
+    { visualConcept: "Synthetic graphic", layoutBrief: "No real data", infographicData: [], imagePrompt: "Synthetic", caption: "Test", altText: "Test", rightsAndAuthenticityChecks: [] },
+    { contentOrder: [], websitePresentation: "Draft only", socialVariants: [], seoTitle: "Test", metaDescription: "Test", keywords: [] }
+  ];
+  let invocationCount = 0;
+  globalThis.fetch = async (_url, options) => {
+    const payload = JSON.parse(options.body);
+    invocationCount++;
+    if (payload.model === "gpt-5-search-api") {
+      return new Response(JSON.stringify({
+        choices: [{ message: {
+          content: "Synthetic department research dossier.",
+          annotations: [{ url_citation: { title: "Synthetic test source", url: "https://example.com/department-test" } }]
+        } }]
+      }), { status: 200 });
+    }
+    const roleIndex = (invocationCount - 2) % 5;
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify(roleOutputs[roleIndex]) } }]
+    }), { status: 200 });
+  };
+
+  for (const department of departmentKeys) {
+    const res = responseRecorder();
+    await handler(request({ body: {
+      department,
+      instruction: "Run a synthetic department routing and safeguard test",
+      language: "en"
+    } }), res);
+    assert.equal(res.statusCode, 200, department + " should be accepted");
+    assert.match(res.body.directorTitle, /^Director /);
+    assert.equal(res.body.result.executionModel.specialistRoles, 5);
+    assert.equal(res.body.result.editorialStatus, "PENDING_ADMIN_APPROVAL");
+    assert.equal(res.body.result.publication, "DISABLED");
+  }
+  assert.equal(invocationCount, 26 * 6, "each department should run one search and five specialist calls");
+});
