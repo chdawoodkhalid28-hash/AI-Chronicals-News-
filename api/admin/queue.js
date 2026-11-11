@@ -1,14 +1,9 @@
 import { del, get, list, put } from "@vercel/blob";
 import { timingSafeEqual } from "node:crypto";
+import { ALLOWED_DECISIONS, isValidId, sanitizeItem, validateItem } from "./queue-core.js";
 
 const PREFIX = "approval-queue/";
 const MAX_RECORDS = 20;
-const MAX_RECORD_BYTES = 3_000_000;
-const ALLOWED_DECISIONS = new Set([
-  "PENDING_ADMIN_REVIEW",
-  "APPROVED_BY_ADMIN — NOT PUBLISHED",
-  "REVISION_REQUIRED"
-]);
 
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string" || !a || !b) return false;
@@ -17,23 +12,8 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
-function isValidId(value) {
-  return typeof value === "string" && /^run-[A-Za-z0-9_-]{1,100}$/.test(value);
-}
-
 function recordPath(id) {
   return PREFIX + id + ".json";
-}
-
-function validateItem(item) {
-  if (!item || typeof item !== "object" || !isValidId(item.id)) return false;
-  if (!item.payload || typeof item.payload !== "object") return false;
-  if (!item.payload.buland || !item.payload.executionSummary) return false;
-  if (!Array.isArray(item.payload.departmentTeams)) {
-    // Current dashboard stores departmentTeams as an object keyed by department.
-    if (!item.payload.departmentTeams || typeof item.payload.departmentTeams !== "object") return false;
-  }
-  return true;
 }
 
 async function readRecord(pathname) {
@@ -44,13 +24,7 @@ async function readRecord(pathname) {
 }
 
 async function writeRecord(item) {
-  const raw = JSON.stringify(item);
-  if (Buffer.byteLength(raw, "utf8") > MAX_RECORD_BYTES) {
-    const error = new Error("Queue record is too large");
-    error.statusCode = 413;
-    throw error;
-  }
-  await put(recordPath(item.id), raw, {
+  await put(recordPath(item.id), JSON.stringify(item), {
     access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,
@@ -67,8 +41,12 @@ async function readAllRecords() {
     const page = await list({ prefix: PREFIX, limit: 100, cursor });
     for (const blob of page.blobs || []) {
       if (!blob.pathname.endsWith(".json")) continue;
-      const item = await readRecord(blob.pathname);
-      if (item && validateItem(item)) found.push(item);
+      try {
+        const item = await readRecord(blob.pathname);
+        if (item && validateItem(item)) found.push(item);
+      } catch {
+        // Skip an unreadable/corrupt record without failing the entire admin queue.
+      }
     }
     hasMore = Boolean(page.hasMore);
     cursor = page.cursor;
@@ -81,10 +59,11 @@ async function readAllRecords() {
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Vary", "Authorization");
   res.setHeader("X-Content-Type-Options", "nosniff");
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
-  const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  const supplied = (req.headers.authorization || "").replace(/^Bearer\\s+/i, "");
   if (!safeEqual(supplied, expected)) {
     return res.status(expected ? 401 : 503).json({
       error: expected ? "Admin authentication failed" : "Admin password is not configured"
@@ -103,16 +82,7 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const item = req.body && req.body.item;
       if (!validateItem(item)) return res.status(400).json({ error: "Invalid approval queue record" });
-      const safeItem = {
-        id: item.id,
-        savedAt: typeof item.savedAt === "string" ? item.savedAt : new Date().toISOString(),
-        instruction: String(item.instruction || "").slice(0, 2000),
-        completedDepartments: Math.max(0, Math.min(26, Number(item.completedDepartments) || 0)),
-        decision: ALLOWED_DECISIONS.has(item.decision) ? item.decision : "PENDING_ADMIN_REVIEW",
-        payload: item.payload
-      };
-      safeItem.payload.executionSummary.publication = "DISABLED";
-      safeItem.payload.executionSummary.editorialStatus = "PENDING_ADMIN_APPROVAL";
+      const safeItem = sanitizeItem(item);
       await writeRecord(safeItem);
       return res.status(200).json({ ok: true, item: safeItem, publication: "DISABLED" });
     }
