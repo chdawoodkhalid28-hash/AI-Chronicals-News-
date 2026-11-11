@@ -16,6 +16,7 @@ Official website and AI newsroom foundation for AI Chronicals News.
 - `api/admin/department-team.js`: authenticated independent department Search & Research plus Director-coordinated newsroom package pipeline.
 - `api/admin/agent.js`: original 26-director review endpoint retained for specialist review workflows.
 - `api/admin/draft.js`: legacy draft endpoint; not used by the current department-team dashboard.
+- `api/admin/queue.js`: authenticated private Blob approval-queue API (list, save, update admin decision, delete).
 
 ## Newsroom hierarchy
 Buland is the central AI coordinator and is not counted among the 26 department directors. Each director owns a dedicated department workflow:
@@ -61,8 +62,9 @@ The five specialist roles are separate model invocations coordinated by the depa
 - Every result is marked `PENDING_ADMIN_APPROVAL`; publication is disabled.
 - A model's web-search citations do not prove that every linked page was opened or independently authenticated. Claims needing verification must remain visible.
 - AI assessments are not external human verification. Primary-source review and real-world confirmation may still be required.
-- The admin dashboard stores completed run records and local review decisions in the current browser's localStorage and provides JSON export plus validated JSON import/restore backups. This is device/browser-specific, is not server-side storage, does not sync across devices, and may be lost if browser data is cleared. Export backups regularly.
-- No server-side persistent approval queue is configured. A public Vercel Blob store (`ai-chronicals-news-media`, region `bom1`) is already connected to the project, but the application does not currently use it. Do not store unpublished drafts, approval decisions, credentials, or other private newsroom data in this public store. Server-side queue persistence requires a private storage backend and authenticated queue API; provision or use one only after explicit admin authorization.
+- The admin dashboard stores completed run records and review decisions in a private Vercel Blob store (`ai-chronicals-news-private-persistence`, region `bom1`, access `private`) through the authenticated `/api/admin/queue` endpoint. The browser localStorage queue remains as a local fallback and JSON import/export backup; use the admin Sync control to load and merge records across devices.
+- Queue API access requires the admin bearer password. Queue records are private and are never exposed as public Blob URLs. The API supports list, save, update decision, and delete. Admin approval is a review state only; it does not publish a story. All queue records are forced to `PENDING_ADMIN_APPROVAL` and `publication: DISABLED` when saved.
+- The older public Blob store (`ai-chronicals-news-media`, region `bom1`) is retained as a legacy store and must not be used for private newsroom drafts or approval decisions.
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows. Department runs are throttled in batches of two, with a short pause between batches; transient upstream failures receive one retry and requests have a timeout. These safeguards reduce but do not eliminate rate-limit failures.
 - Public Vercel Blob storage is intentionally deferred and is not used for draft persistence.
@@ -71,6 +73,7 @@ The five specialist roles are separate model invocations coordinated by the depa
 ## Required Vercel environment variables
 - `OPENAI_API_KEY`
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`)
+- `BLOB_READ_WRITE_TOKEN` (connected to the private newsroom Blob store)
 
 Never put secrets in source files, commits, browser code, logs, or chat messages.
 
