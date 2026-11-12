@@ -52,6 +52,18 @@ test("Admin Graphics workspace links directly to the ten master flyers", () => {
   assert.match(admin, /href="\/graphics\/department-templateflyers\.html"/);
 });
 
+test("Admin requires an explicit verified desk for dynamic directors and forwards it to routing", () => {
+  assert.match(admin, /const requiresAssignment=inheritedTemplateDepartments\.has\(key\)/);
+  assert.match(admin, /if\(requiresAssignment&&!assignedDesk\)/);
+  assert.match(admin, /assignedDesk,storyBeat/);
+  const optionBlock = admin.match(/const graphicsAssignmentOptions = \[([^\]]+)\]/);
+  assert.ok(optionBlock, "Admin assignment options must be present");
+  const options = [...optionBlock[1].matchAll(/"([^"]+)"/g)].map(match => match[1]);
+  assert.equal(new Set(options).size, options.length);
+  assert.ok(options.length >= 10);
+  for (const option of options) assert.ok(authoritativeDirectors.includes(option), "assignment option is not in the authoritative roster: " + option);
+});
+
 test("the old incorrect downstream count is absent", () => {
   assert.ok(!html.includes("16 DOWNSTREAM AGENTS REUSE"));
   assert.ok(html.includes("26 DIRECTOR WORKFLOWS ROUTED"));
