@@ -194,14 +194,29 @@ function renderReport(data){
     if(graphic.visualConcept)addText(card,"p",graphic.visualConcept);
     if(graphic.imagePrompt){
        addText(card,"p","Image prompt: "+graphic.imagePrompt);
+       const directorName=(team.directorTitle||key).replace(/^Director\s+/,"").trim();
+       const requiresAssignment=inheritedTemplateDepartments.has(key);
+       let assignedDesk="";
+       if(requiresAssignment){
+         addText(card,"label","اس ڈائریکٹر کے لیے تصدیق شدہ Assignment Desk منتخب کریں (لازمی):","report-meta");
+         const assignmentSelect=document.createElement("select");
+         assignmentSelect.setAttribute("aria-label","Verified Assignment Desk for "+directorName);
+         assignmentSelect.style.cssText="display:block;width:100%;max-width:420px;margin:8px 0;padding:10px;border:1px solid #3b829e;border-radius:8px;background:#101d2a;color:#fff";
+         const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent="— پہلے Assignment Desk منتخب کریں —";placeholder.disabled=true;placeholder.selected=true;assignmentSelect.appendChild(placeholder);
+         graphicsAssignmentOptions.filter(name=>name!==directorName).forEach(name=>{const option=document.createElement("option");option.value=name;option.textContent=name;assignmentSelect.appendChild(option);});
+         card.appendChild(assignmentSelect);
+         assignmentSelect.addEventListener("change",()=>{assignedDesk=assignmentSelect.value;});
+       }
        const graphicButton=document.createElement("button");
        graphicButton.type="button";
        graphicButton.textContent="اصل گرافک تیار کریں";
-       const graphicStatus=addText(card,"p","Approved master template اس شعبے اور خبر کے موضوع کے مطابق منتخب ہوگا۔","report-meta");
+       const graphicStatus=addText(card,"p",requiresAssignment?"گرافک بنانے سے پہلے تصدیق شدہ Assignment Desk منتخب کریں۔":"Approved master template اس شعبے اور خبر کے موضوع کے مطابق منتخب ہوگا۔","report-meta");
        graphicButton.addEventListener("click",async()=>{
          if(!activeAdminPassword){graphicStatus.textContent="ایڈمن سیشن دستیاب نہیں؛ دوبارہ لاگ اِن کریں۔";return;}
-         graphicButton.disabled=true;graphicStatus.textContent="گرافک تیار ہو رہا ہے…";
+         if(requiresAssignment&&!assignedDesk){graphicStatus.textContent="روٹنگ روک دی گئی: پہلے حقیقی Assignment Desk منتخب کریں۔";return;}
+         graphicButton.disabled=true;graphicStatus.textContent="گرافک روٹنگ اور تیاری جاری ہے…";
          try{
+           const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:directorName,assignedDesk,storyBeat:story.category||story.desk||""})});
            const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:(team.directorTitle||key).replace(/^Director\s+/,""),storyBeat:story.category||story.desk||""})});
            const result=await response.json();
            if(!response.ok)throw new Error(result.detail||result.error||"Graphics request failed");
@@ -419,6 +434,7 @@ const inheritedTemplateDepartments = new Set([
   "audience_social_desk","seo_distribution_desk","ethics_standards_desk",
   "security_privacy_desk"
 ]);
+const graphicsAssignmentOptions = ["Assignment Desk","Politics","World","Crime & Public Safety","Courts & Legal Affairs","Business & Economy","Finance & Markets","Sports","Technology & AI","Science & Health","Climate & Environment","Education","Agriculture & Rural Affairs"];
 function renderTeamRoster(){
   const root=document.getElementById("teamRosterGrid");
   if(!root)return;
