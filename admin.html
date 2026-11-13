@@ -217,7 +217,6 @@ function renderReport(data){
          graphicButton.disabled=true;graphicStatus.textContent="گرافک روٹنگ اور تیاری جاری ہے…";
          try{
            const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:directorName,assignedDesk,storyBeat:story.category||story.desk||""})});
-           const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+activeAdminPassword},body:JSON.stringify({prompt:graphic.imagePrompt,headline:story.headline||"",director:(team.directorTitle||key).replace(/^Director\s+/,""),storyBeat:story.category||story.desk||""})});
            const result=await response.json();
            if(!response.ok)throw new Error(result.detail||result.error||"Graphics request failed");
            graphicStatus.textContent="Selected master: "+result.templateName+" — "+(result.storyBeat||"fixed department mapping");
