@@ -7,7 +7,7 @@
 <style>
 :root{--navy:#071a35;--blue:#1264bd;--red:#e33445;--bg:#f2f5fa;--ink:#182338}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Nastaliq Urdu",sans-serif}
-header{background:var(--navy);color:white;padding:22px 4%}header strong{font:900 22px Arial;direction:ltr;display:block}header span{color:#ff9aa5}
+header{background:linear-gradient(110deg,#061326,#12365a 62%,#241a3e);color:white;padding:22px 4%;display:flex;align-items:center;gap:14px;border-bottom:1px solid #3d7898}header .admin-brand{display:flex;align-items:center;gap:12px}header .admin-brand img{width:54px;height:54px;filter:drop-shadow(0 0 10px #45e6f277)}header strong{font:900 22px Arial;direction:ltr;display:block;letter-spacing:.045em}header span{color:#8defff;font:800 11px Arial;letter-spacing:.16em}
 main{width:min(900px,94%);margin:28px auto}.panel{background:white;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #071a3510}
 h1{font-size:25px;margin-top:0}label{display:block;font-weight:bold;margin:13px 0 6px}
 input,textarea,select{width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:7px;font:inherit;background:white}
@@ -50,7 +50,7 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 </style>
 </head>
 <body>
-<header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span></header>
+<header><div class="admin-brand"><img src="/graphics/ai-chronicals-news-logo.svg" alt="AI Chronicals News cinematic emblem" width="54" height="54"><strong>AI CHRONICALS NEWS</strong></div><span>ADMIN NEWSROOM</span></header>
 <main>
 <nav class="newsroom-nav" aria-label="Newsroom sections">
 <a href="#dashboardPanel">مرکزی ڈیش بورڈ</a>
