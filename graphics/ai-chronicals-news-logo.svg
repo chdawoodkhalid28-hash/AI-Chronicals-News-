@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">AI Chronicals News emblem</title><desc id="desc">Futuristic newsroom emblem with an orbital broadcast ring, luminous hexagonal frame and ACN monogram.</desc>
+<defs>
+ <linearGradient id="g" x1="22" y1="18" x2="230" y2="238" gradientUnits="userSpaceOnUse"><stop stop-color="#68f5ff"/><stop offset=".48" stop-color="#648cff"/><stop offset="1" stop-color="#d66cff"/></linearGradient>
+ <linearGradient id="gold" x1="60" y1="55" x2="190" y2="200" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#9cefff"/></linearGradient>
+ <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="128" cy="128" r="112" fill="#071426" fill-opacity=".92" stroke="url(#g)" stroke-width="5"/>
+<circle cx="128" cy="128" r="96" fill="none" stroke="#65eaff" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="3 8"/>
+<path d="M128 24 214 74v108l-86 50-86-50V74z" fill="#0b1c34" stroke="url(#g)" stroke-width="5" filter="url(#glow)"/>
+<path d="M128 47 194 85v86l-66 38-66-38V85z" fill="none" stroke="#75eaff" stroke-opacity=".35" stroke-width="2"/>
+<path d="M79 166 111 83h18l-33 83H79zm44 0 32-83h18l-33 83h-17z" fill="url(#gold)" opacity=".94"/>
+<path d="M106 139h54" stroke="#67edff" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M35 128h18M203 128h18M128 35v18M128 203v18" stroke="#9af5ff" stroke-width="4" stroke-linecap="round"/>
+<circle cx="128" cy="128" r="7" fill="#fff" filter="url(#glow)"/>
+<path d="M18 92 28 86M228 170l10-6M86 18l6 10M164 228l6 10" stroke="#d66cff" stroke-width="4" stroke-linecap="round"/>
+</svg>
