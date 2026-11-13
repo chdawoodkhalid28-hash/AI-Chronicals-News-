@@ -56,6 +56,9 @@ test("Admin requires an explicit verified desk for dynamic directors and forward
   assert.match(admin, /const requiresAssignment=inheritedTemplateDepartments\.has\(key\)/);
   assert.match(admin, /if\(requiresAssignment&&!assignedDesk\)/);
   assert.match(admin, /assignedDesk,storyBeat/);
+  const graphicsRequests = admin.match(/const response=await fetch\("\/api\/admin\/graphics"/g) || [];
+  assert.equal(graphicsRequests.length, 1, "Admin must make exactly one graphics API request per click");
+  assert.match(admin, /director:directorName,assignedDesk,storyBeat/);
   const optionBlock = admin.match(/const graphicsAssignmentOptions = \[([^\]]+)\]/);
   assert.ok(optionBlock, "Admin assignment options must be present");
   const options = [...optionBlock[1].matchAll(/"([^"]+)"/g)].map(match => match[1]);
