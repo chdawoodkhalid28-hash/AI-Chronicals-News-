@@ -33,3 +33,13 @@ Verification requires two source records or one explicitly marked official. Only
 - The API has no publish endpoint and all article writes force `publication_status=disabled`.
 - Keep database backups/export before schema changes. Review Supabase Free plan limits and project pausing/retention terms before relying on it for critical operations.
 - This migration and API require Preview integration verification after environment variables are configured. No live database test can pass until those variables are set in Vercel and the migration is applied.
+
+## Preview connectivity verification
+
+After adding the two Supabase environment variables to the Preview environment and redeploying, open:
+
+`https://YOUR-PREVIEW-DOMAIN/api/health?supabase=1`
+
+Expected success response: HTTP 200 with `provider: "supabase"`, `status: "connected"`, and `probe: "read_only_select"`. This performs only a `SELECT id ... LIMIT 1` against `news_articles`; it does not return article data or expose credentials.
+
+If the response is HTTP 503 with `status: "schema_not_ready"`, apply `supabase/migrations/202611160001_newsroom_core.sql` in the Supabase SQL Editor, then retry the probe. A `database_unavailable` response indicates that the service URL/key, project availability, or REST connection still needs attention. Do not add the service-role key to browser code or chat.
