@@ -281,3 +281,15 @@ Working branch: `ai-newsroom-foundation`
 - Gemini's live generation probe previously timed out/returned temporary upstream errors; key validity and successful generation remain unconfirmed. The newsroom's current Buland and department workflow uses the configured OpenAI integration.
 - A full live 26-department run was not started because it can issue approximately 157 model requests and is not necessary for this release-preparation pass.
 - Publishing remains disabled; no merge to `main`, Production promotion, or social publishing was performed.
+
+ 
+## 2026-11-17 — TemplateFlyer format previews and local editing
+
+- Updated `graphics/department-templateflyers.html` on `ai-newsroom-foundation` in commit `07d19ca07b82be8a352b983deed30b400bcbf774`.
+- Added interactive 16:9 wide, 1:1 square and 9:16 story preview modes; the story mode switches to a single-column portrait layout and adjusts typography/motif sizing for vertical composition.
+- Added device-local save and reset controls for the 50 editable copy fields, with an accessible live status message. Saved text is stored only in the visitor's browser local storage; it is not synchronized to the server or shared between devices.
+- Kept the existing ten distinct department palettes, ten vector motifs, ten editorial reference-image slots, image credits/licence links, source/verification footer treatment, reduced-motion support and Admin approval safeguard. No new raster or AI-generated image assets were created.
+- Vercel Preview for commit `07d19ca07b82be8a352b983deed30b400bcbf774` reached READY: deployment `dpl_9aGTHK25JQfrRZw14dTYBhgoTMhJ`, URL https://ai-chronicals-news-lhvvnvsua-chdawoodkhalid28-5713.vercel.app . GitHub combined status for the project Vercel check is SUCCESS; separate `skills-academy-loop` check is pending and is not this project.
+- Deployed flyer page and Admin page returned HTTP 200. Deployed HTML inspection confirms ten cards, 50 editable fields and the three format controls, local save/reset controls and Print / Save PDF control. This verifies deployed source/HTTP response, not live viewport/browser interaction or actual PDF output.
+- Read-only Supabase probe still returns HTTP 503 with `SUPABASE_URL_INVALID`; no database environment value was read or changed. Vercel reported no project runtime errors in the inspected 24-hour aggregation and no Preview error/fatal logs in the inspected 30-minute window.
+- Full `npm test`, authenticated Admin CRUD, actual browser viewport checks, image binary loading and PDF output remain unverified. TinyFish browser automation remains blocked by its negative wallet balance. No payment, login bypass, paid generation, Production change, main merge, secret change, full AI workflow or news publication occurred. All publication remains disabled pending explicit Admin approval.
