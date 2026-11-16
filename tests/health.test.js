@@ -72,3 +72,18 @@ test("Supabase probe reports an unapplied schema without leaking database detail
   assert.equal(res.body.status, "schema_not_ready");
   assert.equal(JSON.stringify(res.body).includes("relation does not exist"), false);
 });
+
+test("Supabase probe identifies rejected credentials by status only", async () => {
+  process.env.SUPABASE_URL = "https://example.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  globalThis.fetch = async () => new Response(JSON.stringify({ message: "secret provider detail" }), {
+    status: 401,
+    headers: { "Content-Type": "application/json" }
+  });
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "1" } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.status, "credentials_rejected");
+  assert.equal(res.body.upstreamStatus, 401);
+  assert.equal(JSON.stringify(res.body).includes("secret provider detail"), false);
+});
