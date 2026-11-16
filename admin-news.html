@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>News Management | AI Chronicals News</title>
+<style>
+:root{color-scheme:light;--navy:#071a35;--blue:#1264bd;--bg:#f2f5fa;--ink:#182338}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Nastaliq Urdu",sans-serif}
+header{background:linear-gradient(110deg,#061326,#12365a 62%,#241a3e);color:#fff;padding:20px 4%}header a{color:#9ceeff}main{width:min(1100px,95%);margin:22px auto}.panel{background:#fff;border-radius:12px;padding:20px;margin:14px 0;box-shadow:0 4px 18px #071a3510}
+h1,h2{margin-top:0}label{display:block;font-weight:bold;margin:12px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:inherit}textarea{min-height:90px}button{border:0;border-radius:7px;padding:10px 14px;background:var(--blue);color:#fff;font-weight:bold;cursor:pointer;margin:5px}button:disabled{opacity:.5}.muted{color:#66758a;font-size:13px;line-height:1.8}.status{padding:12px;background:#eef4fb;border-radius:8px;white-space:pre-wrap;margin-top:12px}.article{border:1px solid #d9e2ed;border-radius:10px;padding:14px;margin:12px 0}.article h3{margin:0 0 8px}.meta{font-size:12px;color:#64748b}.pill{display:inline-block;padding:4px 8px;background:#eef4fb;border-radius:30px;font-size:12px}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{font-size:12px}.danger{background:#8a2632}
+@media(max-width:600px){.panel{padding:14px}button{min-height:42px}.actions button{flex:1 1 45%}}
+</style></head>
+<body>
+<header><h1>AI CHRONICALS NEWS — News Management</h1><a href="/admin.html">مرکزی Admin Panel پر واپس جائیں</a></header>
+<main>
+<section class="panel">
+<h2>ایڈمن تصدیق</h2><label for="adminPassword">Admin Password</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="اپنا Admin password درج کریں">
+<div class="actions"><button id="connect">محفوظ Database سے رابطہ کریں</button><button id="refresh" disabled>فہرست Refresh کریں</button></div>
+<div id="connectionStatus" class="status" role="status">Password صرف اس صفحے کی موجودہ نشست میں استعمال ہوگا؛ براؤزر میں محفوظ نہیں کیا جائے گا۔</div>
+</section>
+<section class="panel">
+<h2>نیا خبر ڈرافٹ</h2><p class="muted">ہر خبر کم از کم ایک HTTPS source کے ساتھ محفوظ ہوگی۔ ابتدائی حیثیت Pending Verification ہے۔ تصدیق کے لیے دو آزاد ذرائع یا ایک واضح سرکاری ذریعہ لازم ہے۔ اشاعت ہمیشہ بند رہے گی۔</p>
+<label for="headline">سرخی</label><input id="headline" maxlength="240" placeholder="خبر کی سرخی">
+<label for="summary">خلاصہ</label><textarea id="summary" maxlength="1200"></textarea>
+<label for="body">خبر کا مکمل مسودہ</label><textarea id="body" maxlength="30000"></textarea>
+<label for="language">زبان</label><select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
+<label for="category">شعبہ / Category</label><input id="category" value="general" maxlength="80">
+<label for="desk">Assigned Desk</label><input id="desk" value="newsroom" maxlength="100">
+<label for="sources">Source URLs — ہر سطر میں ایک HTTPS URL</label><textarea id="sources" placeholder="https://official.gov.pk/news/123&#10;https://reputable-news.example/story"></textarea>
+<label><input id="official" type="checkbox" style="width:auto"> پہلا Source سرکاری / Official ہے</label>
+<button id="save" disabled>Draft کو PostgreSQL میں محفوظ کریں</button>
+<div id="saveStatus" class="status" role="status">پہلے Admin کی تصدیق کریں۔</div>
+</section>
+<section class="panel"><h2>News Desk — محفوظ شدہ خبریں</h2><div id="articles" class="muted">Database سے رابطہ قائم ہونے کے بعد فہرست یہاں آئے گی۔</div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let password="";
+const statuses=[
+ ["pending_verification","تصدیق زیرِ انتظار"],
+ ["verified","تصدیق شدہ"],
+ ["needs_revision","نظرثانی درکار"],
+ ["approved_not_published","منظور — شائع نہیں"],
+ ["rejected","مسترد"]
+];
+async function api(method,body,query=""){
+ const response=await fetch("/api/admin/news"+query,{method,headers:{"Authorization":"Bearer "+password,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
+ const data=await response.json().catch(()=>({error:"Invalid server response"}));
+ if(!response.ok)throw new Error(data.error||"Database request failed");
+ return data;
+}
+function node(tag,text,className){const el=document.createElement(tag);el.textContent=text||"";if(className)el.className=className;return el;}
+function render(items){
+ const root=$("articles");root.replaceChildren();
+ if(!items.length){root.textContent="ابھی کوئی خبر محفوظ نہیں۔";return;}
+ for(const item of items){
+  const card=node("article","", "article");card.appendChild(node("h3",item.headline));
+  card.appendChild(node("div","حیثیت: "+item.editorial_status+" | اشاعت: "+item.publication_status,"meta"));
+  if(item.summary)card.appendChild(node("p",item.summary));
+  card.appendChild(node("div","ذرائع: "+(item.sources||[]).length,"meta"));
+  for(const source of item.sources||[]){const a=node("a",source.source_title||source.publisher||source.source_url);a.href=source.source_url;a.target="_blank";a.rel="noopener noreferrer";a.dir="ltr";a.style.display="block";card.appendChild(a);}
+  const actions=node("div","","actions");
+  for(const [value,label] of statuses){
+   const b=node("button",label);b.type="button";b.disabled=value===item.editorial_status;b.addEventListener("click",async()=>{
+    if(value==="approved_not_published"&&!confirm("یہ صرف ادارتی منظوری ہوگی؛ خبر شائع نہیں ہوگی۔ جاری رکھیں؟"))return;
+    b.disabled=true;
+    try{await api("PATCH",{id:item.id,editorialStatus:value,note:"Admin decision via News Management"});await load();}
+    catch(e){alert(e.message);b.disabled=false;}
+   });actions.appendChild(b);
+  }
+  card.appendChild(actions);root.appendChild(card);
+ }
+}
+async function load(){const data=await api("GET");render(data.items||[]);$("connectionStatus").textContent="Database connected. "+(data.items||[]).length+" records loaded. Publication DISABLED.";}
+$("connect").addEventListener("click",async()=>{password=$("adminPassword").value;if(!password){$("connectionStatus").textContent="Admin password required.";return;}try{await load();$("save").disabled=false;$("refresh").disabled=false;}catch(e){password="";$("connectionStatus").textContent=e.message;}});
+$("refresh").addEventListener("click",()=>load().catch(e=>$("connectionStatus").textContent=e.message));
+$("save").addEventListener("click",async()=>{
+ const urls=$("sources").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ const sources=urls.map((url,i)=>({url,official:$("official").checked&&i===0}));
+ $("save").disabled=true;
+ try{
+  await api("POST",{article:{headline:$("headline").value,summary:$("summary").value,body:$("body").value,language:$("language").value,category:$("category").value,assignedDesk:$("desk").value,sources}});
+  $("saveStatus").textContent="Draft محفوظ ہوگیا؛ Pending Verification. Publication DISABLED.";
+  $("headline").value="";$("summary").value="";$("body").value="";$("sources").value="";$("official").checked=false;
+  await load();
+ }catch(e){$("saveStatus").textContent=e.message;}
+ finally{$("save").disabled=false;}
+});
+</script></body></html>

@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       if (nextStatus === "approved_not_published" && current.editorial_status !== "verified") return res.status(409).json({ error: "Only a verified article can be marked approved; publishing remains disabled" });
       const updatedRows = await supabaseRequest("news_articles", {
         method: "PATCH",
-        query: new URLSearchParams({ id: "eq." + id }),
+        query: new URLSearchParams({ id: "eq." + id }).toString(),
         body: { editorial_status: nextStatus, verification_notes: note, publication_status: "disabled" }
       });
       await supabaseRequest("editorial_events", { method: "POST", body: { article_id: id, previous_status: current.editorial_status, new_status: nextStatus, note, actor: "admin" } });
