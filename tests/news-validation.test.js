@@ -14,7 +14,7 @@ test("normalizes valid article payload and keeps publication disabled", () => {
 });
 test("requires two sources or one official source for verification", () => {
   assert.equal(canMarkVerified([{ is_official: false }]), false);
-  assert.equal(canMarkVerified([{ is_official: false }, { is_official: false }]), true);
+  assert.equal(canMarkVerified([{ is_official: false, publisher: "one.example" }, { is_official: false, publisher: "two.example" }]), true);
   assert.equal(canMarkVerified([{ is_official: true }]), true);
 });
 test("deduplicates sources and rejects credentials in URLs", () => {
