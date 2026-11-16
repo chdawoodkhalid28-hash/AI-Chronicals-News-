@@ -107,3 +107,13 @@ test("Supabase probe classifies invalid project URL configuration", async () => 
   assert.equal(res.statusCode, 503);
   assert.equal(res.body.status, "invalid_configuration");
 });
+
+test("Supabase probe distinguishes an HTTP URL from a secure project URL", async () => {
+  process.env.SUPABASE_URL = "http://example.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "1" } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.status, "invalid_configuration");
+  assert.equal(res.body.reasonCode, "SUPABASE_URL_HTTPS_REQUIRED");
+});
