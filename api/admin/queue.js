@@ -70,7 +70,8 @@ export default async function handler(req, res) {
       error: expected ? "Admin authentication failed" : "Admin password is not configured"
     });
   }
-  if (req.query && req.query.resource === "news") return handleNewsRequest(req, res);\n  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (req.query && req.query.resource === "news") return handleNewsRequest(req, res);
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(503).json({ error: "Private Blob storage is not configured" });
   }
 
