@@ -40,6 +40,13 @@ footer{margin-top:18px;color:#9fb2cb;font-size:11px}
 @keyframes fx-sweep{0%,18%{transform:translateX(-85%) skewX(-12deg)}62%,100%{transform:translateX(85%) skewX(-12deg)}}
 @keyframes fx-pulse{0%,100%{opacity:.38;transform:scale(.96)}50%{opacity:.9;transform:scale(1.04)}}
 @keyframes live-pulse{0%,100%{filter:brightness(1);box-shadow:0 0 8px #ff345e44}50%{filter:brightness(1.22);box-shadow:0 0 18px #ff345e88}}
+
+.toolbar{align-items:flex-start}.toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}.format-switch{display:flex;gap:5px;flex-wrap:wrap}.toolbar button{font-size:11px;padding:9px 11px}.toolbar .format-button{background:#102742;border-color:#456486;color:#d6e8fa}.toolbar .format-button.is-active{background:linear-gradient(110deg,#237bf0,#28c8db);border-color:#8deaff;color:#fff}.toolbar .secondary-button{background:#18253a;border-color:#52657f}.edit-status{flex-basis:100%;font-size:10px;color:#a9c1d9;text-align:right}
+.grid[data-format="square"] .flyer{aspect-ratio:1/1}.grid[data-format="square"] .headline{max-width:88%;font-size:clamp(19px,2.3vw,31px)}.grid[data-format="square"] .deck{max-width:84%}
+.grid[data-format="story"]{grid-template-columns:minmax(0,1fr);max-width:620px;margin-inline:auto}.grid[data-format="story"] .flyer{aspect-ratio:9/16;max-height:760px;min-height:480px;padding:7%}.grid[data-format="story"] .headline{max-width:94%;font-size:clamp(25px,4vw,42px);line-height:1.04}.grid[data-format="story"] .deck{max-width:92%;font-size:clamp(11px,1.5vw,15px)}.grid[data-format="story"] .motif{width:48%;height:42%;top:20%;right:3%;opacity:.72}.grid[data-format="story"] .foot{font-size:9px;flex-wrap:wrap}.grid[data-format="story"] .topline{align-items:flex-start}
+@media(max-width:600px){.toolbar-actions{justify-content:flex-start;width:100%}.format-switch{width:100%}.format-switch button{flex:1}.grid[data-format="story"] .flyer{min-height:500px}.grid[data-format="square"] .headline{font-size:clamp(20px,6vw,30px)}}
+@media print{.toolbar-actions,.edit-status,.library-callout{display:none!important}.grid[data-format="story"]{max-width:none}.grid[data-format="story"] .flyer{max-height:none}}
+
 @media(prefers-reduced-motion:reduce){.fx-layer:before,.fx-orbit,.live{animation:none!important}.dept,.editorial-photo{transition:none!important}}
 @media print{.fx-layer,.fx-orbit{display:none!important}.live{animation:none!important}}
 
@@ -48,7 +55,7 @@ footer{margin-top:18px;color:#9fb2cb;font-size:11px}
 <body>
 <header><div class="eyebrow">Cinematic digital newsroom · broadcast VFX master visual system</div><h1>AI CHRONICALS NEWS</h1><p>10 independent department Master TemplateFlyers. Each desk has its own visual language, colour signature, editorial hierarchy, original vector art and a rights-checked reference photograph — unified by one cinematic digital-news identity.</p></header>
 <main>
-<div class="toolbar"><div class="chips"><span class="chip">10 MASTER FLYERS</span><span class="chip">26 DIRECTOR WORKFLOWS ROUTED</span><span class="chip">URDU + ENGLISH READY</span><span class="chip">ADMIN APPROVAL ONLY</span><span class="chip">BROADCAST VFX LAYERS</span></div><button onclick="window.print()">Print / Save PDF</button></div>
+<div class="toolbar"><div class="chips"><span class="chip">10 MASTER FLYERS</span><span class="chip">26 DIRECTOR WORKFLOWS ROUTED</span><span class="chip">URDU + ENGLISH READY</span><span class="chip">ADMIN APPROVAL ONLY</span><span class="chip">BROADCAST VFX LAYERS</span></div><div class="toolbar-actions" role="group" aria-label="Flyer actions"><div class="format-switch" role="group" aria-label="Preview format"><button type="button" class="format-button is-active" data-format="wide" aria-pressed="true">16:9 Wide</button><button type="button" class="format-button" data-format="square" aria-pressed="false">1:1 Square</button><button type="button" class="format-button" data-format="story" aria-pressed="false">9:16 Story</button></div><button type="button" id="save-edits">Save edits</button><button type="button" id="reset-edits" class="secondary-button">Reset samples</button><button type="button" id="print-flyers">Print / Save PDF</button></div><span id="edit-status" class="edit-status" role="status" aria-live="polite">Edits stay on this device until saved.</span></div>
 <div class="library-callout" style="margin:16px 0;padding:16px 18px;border:1px solid #4a78a0;border-radius:14px;background:linear-gradient(110deg,#122b49,#251d45);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><div><strong style="color:#8cecff">READY-MADE CANVA FLYERS</strong><div style="font-size:12px;color:#c9d9ec;margin-top:4px">قومی خبر، معیشت، سیاست، کھیل، امن و امان اور سائبر کرائم — چھ editable copies الگ فولڈر میں محفوظ ہیں۔</div></div><a href="/graphics/ready-made-flyer-library.html" style="display:inline-block;padding:10px 14px;border-radius:8px;background:linear-gradient(110deg,#237bf0,#28c8db);color:#fff;text-decoration:none;font-weight:900;font-size:12px">Open Ready-made Library →</a></div>\n<div class="intro"><h2>Department Master TemplateFlyers</h2><p>Editable sample copy · illustrative reference photos · replace with story-specific verified images before publication</p></div>
 <section class="grid">
 <article id="p1" class="dept" style="--a:#54d8f5;--b:#6e7bff;--c:#ff5f9e;--deep:#102d50">
@@ -186,4 +193,24 @@ footer{margin-top:18px;color:#9fb2cb;font-size:11px}
 <section class="workflow"><h2>Editorial-to-visual production flow</h2><div class="steps"><div class="step"><b>01 · BRIEF</b>Department assignment and scope</div><div class="step"><b>02 · RESEARCH</b>Independent research and source links</div><div class="step"><b>03 · EVIDENCE</b>Fact-check, claims and verification gaps</div><div class="step"><b>04 · DESIGN QA</b>Matching master flyer, credits and format checks</div><div class="step"><b>05 · APPROVAL</b>Admin review required; publishing stays disabled</div></div></section>
 <footer>Design system draft · The 10 coverage masters are reusable by the 26-director workflow. Photo credits and license links appear below each master; image credits are also recorded in graphics/image-credits.json. Cross-functional agents (research, verification, language, visuals, audience, SEO, ethics and security) contribute to the relevant desk template; they do not create additional master identities. No auto-publishing.</footer>
 </main>
+<script>
+(()=> {
+  const grid=document.querySelector(".grid");
+  const status=document.getElementById("edit-status");
+  const editable=[...document.querySelectorAll(".edit[contenteditable='true']")];
+  const storageKey="acn-templateflyer-edits-v1";
+  editable.forEach((node,index)=>{node.dataset.editKey=String(index);node.setAttribute("aria-label","Editable flyer text "+(index+1));});
+  const setStatus=(message)=>{if(status)status.textContent=message;};
+  const readSaved=()=>{try{return JSON.parse(localStorage.getItem(storageKey)||"{}");}catch{return {};}};
+  const restore=()=>{const saved=readSaved();editable.forEach(node=>{const key=node.dataset.editKey;if(Object.prototype.hasOwnProperty.call(saved,key))node.innerHTML=saved[key];});};
+  const save=()=>{const saved={};editable.forEach(node=>saved[node.dataset.editKey]=node.innerHTML);try{localStorage.setItem(storageKey,JSON.stringify(saved));setStatus("Saved on this device · "+new Date().toLocaleTimeString());}catch{setStatus("Could not save locally. Copy your text before leaving.");}};
+  const reset=()=>{if(!confirm("Reset all editable flyer text to the original sample copy on this device?"))return;localStorage.removeItem(storageKey);location.reload();};
+  document.querySelectorAll("[data-format]").forEach(button=>button.addEventListener("click",()=>{const format=button.dataset.format;grid.dataset.format=format;document.querySelectorAll(".format-button").forEach(item=>{const active=item===button;item.classList.toggle("is-active",active);item.setAttribute("aria-pressed",String(active));});setStatus("Preview format: "+(format==="wide"?"16:9 wide":format==="square"?"1:1 square":"9:16 story"));}));
+  document.getElementById("save-edits")?.addEventListener("click",save);
+  document.getElementById("reset-edits")?.addEventListener("click",reset);
+  document.getElementById("print-flyers")?.addEventListener("click",()=>window.print());
+  editable.forEach(node=>node.addEventListener("input",()=>setStatus("Unsaved changes · select Save edits to keep them on this device.")));
+  restore();
+})();
+</script>
 </body></html>
