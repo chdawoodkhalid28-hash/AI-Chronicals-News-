@@ -43,7 +43,8 @@ test("flyer copy is editable and includes all required output formats", () => {
 });
 
 test("print and responsive layout controls are present", () => {
-  assert.match(html, /onclick="window\.print\(\)"/);
+  assert.match(html, /id="print-flyers"/);
+  assert.match(html, /addEventListener\("click",\(\)=>window\.print\(\)\)/);
   assert.match(html, /@media\(max-width:820px\)/);
   assert.match(html, /@media\(max-width:480px\)/);
 });
