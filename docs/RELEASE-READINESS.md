@@ -48,3 +48,15 @@
 
 **Status: Preview release candidate preparation in progress — NOT approved for Production.**  
 The site has a deployable Preview foundation, but the database connectivity check, authenticated admin acceptance tests, latest CI result, and final owner release approval must pass before Production promotion.
+
+## 16 November 2026 — Latest Preview acceptance check
+
+- Latest source commit: `0ed6445d7d7381350a70b12ca393c1bc93197789` on `ai-newsroom-foundation`.
+- Latest Vercel Preview: `dpl_9V811VCYVjNmdukWjm25NWmkkgVg` — READY at https://ai-chronicals-news-osa244isi-chdawoodkhalid28-5713.vercel.app .
+- Live smoke tests: homepage, `/admin.html`, `/admin-news.html`, and `/graphics/department-templateflyers.html` all returned HTTP 200. Standard `/api/health` returned HTTP 200 with publication disabled.
+- GitHub Actions: Node.js unit and safety tests passed; backend JavaScript validation passed. Earlier full workflow pass on commit `714037e957b4b8d3f629f4fef62da2c440102061` also passed the isolated department-team tests. The latest code-only change does not alter department workflow source.
+- Supabase read-only probe returned HTTP 503 with `status: invalid_configuration` and `reasonCode: SUPABASE_URL_INVALID`. Both Supabase environment variable names are present in Preview, but the configured `SUPABASE_URL` value fails URL parsing. The value was not retrieved or exposed. Replace it with the exact Project URL from Supabase Project Settings → API (normally `https://<project-ref>.supabase.co`), then redeploy and rerun the probe. Do not change or share the service-role key.
+- A separate Cloudflare check named `Workers Builds: ai-chronicals-news` reported failure against its Production Worker build. Vercel Preview is READY; the Cloudflare failure is not a Vercel build failure, and Cloudflare build logs were not accessible through the current connected tools. If Cloudflare is intended as a release host, investigate that check before promotion.
+- Production branch `main` remains untouched; no Production promotion, news publication, or social posting occurred.
+
+**Current release decision: BLOCKED pending correction of the Preview Supabase Project URL, successful live database probe, owner-entered authenticated News Management/queue acceptance, and review of the separate Cloudflare failure if Cloudflare is part of the target hosting plan.**
