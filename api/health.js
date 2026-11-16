@@ -1,4 +1,5 @@
 import { generateGeminiText, DEFAULT_MODEL } from "../lib/gemini.js";
+import { supabaseRequest } from "../lib/supabase-rest.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -21,6 +22,42 @@ export default async function handler(req, res) {
     supabaseConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
     approvalQueuePersistence: process.env.BLOB_READ_WRITE_TOKEN ? "private-vercel-blob-with-local-browser-fallback" : "browser-local-only"
   };
+
+  if (req.query?.supabase === "1") {
+    if (!capabilities.supabaseConfigured) {
+      return res.status(503).json({
+        service: "AI Chronicals News",
+        ok: false,
+        provider: "supabase",
+        status: "not_configured",
+        probe: "read_only_select",
+        capabilities
+      });
+    }
+    try {
+      await supabaseRequest("news_articles", {
+        query: new URLSearchParams({ select: "id", limit: "1" }).toString()
+      });
+      return res.status(200).json({
+        service: "AI Chronicals News",
+        ok: true,
+        provider: "supabase",
+        status: "connected",
+        probe: "read_only_select",
+        table: "news_articles",
+        capabilities
+      });
+    } catch (error) {
+      return res.status(503).json({
+        service: "AI Chronicals News",
+        ok: false,
+        provider: "supabase",
+        status: error.statusCode === 404 ? "schema_not_ready" : "database_unavailable",
+        probe: "read_only_select",
+        capabilities
+      });
+    }
+  }
 
   if (req.query?.gemini === "1") {
     if (!process.env.GEMINI_API_KEY) {
