@@ -87,3 +87,23 @@ test("Supabase probe identifies rejected credentials by status only", async () =
   assert.equal(res.body.upstreamStatus, 401);
   assert.equal(JSON.stringify(res.body).includes("secret provider detail"), false);
 });
+
+test("Supabase probe classifies network failures without exposing provider errors", async () => {
+  process.env.SUPABASE_URL = "https://example.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  globalThis.fetch = async () => { throw new Error("private network diagnostic"); };
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "1" } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.status, "network_error");
+  assert.equal(JSON.stringify(res.body).includes("private network diagnostic"), false);
+});
+
+test("Supabase probe classifies invalid project URL configuration", async () => {
+  process.env.SUPABASE_URL = "not-a-url";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "1" } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.status, "invalid_configuration");
+});
