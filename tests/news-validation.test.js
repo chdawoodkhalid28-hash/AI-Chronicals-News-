@@ -23,3 +23,14 @@ test("deduplicates sources and rejects credentials in URLs", () => {
   const bad = validateArticleInput({ headline: "A sufficiently long headline", sources: ["https://user:pass@example.com/a"] });
   assert.equal(bad.ok, false);
 });
+
+test("requires distinct publisher domains for the two-source verification path", () => {
+  assert.equal(canMarkVerified([{ publisher: "publisher.example" }, { publisher: "publisher.example" }]), false);
+  assert.equal(canMarkVerified([{ publisher: "one.example" }, { publisher: "two.example" }]), true);
+});
+test("infers a publisher domain when source metadata is omitted", () => {
+  const result = validateArticleInput({ headline: "A sufficiently long headline", sources: ["https://one.example/a", "https://two.example/b"] });
+  assert.equal(result.ok, true);
+  assert.equal(result.sources[0].publisher, "one.example");
+  assert.equal(result.sources[1].publisher, "two.example");
+});
