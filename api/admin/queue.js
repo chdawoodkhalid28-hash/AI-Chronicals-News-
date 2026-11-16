@@ -1,6 +1,7 @@
 import { del, get, list, put } from "@vercel/blob";
 import { timingSafeEqual } from "node:crypto";
 import { ALLOWED_DECISIONS, isValidId, sanitizeItem, validateItem } from "./queue-core.js";
+import { handleNewsRequest } from "../../lib/news-handler.js";
 
 const PREFIX = "approval-queue/";
 const MAX_RECORDS = 20;
