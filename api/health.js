@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         ? "schema_not_ready"
         : upstreamStatus === 401 || upstreamStatus === 403
           ? "credentials_rejected"
-          : error.code === "SUPABASE_URL_INVALID"
+          : error.code === "SUPABASE_URL_INVALID" || error.code === "SUPABASE_URL_HTTPS_REQUIRED"
             ? "invalid_configuration"
             : error.code === "SUPABASE_NETWORK_ERROR"
               ? "network_error"
