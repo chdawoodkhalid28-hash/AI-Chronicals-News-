@@ -64,6 +64,7 @@ export default async function handler(req, res) {
         provider: "supabase",
         status,
         upstreamStatus,
+        reasonCode: error.code || (upstreamStatus ? "SUPABASE_HTTP_" + upstreamStatus : "SUPABASE_REQUEST_FAILED"),
         probe: "read_only_select",
         capabilities
       });
