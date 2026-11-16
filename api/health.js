@@ -48,11 +48,18 @@ export default async function handler(req, res) {
         capabilities
       });
     } catch (error) {
+      const upstreamStatus = Number.isInteger(error.statusCode) ? error.statusCode : null;
+      const status = upstreamStatus === 404
+        ? "schema_not_ready"
+        : upstreamStatus === 401 || upstreamStatus === 403
+          ? "credentials_rejected"
+          : "database_unavailable";
       return res.status(503).json({
         service: "AI Chronicals News",
         ok: false,
         provider: "supabase",
-        status: error.statusCode === 404 ? "schema_not_ready" : "database_unavailable",
+        status,
+        upstreamStatus,
         probe: "read_only_select",
         capabilities
       });
