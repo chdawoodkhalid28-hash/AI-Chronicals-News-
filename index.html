@@ -30,6 +30,29 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:#fff;color:#111}.topbar,nav,.hero-ctas,.director-tools,.nav-action{display:none!important}header,.hero-main,.hero-side,.metric,.director-card,.desk-card,.workflow-card,.structure-panel,.broadcast,.org-branch{background:#fff!important;color:#111!important;box-shadow:none!important;border:1px solid #aaa}.hero p,.director-card p,.desk-card p,.workflow-card p,.org-branch p{color:#333!important}.director-grid{grid-template-columns:repeat(3,1fr)}.desk-grid{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:repeat(3,1fr)}}
 
+
+/* Broadcast Graphics & VFX Studio — elevated newsroom control surface */
+#broadcast{margin:0 0 24px;position:relative}
+#broadcast .section-head{margin:8px 0 14px}
+#broadcast .broadcast{border:1px solid #3a7397;box-shadow:0 0 0 1px #35e7ff12,0 18px 50px #0008,0 0 32px #287bff22}
+#broadcast .breaking{min-height:280px;background:radial-gradient(ellipse at 78% 28%,#ff315933,transparent 32%),linear-gradient(120deg,#310d25,#111a35 58%,#0b2942)}
+#broadcast .breaking:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 27px,#72eaff0b 28px),repeating-linear-gradient(90deg,transparent 0 37px,#72eaff0a 38px);pointer-events:none}
+#broadcast .breaking:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-30%;width:22%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,#fff4,transparent);animation:sweep 5s linear infinite;pointer-events:none}
+#broadcast .breaking>*{position:relative;z-index:1}
+#broadcast .alert{box-shadow:0 0 18px #ff315966}
+#broadcast .vfx{position:relative;overflow:hidden}
+#broadcast .vfx:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 18%,#35e7ff22,transparent 28%),repeating-linear-gradient(0deg,transparent 0 25px,#35e7ff0b 26px),repeating-linear-gradient(90deg,transparent 0 32px,#35e7ff09 33px);pointer-events:none}
+#broadcast .vfx>*{position:relative;z-index:1}
+#broadcast .vfx-graphic{height:125px;border-color:#45e6f266;box-shadow:inset 0 0 35px #35e7ff12,0 0 24px #287bff20}
+#broadcast .vfx-graphic:before{content:"";position:absolute;inset:12% 7%;border:1px solid #35e7ff35;clip-path:polygon(0 0,18% 0,18% 2px,82% 2px,82% 0,100% 0,100% 100%,78% 100%,78% calc(100% - 2px),22% calc(100% - 2px),22% 100%,0 100%)}
+#broadcast .vfx-graphic:after{animation:vfxScan 3.2s ease-in-out infinite alternate}
+@keyframes vfxScan{from{transform:translateY(-34px) rotate(-12deg);opacity:.45}to{transform:translateY(38px) rotate(-12deg);opacity:1}}
+.news-command .news-priority{isolation:isolate}
+.news-command .news-priority:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 29px,#8beaff0b 30px),repeating-linear-gradient(90deg,transparent 0 39px,#8beaff08 40px)}
+.news-command .breaking-panel{box-shadow:0 0 22px #ff526b22,inset 0 0 40px #ff31590b}
+.news-command .live-panel{box-shadow:0 0 22px #35e7c322,inset 0 0 40px #35e7c30b}
+.news-command .developing-panel{box-shadow:0 0 22px #ffc96b22,inset 0 0 40px #ffc96b0b}
+
 /* News-first front desk hierarchy */
 .news-command{display:grid;grid-template-columns:1.15fr .9fr 1fr;gap:12px;margin:0 0 20px}
 .news-priority{position:relative;overflow:hidden;border:1px solid #355a78;border-radius:12px;padding:18px;background:linear-gradient(145deg,#11243a,#081525);min-height:190px}
@@ -64,6 +87,8 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 <nav><div class="container nav-inner"><div class="navlinks"><a href="#home">فرنٹ ڈیسک</a><a href="#structure">ادارہ جاتی ڈھانچہ</a><a href="#directors">26 ڈائریکٹرز</a><a href="#desks">10 مرکزی ڈیسک</a><a href="#workflow">نیوز ورک فلو</a><a href="#broadcast">گرافکس</a><a href="/graphics/department-templateflyers.html">10 ڈیجیٹل ٹیمپلیٹس</a></div><a class="nav-action" href="/admin.html">ADMIN NEWSROOM ↗</a></div></nav>
 <main class="container" id="home">
 <div class="ticker"><b>NEWS DESK</b><span>مستند معلومات، اصل ذرائع، واضح ادارتی ذمہ داری اور ہر خبر پر انسانی نگرانی۔</span></div>
+
+<section id="broadcast"><div class="section-head"><div><h2>Broadcast Graphics & VFX Studio</h2><p>نیوز پیکیج، بریکنگ گرافکس اور پریزنٹیشن کے لیے مرکزی بصری نظام۔</p></div><em>VISUAL SYSTEM</em></div><div class="broadcast"><div class="breaking"><span class="alert">DESIGN PREVIEW · NOT LIVE</span><h3>BREAKING<br>NEWS</h3><p>یہ صرف ڈیزائن پری ویو ہے، حقیقی بریکنگ نیوز یا لائیو نشریات نہیں۔ حقیقی استعمال سے پہلے تصدیق شدہ خبر، وقت، مقام اور ماخذ شامل کریں۔</p><div class="lower-third">VERIFIED STORY COPY · SOURCE CREDIT · ADMIN REVIEW</div></div><div class="vfx"><div class="eyebrow">CINEMATIC VFX / HUD</div><h3>ایک مستقل، جدید اور ذمہ دارانہ براڈکاسٹ شناخت</h3><p>نیون HUD لائنز، گرڈ، لائٹ سویپ، ڈیٹا ماڈیولز اور ڈیسک کے مطابق بصری ترتیب۔ آرائشی ڈیٹا کو حقیقی اعدادوشمار کے طور پر پیش نہیں کیا جائے گا۔</p><div class="vfx-graphic" aria-hidden="true"></div><p><a href="/graphics/broadcast-vfx-template-suite.html" style="color:var(--cyan)">Broadcast VFX Template Suite کھولیں ↗</a></p></div></div></section>
 
 <section class="news-command" aria-label="اہم ترین نیوز ڈیسک">
  <article class="news-priority breaking-panel"><span class="priority-label"><i class="priority-dot"></i> BREAKING NEWS</span><h2>عارف والا–بوریوالا روڈ حادثہ: 8 افراد جاں بحق</h2><p>کوسٹر اور آئل ٹینکر کے تصادم کی خبر؛ زخمیوں کی تعداد مختلف میڈیا رپورٹس میں مختلف ہے، اس لیے حتمی تعداد کی تصدیق جاری ہے۔</p><small>17 نومبر 2026 · ماخذ: ڈان، دی نیشن · ابتدائی رپورٹ</small><a class="priority-link" href="/news/urdu-news-2026-11-17.html">مکمل بلیٹن اور ذرائع دیکھیں ↗</a></article>
@@ -152,7 +177,7 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 <article class="workflow-card"><div class="step">06</div><h3>Admin Approval</h3><p>انسانی ایڈمن کا فیصلہ، محفوظ Queue اور منظوری کے بعد ہی اگلا قدم۔</p></article>
 </div><div class="safety-strip"><b>PASS ≠ PUBLISH</b><span>AI کی PASS سفارش صرف ادارتی جائزے کے لیے ہے۔ کوئی آٹو پبلشنگ، خودکار لائیو نیوز فیڈ یا انسانی منظوری کے بغیر اشاعت فعال نہیں۔</span></div></section>
 <section id="latest"><div class="section-head"><div><h2>تازہ ترین خبریں / Latest Bulletins</h2><p>17 نومبر 2026 کے اردو اور انگریزی بلیٹن — مکمل خلاصے، اصل ذرائع اور متعلقہ بصری مواد۔</p></div><em>12 STORIES · TWO LANGUAGES</em></div><div class="empty"><b style="display:block;color:#8cecff;font-size:18px;margin-bottom:8px">12 Important Stories · اردو + English</b><p>Arifwala road crash, fuel prices, Pakistan–Turkmenistan cooperation, ECO declaration, Karachi Red Line, Bannu schools, SPSC action, Saiful Muluk road, women’s cricket coach, hepatitis C services and market update.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a class="cta" href="/news/urdu-news-2026-11-17.html">اردو بلیٹن پڑھیں ↗</a><a class="cta secondary" href="/news/english-news-2026-11-17.html">Read English Bulletin ↗</a></div></div></section>
-<section id="broadcast"><div class="section-head"><div><h2>Broadcast Graphics & VFX Studio</h2><p>نیوز پیکیج، بریکنگ گرافکس اور پریزنٹیشن کے لیے مرکزی بصری نظام۔</p></div><em>VISUAL SYSTEM</em></div><div class="broadcast"><div class="breaking"><span class="alert">DESIGN PREVIEW · NOT LIVE</span><h3>BREAKING<br>NEWS</h3><p>یہ صرف ڈیزائن پری ویو ہے، حقیقی بریکنگ نیوز یا لائیو نشریات نہیں۔ حقیقی استعمال سے پہلے تصدیق شدہ خبر، وقت، مقام اور ماخذ شامل کریں۔</p><div class="lower-third">VERIFIED STORY COPY · SOURCE CREDIT · ADMIN REVIEW</div></div><div class="vfx"><div class="eyebrow">CINEMATIC VFX / HUD</div><h3>ایک مستقل، جدید اور ذمہ دارانہ براڈکاسٹ شناخت</h3><p>نیون HUD لائنز، گرڈ، لائٹ سویپ، ڈیٹا ماڈیولز اور ڈیسک کے مطابق بصری ترتیب۔ آرائشی ڈیٹا کو حقیقی اعدادوشمار کے طور پر پیش نہیں کیا جائے گا۔</p><div class="vfx-graphic" aria-hidden="true"></div><p><a href="/graphics/broadcast-vfx-template-suite.html" style="color:var(--cyan)">Broadcast VFX Template Suite کھولیں ↗</a></p></div></div></section>
+
 </main>
 <footer id="about"><div class="container"><div class="footgrid"><div><h3>AI CHRONICALS NEWS</h3><p>آزادانہ تحقیق، اصل ذرائع، غیر جانب دار صحافت اور واضح ادارتی جواب دہی۔</p><p>INDEPENDENT NEWSROOM · VERIFIED FIRST</p></div><div><h3>نیوز روم</h3><p><a href="#directors">تمام 26 ڈائریکٹرز</a></p><p><a href="#desks">10 مرکزی ڈیسک</a></p><p><a href="#workflow">ادارتی ورک فلو</a></p></div><div><h3>آپریشنز</h3><p><a href="/admin.html">Admin Control Room</a></p><p><a href="/graphics/department-templateflyers.html">Department Master Flyers</a></p><p><a href="/graphics/ready-made-flyer-library.html">Ready-made Flyer Library</a></p></div></div><div class="copyright">© <span id="year"></span> AI Chronicals News. All rights reserved. · Publication requires human admin approval.</div></div></footer>
 <script>
