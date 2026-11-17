@@ -74,7 +74,7 @@ test("the old incorrect downstream count is absent", () => {
 });
 
 test("department flyer page uses globally unique IDs and valid in-page links", () => {
-  const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]);
+  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match => match[1]);
   assert.equal(new Set(ids).size, ids.length, "duplicate HTML/SVG id found");
   const targets = [...html.matchAll(/href=["']#([^"']+)["']/g)].map(match => match[1]);
   for (const target of targets) assert.ok(ids.includes(target), "broken flyer anchor: " + target);
@@ -83,6 +83,6 @@ test("department flyer page uses globally unique IDs and valid in-page links", (
 });
 
 test("flyer library and VFX suite links are present from the department gallery", () => {
-  assert.match(html, /href="\\/graphics\\/ready-made-flyer-library\\.html"/);
-  assert.match(admin, /href="\\/graphics\\/broadcast-vfx-template-suite\\.html"/);
+  assert.ok(html.includes('href="/graphics/ready-made-flyer-library.html"'));
+  assert.ok(admin.includes('href="/graphics/broadcast-vfx-template-suite.html"'));
 });
