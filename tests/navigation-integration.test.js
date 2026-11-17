@@ -32,7 +32,7 @@ test("Admin dashboard links to all operational and graphics workspaces", () => {
 });
 
 test("connector page is protected by the admin middleware route", async () => {
-  const middleware = await readFile(new URL("../middleware.js", root), "utf8");
+  const middleware = await readFile(new URL("middleware.js", root), "utf8");
   assert.match(middleware, /matcher:\s*\["\/connectors\.html"\]/);
   assert.match(middleware, /acn_admin_access/);
   assert.match(middleware, /ADMIN_PASSWORD/);
