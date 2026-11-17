@@ -98,7 +98,16 @@ export default async function handler(req, res) {
         ok: false,
         provider: "gemini",
         model: DEFAULT_MODEL,
-        status: error.status === 401 || error.status === 403 ? "key_rejected_or_access_denied" : "request_failed",
+        status: error.status === 401 || error.status === 403
+          ? "key_rejected_or_access_denied"
+          : error.code === "GEMINI_EMPTY_RESPONSE"
+            ? (error.finishReason === "SAFETY" || error.finishReason === "BLOCKLIST" || error.promptBlockReason
+              ? "response_blocked"
+              : "empty_response")
+            : "request_failed",
+        diagnostic: error.code === "GEMINI_EMPTY_RESPONSE"
+          ? { finishReason: error.finishReason, promptBlockReason: error.promptBlockReason }
+          : undefined,
         error: error.message,
         capabilities
       });
