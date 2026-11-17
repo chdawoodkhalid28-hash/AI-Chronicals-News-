@@ -73,3 +73,19 @@ test("graphics library exposes all ten department master flyers and reusable ass
   assert.ok(flyers.includes('href="/graphics/ready-made-flyer-library.html"'));
   assert.ok(flyers.includes('id="print-flyers"'));
 });
+
+test("ready-made Canva library has six verified current edit links and sample-content warning", () => {
+  const library = pages["graphics/ready-made-flyer-library.html"];
+  const expected = [
+    "a0k71Vy5OSuBT8g",
+    "vM-_1furG5nosfk",
+    "DdcPTpAppX97zyK",
+    "NedU9OVM1Yoezf9",
+    "c53RpVXSVn_YX2-",
+    "PRRxb0q3HU4lwKJ"
+  ];
+  const actual = [...library.matchAll(/https:\/\/www\.canva\.com\/d\/([^"'\s]+)/g)].map(match => match[1]);
+  assert.deepEqual(actual, expected);
+  assert.ok(library.includes("چھ موجودہ Canva designs"));
+  assert.ok(library.includes("پرانے نمونے"));
+});
