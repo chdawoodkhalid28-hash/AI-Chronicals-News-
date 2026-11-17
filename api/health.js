@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     try {
       const result = await generateGeminiText(
         "Reply with exactly: GEMINI_CONNECTION_OK",
-        { maxOutputTokens: 24 }
+        { maxOutputTokens: 256 }
       );
       const passed = result.text.includes("GEMINI_CONNECTION_OK");
       return res.status(passed ? 200 : 502).json({
