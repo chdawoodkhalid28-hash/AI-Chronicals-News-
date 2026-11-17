@@ -117,3 +117,16 @@ test("Supabase probe distinguishes an HTTP URL from a secure project URL", async
   assert.equal(res.body.status, "invalid_configuration");
   assert.equal(res.body.reasonCode, "SUPABASE_URL_HTTPS_REQUIRED");
 });
+
+test("Gemini health probe classifies empty candidate responses without exposing payloads", async () => {
+  process.env.GEMINI_API_KEY = "test-gemini-key";
+  globalThis.fetch = async () => new Response(JSON.stringify({
+    candidates: [{ finishReason: "MAX_TOKENS", content: { parts: [] } }]
+  }), { status: 200, headers: { "Content-Type": "application/json" } });
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { gemini: "1" } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.status, "empty_response");
+  assert.equal(res.body.diagnostic.finishReason, "MAX_TOKENS");
+  assert.equal(JSON.stringify(res.body).includes("test-gemini-key"), false);
+});
