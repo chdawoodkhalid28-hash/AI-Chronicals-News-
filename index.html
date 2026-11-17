@@ -29,6 +29,33 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 @media(max-width:480px){.container{width:94%}.brand{justify-content:center}.brand>div:first-child{width:100%}.brand-status{font-size:10px}.hero-main{min-height:300px;padding:22px}.hero h1{font-size:28px}.hero p{font-size:13px}.metrics{gap:7px}.metric{padding:11px}.metric b{font-size:21px}.metric span{font-size:10px}.section-head h2{font-size:19px}.section-head em{font-size:9px}.director-grid{grid-template-columns:1fr}.desk-grid{grid-template-columns:1fr 1fr}.workflow{grid-template-columns:1fr 1fr}.director-card{min-height:0}.ticker span{font-size:11px}.nav-action{padding:7px 10px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:#fff;color:#111}.topbar,nav,.hero-ctas,.director-tools,.nav-action{display:none!important}header,.hero-main,.hero-side,.metric,.director-card,.desk-card,.workflow-card,.structure-panel,.broadcast,.org-branch{background:#fff!important;color:#111!important;box-shadow:none!important;border:1px solid #aaa}.hero p,.director-card p,.desk-card p,.workflow-card p,.org-branch p{color:#333!important}.director-grid{grid-template-columns:repeat(3,1fr)}.desk-grid{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:repeat(3,1fr)}}
+
+/* News-first front desk hierarchy */
+.news-command{display:grid;grid-template-columns:1.15fr .9fr 1fr;gap:12px;margin:0 0 20px}
+.news-priority{position:relative;overflow:hidden;border:1px solid #355a78;border-radius:12px;padding:18px;background:linear-gradient(145deg,#11243a,#081525);min-height:190px}
+.news-priority.breaking-panel{border-color:#a83e59;background:linear-gradient(135deg,#3b1428,#171b32 68%,#102a42);box-shadow:0 0 24px #ff526b18}
+.news-priority.live-panel{border-color:#277c76;background:linear-gradient(135deg,#103b3a,#0a1d2b 75%)}
+.news-priority.developing-panel{border-color:#8c693b;background:linear-gradient(135deg,#3b2b17,#182237 72%)}
+.priority-label{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border-radius:4px;font:900 10px Arial;letter-spacing:.1em;direction:ltr;background:#b51e3e;color:#fff}
+.live-panel .priority-label{background:#087d70}.developing-panel .priority-label{background:#94631e}
+.priority-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 9px currentColor}
+.news-priority h2{font-size:21px;line-height:1.55;margin:12px 0 7px}
+.news-priority p{font-size:12px;color:#d1deed;margin:0 0 10px}
+.news-priority small{display:block;color:#a9c1d7;font-size:10px;margin-top:8px}
+.priority-link{display:inline-block;margin-top:8px;color:#83eaff;font-weight:bold;font-size:12px}
+.daily-news-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.daily-news-item{padding:14px;border:1px solid #2b4d69;border-radius:9px;background:linear-gradient(145deg,#10243b,#091626);min-height:118px}
+.daily-news-item b{display:block;font-size:13px;line-height:1.7}
+.daily-news-item small{display:block;color:#8ebbd3;font-size:10px;margin:5px 0}
+.daily-news-item a{color:#7ce8f6;font-size:11px;font-weight:bold}
+.developed-stories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.developed-story{padding:17px;border:1px solid #345773;border-radius:10px;background:linear-gradient(135deg,#122a43,#0a1728)}
+.developed-story h3{font-size:17px;margin:6px 0}
+.developed-story p{font-size:12px;color:#c5d5e6;margin:0}
+.story-tag{font:800 9px Arial;letter-spacing:.1em;color:#56d9ed;direction:ltr}
+@media(max-width:850px){.news-command{grid-template-columns:1fr}.daily-news-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.developed-stories{grid-template-columns:1fr}.daily-news-item{padding:11px}.news-priority{min-height:0}}
+
 </style>
 </head>
 <body>
@@ -37,6 +64,37 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 <nav><div class="container nav-inner"><div class="navlinks"><a href="#home">فرنٹ ڈیسک</a><a href="#structure">ادارہ جاتی ڈھانچہ</a><a href="#directors">26 ڈائریکٹرز</a><a href="#desks">10 مرکزی ڈیسک</a><a href="#workflow">نیوز ورک فلو</a><a href="#broadcast">گرافکس</a><a href="/graphics/department-templateflyers.html">10 ڈیجیٹل ٹیمپلیٹس</a></div><a class="nav-action" href="/admin.html">ADMIN NEWSROOM ↗</a></div></nav>
 <main class="container" id="home">
 <div class="ticker"><b>NEWS DESK</b><span>مستند معلومات، اصل ذرائع، واضح ادارتی ذمہ داری اور ہر خبر پر انسانی نگرانی۔</span></div>
+
+<section class="news-command" aria-label="اہم ترین نیوز ڈیسک">
+ <article class="news-priority breaking-panel"><span class="priority-label"><i class="priority-dot"></i> BREAKING NEWS</span><h2>عارف والا–بوریوالا روڈ حادثہ: 8 افراد جاں بحق</h2><p>کوسٹر اور آئل ٹینکر کے تصادم کی خبر؛ زخمیوں کی تعداد مختلف میڈیا رپورٹس میں مختلف ہے، اس لیے حتمی تعداد کی تصدیق جاری ہے۔</p><small>17 نومبر 2026 · ماخذ: ڈان، دی نیشن · ابتدائی رپورٹ</small><a class="priority-link" href="/news/urdu-news-2026-11-17.html">مکمل بلیٹن اور ذرائع دیکھیں ↗</a></article>
+ <article class="news-priority live-panel"><span class="priority-label"><i class="priority-dot"></i> LIVE NEWS DESK</span><h2>لائیو اپ ڈیٹس ڈیسک</h2><p>یہاں اہم واقعات کی تازہ تصدیق شدہ اپ ڈیٹس ترتیب سے دکھائی جائیں گی۔ فی الحال کوئی لائیو ویڈیو یا مسلسل خودکار فیڈ منسلک نہیں؛ غیر مصدقہ خبر کو لائیو نہیں دکھایا جاتا۔</p><small>LIVE TEXT UPDATES · VERIFIED ONLY</small><a class="priority-link" href="/admin.html">ایڈمن نیوز روم کھولیں ↗</a></article>
+ <article class="news-priority developing-panel"><span class="priority-label"><i class="priority-dot"></i> DEVELOPING NEWS</span><h2>حادثے میں زخمیوں کی تعداد کی تصدیق</h2><p>ابتدائی رپورٹس میں زخمیوں کی تعداد پر اختلاف ہے۔ ادارتی ڈیسک صرف مصدقہ سرکاری یا قابلِ اعتماد اپ ڈیٹ شامل کرے گا؛ فی الحال متضاد اعداد کو واضح رکھا گیا ہے۔</p><small>UPDATE STATUS: CONFIRMATION PENDING</small><a class="priority-link" href="/news/urdu-news-2026-11-17.html">متعلقہ خبر پڑھیں ↗</a></article>
+</section>
+<section id="daily-news"><div class="section-head"><div><h2>پورے دن کی خبریں</h2><p>17 نومبر 2026 — قومی، عالمی، معیشت، تعلیم، صحت، موسم، کھیل اور عوامی دلچسپی کی اہم خبریں۔</p></div><em>DAILY NEWS ROUNDUP</em></div>
+ <div class="daily-news-list">
+  <article class="daily-news-item"><small>سیاست و خارجہ</small><b>پاکستان اور ترکمانستان کے درمیان چھٹے مشترکہ کمیشن کا پروٹوکول</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>عالمی امور</small><b>ای سی او کی پاکستان اور قطر کی سفارتی کوششوں کی حمایت</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>معیشت</small><b>پیٹرول اور ڈیزل کی قیمتوں میں فی لیٹر 2 روپے کمی</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>شہری ترقی</small><b>کراچی ریڈ لائن منصوبے کی فنڈنگ میں توسیع، اہداف سے مشروط</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>تعلیم</small><b>بنوں کے 30 سرکاری اسکولوں کی عمارتیں غیر محفوظ قرار</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>عدلیہ و انتظامیہ</small><b>بھرتی قواعد کی خلاف ورزی پر سندھ پبلک سروس کمیشن کے تین اہلکار برطرف</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>موسم و سفر</small><b>برف باری کے باعث سیف الملوک جھیل جانے پر پابندی</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>کھیل</small><b>شین ڈائٹز پاکستان ویمنز کرکٹ ٹیم کے ہیڈ کوچ مقرر</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>مالیاتی مارکیٹ</small><b>کے ایس ای 100 انڈیکس کی کاروباری سیشن کے دوران صورتحال</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>ثقافت و سیاحت</small><b>پاکستان اور ترکمانستان کے درمیان سیاحتی تعاون کی مفاہمت</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>صحت</small><b>اسلام آباد کے 13 مراکز پر ہیپاٹائٹس سی کی مفت اسکریننگ اور علاج</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+  <article class="daily-news-item"><small>حادثات و عوامی تحفظ</small><b>عارف والا–بوریوالا روڈ حادثہ: ہلاکتوں اور زخمیوں کی تفصیل</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
+ </div>
+ <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px"><a class="cta" href="/news/urdu-news-2026-11-17.html">مکمل اردو روزانہ بلیٹن ↗</a><a class="cta secondary" href="/news/english-news-2026-11-17.html">English Daily Bulletin ↗</a></div>
+</section>
+<section id="developed-stories"><div class="section-head"><div><h2>مکمل تفصیلی اسٹوریز</h2><p>مختصر سرخیوں کے بعد پس منظر، اہم اعداد، متعلقہ فریق اور اصل ذرائع کے ساتھ تفصیلی مطالعہ۔</p></div><em>IN-DEPTH REPORTING</em></div>
+ <div class="developed-stories">
+  <article class="developed-story"><span class="story-tag">PUBLIC SAFETY · DEVELOPING</span><h3>عارف والا–بوریوالا روڈ حادثہ: دستیاب معلومات اور رپورٹوں میں فرق</h3><p>ڈان اور دی نیشن کی رپورٹس کے مطابق تصادم میں 8 افراد جاں بحق ہوئے، تاہم زخمیوں کی تعداد میں فرق ہے۔ اسی لیے زخمیوں کی حتمی تعداد کو غیر مصدقہ سمجھتے ہوئے دونوں رپورٹوں کا حوالہ دیا گیا ہے۔</p><a class="priority-link" href="/news/urdu-news-2026-11-17.html">مکمل رپورٹ اور اصل ذرائع ↗</a></article>
+  <article class="developed-story"><span class="story-tag">ECONOMY · EXPLAINER</span><h3>پیٹرولیم قیمتوں میں کمی: نئے نرخ اور صارفین پر اثر</h3><p>17 نومبر سے پیٹرول اور ہائی اسپیڈ ڈیزل کے نرخوں میں فی لیٹر 2 روپے کمی رپورٹ ہوئی۔ مکمل بلیٹن میں نئے نرخ، اطلاق کی تاریخ اور متعلقہ ذرائع درج ہیں۔</p><a class="priority-link" href="/news/urdu-news-2026-11-17.html">تفصیل اور ذرائع ↗</a></article>
+  <article class="developed-story"><span class="story-tag">EDUCATION · PUBLIC INTEREST</span><h3>بنوں کے 30 غیر محفوظ اسکول: عمارتوں کی حالت اور تعمیرِ نو</h3><p>رپورٹس میں 30 سرکاری اسکول عمارتوں کو غیر محفوظ قرار دینے اور تعمیرِ نو کے لیے 1.05 ارب روپے کے منصوبے کا ذکر ہے؛ مزید عمارتوں کی خستہ حالی بھی رپورٹ ہوئی۔</p><a class="priority-link" href="/news/urdu-news-2026-11-17.html">تفصیل اور ذرائع ↗</a></article>
+  <article class="developed-story"><span class="story-tag">HEALTH · PUBLIC SERVICE</span><h3>اسلام آباد میں ہیپاٹائٹس سی کی مفت اسکریننگ اور علاج</h3><p>وزیرِاعظم پروگرام کے تحت 13 مراکز میں مفت اسکریننگ، تشخیص اور علاج کی سہولت رپورٹ کی گئی ہے۔ بلیٹن میں متعلقہ اشاعت کا حوالہ دیا گیا ہے۔</p><a class="priority-link" href="/news/urdu-news-2026-11-17.html">تفصیل اور ذریعہ ↗</a></article>
+ </div>
+</section>
 <section class="hero"><article class="hero-main"><div class="hero-copy"><div class="eyebrow">THE NEWSROOM CONTROL TOWER</div><h1>خبر کی تلاش سے اشاعت کی منظوری تک — ایک مربوط AI نیوز روم</h1><p>AI Chronicals News میں 26 مخصوص ڈائریکٹرز، اپنی اپنی تحقیق اور ماہر ٹیموں کے ساتھ، 10 مرکزی کوریج ڈیسک کے تحت کام کرتے ہیں۔ ہر خبر کی جانچ، ادارتی نظرثانی اور حتمی فیصلہ انسانی ایڈمن کے اختیار میں رہتا ہے۔</p><div class="hero-ctas"><a class="cta" href="#directors">26 ڈائریکٹرز دیکھیں</a><a class="cta secondary" href="/admin.html">ایڈمن کنٹرول روم کھولیں</a></div></div></article><aside class="hero-side"><div class="side-stat"><strong>26</strong><span>AI Department Directors</span><small>ہر ڈائریکٹر کی مخصوص ذمہ داری اور ٹیم ورک فلو</small></div><div class="side-stat"><strong>10</strong><span>Core Editorial Desks</span><small>یکساں کوریج معیار اور مرکزی TemplateFlyer نظام</small></div><div class="side-stat"><strong>5</strong><span>Specialist Roles / Team</span><small>Research · Storyline · Fact-check · Graphics · Presentation</small></div><div class="side-stat"><strong>01</strong><span>Human Admin Approval Gate</span><small>منظوری کے بغیر اشاعت نہیں</small></div></aside></section>
 <div class="metrics"><div class="metric"><div><b>26/26</b><span>Director roles defined</span></div><span>●</span></div><div class="metric"><div><b>10/10</b><span>Master editorial desks</span></div><span>●</span></div><div class="metric"><div><b>5×26</b><span>Specialist role structure</span></div><span>●</span></div><div class="metric"><div><b>OFF</b><span>Auto-publishing</span></div><span>●</span></div></div>
 <section id="structure"><div class="section-head"><div><h2>ادارہ جاتی ڈھانچہ — Newsroom Organization</h2><p>مرکزی قیادت، کوریج ڈائریکٹرز اور مشترکہ ادارتی/پروڈکشن یونٹس</p></div><em>OPERATING MODEL</em></div><div class="structure-panel"><div class="org-top"><b>BULAND · CENTRAL COORDINATOR</b><span>مرکزی اسائنمنٹ، ترجیح، ٹاسک تقسیم اور رن کی نگرانی</span><small>Editor-in-Chief کی ادارتی نگرانی اور Admin کی حتمی منظوری برقرار</small></div><div class="branch-flow">↓ &nbsp; ↓ &nbsp; ↓</div><div class="org-branches"><article class="org-branch"><h3>01 · قیادت و اسائنمنٹ</h3><p>Newsroom / Editor-in-Chief، Assignment Desk، Pakistan، Provincial & Local — ادارتی سمت، ترجیح اور جغرافیائی کوریج۔</p><span class="branch-count">4 DIRECTORS</span></article><article class="org-branch"><h3>02 · موضوعاتی کوریج</h3><p>Politics، World، Crime، Courts، Business، Finance، Sports، Technology، Science، Climate، Education اور Agriculture۔</p><span class="branch-count">12 DIRECTORS</span></article><article class="org-branch"><h3>03 · ادارتی معیار و پروڈکشن</h3><p>Research، OSV، Fact-check، زبان، Copy Editing، Visuals، Audience، SEO، Ethics اور Security۔</p><span class="branch-count">10 DIRECTORS</span></article></div><div class="safety-strip"><b>ADMIN CONTROL GATE</b><span>AI ٹیمیں تحقیق اور ڈرافٹ تیار کرتی ہیں؛ PASS سفارش بھی خودکار اشاعت نہیں۔ ایڈمن کی منظوری الگ اور لازمی ہے۔</span></div></div></section>
