@@ -16,11 +16,40 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
 .status{padding:12px;border-radius:7px;background:#eef4fb;margin-top:14px;white-space:pre-wrap}
 #result{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}.report-card{border:1px solid #dbe3ee;border-radius:10px;padding:16px;margin:12px 0;background:#fff}.report-card h3{margin:0 0 8px}.report-card p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.report-meta{font-size:12px;color:#66758a}.report-card a{display:block;direction:ltr;overflow-wrap:anywhere;margin:6px 0}.raw-data{margin-top:16px}.tag{display:inline-block;background:#fff1f2;color:#a51f32;padding:5px 10px;border-radius:20px;font-size:12px}.department-progress{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px}.department-state{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 11px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font-size:13px}.department-state small{color:#69778b}.state-running{border-color:#1264bd;background:#eef6ff}.state-success{border-color:#16834a;background:#effaf3}.state-failed{border-color:#d33b48;background:#fff1f2}
 .newsroom-nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 14px;background:#071a35;border-radius:12px;scrollbar-width:thin}.newsroom-nav a{flex:0 0 auto;color:#fff;text-decoration:none;border:1px solid #49617f;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700}.newsroom-nav a:focus,.newsroom-nav a:hover{background:#173b66;outline:2px solid #91bfff;outline-offset:1px}html{scroll-behavior:smooth}main section[id]{scroll-margin-top:76px}
-.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-vector-icon{float:left;width:44px;height:44px;margin:0 0 8px 10px;padding:8px;border:1px solid #3b829e;border-radius:10px;background:linear-gradient(145deg,#0c2941,#25204a);stroke:#45ddec;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #45ddec66)}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}.user-preview-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 16px;border:1px solid #52c9ef;border-radius:8px;background:linear-gradient(110deg,#087da8,#3156b7);color:#fff;text-decoration:none;font:800 12px Arial;box-shadow:0 0 18px #1684c633}.user-preview-link:hover,.user-preview-link:focus{background:linear-gradient(110deg,#0b91bd,#4769d3);outline:2px solid #9deaff;outline-offset:2px}</style>
+.team-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:14px}.team-roster-card{border:1px solid #dbe3ee;border-radius:9px;padding:12px;background:#fbfdff}.team-vector-icon{float:left;width:44px;height:44px;margin:0 0 8px 10px;padding:8px;border:1px solid #3b829e;border-radius:10px;background:linear-gradient(145deg,#0c2941,#25204a);stroke:#45ddec;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #45ddec66)}.team-roster-card b{display:block;font-size:13px}.team-roster-card small{display:block;color:#1264bd;font-size:10px;margin:5px 0}.team-roster-card p{font-size:11px;color:#58677b;line-height:1.7;margin:0}.admin-tool-access{border:1px solid #c6d7e8;background:#f4f8fc;border-radius:9px;padding:12px;margin-top:12px}.admin-tool-access a{display:inline-block;margin:8px 0;padding:10px 13px;border-radius:7px;background:#0b385e;color:#fff;font-weight:bold;font-size:12px}.admin-tool-access a[hidden]{display:none}.user-preview-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:10px 16px;border:1px solid #52c9ef;border-radius:8px;background:linear-gradient(110deg,#087da8,#3156b7);color:#fff;text-decoration:none;font:800 12px Arial;box-shadow:0 0 18px #1684c633}.user-preview-link:hover,.user-preview-link:focus{background:linear-gradient(110deg,#0b91bd,#4769d3);outline:2px solid #9deaff;outline-offset:2px}
+/* Responsive admin workspace and keyboard accessibility */
+.skip-link{position:fixed;z-index:100;top:8px;right:8px;transform:translateY(-160%);padding:10px 14px;background:#fff;color:#071a35;border-radius:7px;font-weight:800}
+.skip-link:focus{transform:translateY(0)}
+:focus-visible{outline:3px solid #167cc5!important;outline-offset:3px!important}
+.panel{min-width:0;overflow-wrap:anywhere}
+@media(max-width:680px){
+ header{padding:17px 4%}
+ header strong{font-size:19px}
+ main{width:96%;margin:16px auto}
+ .panel{padding:15px;margin:12px 0;border-radius:10px}
+ h1{font-size:21px;line-height:1.35}
+ .newsroom-nav{gap:6px;padding:8px;border-radius:9px}
+ .newsroom-nav a{font-size:12px;padding:9px 10px}
+ .department-progress,.team-roster-grid{grid-template-columns:minmax(0,1fr)}
+ .department-state{align-items:flex-start;flex-wrap:wrap}
+ input,textarea,select{font-size:16px;max-width:100%}
+ button{max-width:100%;white-space:normal}
+ .report-card{padding:12px}
+ .user-preview-link{font-size:11px;padding:9px 11px}
+}
+@media(max-width:380px){
+ main{width:94%}
+ .panel{padding:12px}
+ .newsroom-nav a{font-size:11px;padding:8px}
+ header strong{font-size:17px}
+}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">مرکزی مواد پر جائیں</a>
 <header><strong>AI CHRONICALS NEWS</strong><span>ADMIN NEWSROOM</span><a class="user-preview-link" href="/" target="_blank" rel="noopener" aria-label="Open public website user preview">USER PREVIEW ↗</a></header>
-<main>
+<main id="main-content">
 <nav class="newsroom-nav" aria-label="Newsroom sections">
 <a href="#dashboardPanel">مرکزی ڈیش بورڈ</a>
 <a href="#assignmentPanel">اسائنمنٹ سینٹر</a>
