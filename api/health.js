@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     geminiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiProvider: DEFAULT_MODEL,
     blobTokenConfigured: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-    supabaseConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+    supabaseConfigured: Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)),
     approvalQueuePersistence: process.env.BLOB_READ_WRITE_TOKEN ? "private-vercel-blob-with-local-browser-fallback" : "browser-local-only"
   };
 
