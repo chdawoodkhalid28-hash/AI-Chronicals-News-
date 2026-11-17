@@ -79,9 +79,22 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
 @media(max-width:850px){.news-command{grid-template-columns:1fr}.daily-news-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.developed-stories{grid-template-columns:1fr}.daily-news-item{padding:11px}.news-priority{min-height:0}}
 
-.daily-news-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:4px}.daily-news-item{padding:15px;border:1px solid #2b4d69;border-radius:10px;background:linear-gradient(145deg,#10243b,#091626);min-height:148px;transition:transform .18s,border-color .18s}.daily-news-item:hover{transform:translateY(-2px);border-color:#45e6f2}.daily-news-item small{display:block;color:#8cecff;font:800 9px Arial;letter-spacing:.12em;direction:ltr;text-align:left}.daily-news-item b{display:block;font-size:14px;line-height:1.7;margin:7px 0}.daily-news-item p{font-size:11px;color:#c2d4e6;margin:0 0 8px;line-height:1.7}.daily-news-item a{color:#7ce8f6;font-size:11px;font-weight:bold}@media(max-width:900px){.daily-news-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.daily-news-list{grid-template-columns:1fr}}\n</style>
+.daily-news-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:4px}.daily-news-item{padding:15px;border:1px solid #2b4d69;border-radius:10px;background:linear-gradient(145deg,#10243b,#091626);min-height:148px;transition:transform .18s,border-color .18s}.daily-news-item:hover{transform:translateY(-2px);border-color:#45e6f2}.daily-news-item small{display:block;color:#8cecff;font:800 9px Arial;letter-spacing:.12em;direction:ltr;text-align:left}.daily-news-item b{display:block;font-size:14px;line-height:1.7;margin:7px 0}.daily-news-item p{font-size:11px;color:#c2d4e6;margin:0 0 8px;line-height:1.7}.daily-news-item a{color:#7ce8f6;font-size:11px;font-weight:bold}@media(max-width:900px){.daily-news-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.daily-news-list{grid-template-columns:1fr}}\n
+/* Accessibility and front-desk finishing layer */
+.skip-link{position:fixed;z-index:1000;top:8px;right:8px;transform:translateY(-160%);padding:10px 14px;background:#fff;color:#071426;border-radius:7px;font-weight:800}
+.skip-link:focus{transform:translateY(0)}
+:focus-visible{outline:3px solid #8beaff!important;outline-offset:3px!important}
+.news-tools input:focus{border-color:#45e6f2;box-shadow:0 0 0 3px #45e6f222}
+.daily-news-item[hidden]{display:none!important}
+#backToTop{position:fixed;z-index:30;left:18px;bottom:18px;width:44px;height:44px;border:1px solid #65d8ee;border-radius:50%;background:#0b2942;color:#fff;font-size:20px;box-shadow:0 8px 24px #0008;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:.2s}
+#backToTop.is-visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+@media(max-width:520px){.news-tools{align-items:stretch!important}.news-tools label{width:100%}#newsSearch{min-width:100%!important}.news-tools output{flex:1}}
+@media(prefers-reduced-motion:reduce){#backToTop{transition:none}}
+
+</style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">مرکزی مواد پر جائیں</a>
 <div class="topbar"><div class="container"><span id="today">AI Chronicals Newsroom</span><span>VERIFIED FIRST · HUMAN APPROVAL REQUIRED · PUBLISHING DISABLED</span></div></div>
 <header><div class="container brand"><div><div class="wordmark">AI <span>CHRONICALS</span> NEWS</div><div class="tagline">INDEPENDENT NEWSROOM · VERIFIED FIRST</div></div><div class="brand-status">26 DIRECTORS · 10 EDITORIAL DESKS · ONE NEWSROOM</div></div></header>
 <nav><div class="container nav-inner"><div class="navlinks"><a href="#home">فرنٹ ڈیسک</a><a href="#structure">ادارہ جاتی ڈھانچہ</a><a href="#directors">26 ڈائریکٹرز</a><a href="#desks">10 مرکزی ڈیسک</a><a href="#workflow">نیوز ورک فلو</a><a href="#broadcast">گرافکس</a><a href="/graphics/department-templateflyers.html">10 ڈیجیٹل ٹیمپلیٹس</a></div><a class="nav-action" href="/admin.html">ADMIN NEWSROOM ↗</a></div></nav>
@@ -96,7 +109,8 @@ footer{background:#020812;border-top:1px solid #29435f;padding:32px 0;color:#c2d
  <article class="news-priority developing-panel"><span class="priority-label"><i class="priority-dot"></i> DEVELOPING NEWS</span><h2>حادثے میں زخمیوں کی تعداد کی تصدیق</h2><p>ابتدائی رپورٹس میں زخمیوں کی تعداد پر اختلاف ہے۔ ادارتی ڈیسک صرف مصدقہ سرکاری یا قابلِ اعتماد اپ ڈیٹ شامل کرے گا؛ فی الحال متضاد اعداد کو واضح رکھا گیا ہے۔</p><small>UPDATE STATUS: CONFIRMATION PENDING</small><a class="priority-link" href="/news/urdu-news-2026-11-17.html">متعلقہ خبر پڑھیں ↗</a></article>
 </section>
 <section id="daily-news"><div class="section-head"><div><h2>پورے دن کی خبریں</h2><p>17 نومبر 2026 — قومی، عالمی، معیشت، تعلیم، صحت، موسم، کھیل اور عوامی دلچسپی کی اہم خبریں۔</p></div><em>DAILY NEWS ROUNDUP</em></div>
- <div class="daily-news-list">
+ <div class="news-tools" role="search" aria-label="خبروں میں تلاش" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 14px;padding:12px;border:1px solid #315572;border-radius:10px;background:#091a2c"><label for="newsSearch" style="font-size:12px;color:#dceafa;font-weight:bold">خبروں میں تلاش</label><input id="newsSearch" type="search" placeholder="سرخی، موضوع یا زمرہ تلاش کریں…" autocomplete="off" style="flex:1;min-width:190px;padding:10px 12px;border:1px solid #456987;border-radius:7px;background:#061323;color:#fff"><output id="newsSearchCount" aria-live="polite" style="font-size:11px;color:#8edff0">تمام خبریں</output><button id="clearNewsSearch" type="button" style="padding:8px 12px;border:1px solid #54748f;border-radius:7px;background:#132b43;color:#fff;cursor:pointer">صاف کریں</button></div>
+<div class="daily-news-list">
   <article class="daily-news-item"><small>سیاست و خارجہ</small><b>پاکستان اور ترکمانستان کے درمیان چھٹے مشترکہ کمیشن کا پروٹوکول</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
   <article class="daily-news-item"><small>عالمی امور</small><b>ای سی او کی پاکستان اور قطر کی سفارتی کوششوں کی حمایت</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
   <article class="daily-news-item"><small>معیشت</small><b>پیٹرول اور ڈیزل کی قیمتوں میں فی لیٹر 2 روپے کمی</b><a href="/news/urdu-news-2026-11-17.html">خبر پڑھیں ↗</a></article>
@@ -226,5 +240,42 @@ search.addEventListener("input",()=>{
  count.textContent=visible+" میں سے 26 ڈائریکٹرز";
  noResults.style.display=visible?"none":"block";
 });
+
+/* Front-desk usability: accessible news search, keyboard shortcut and back-to-top */
+(()=>{
+ const search=document.getElementById("newsSearch");
+ const cards=[...document.querySelectorAll(".daily-news-item")];
+ const count=document.getElementById("newsSearchCount");
+ const clear=document.getElementById("clearNewsSearch");
+ if(search&&count&&cards.length){
+  const apply=()=>{
+   const q=search.value.trim().toLocaleLowerCase();
+   let shown=0;
+   cards.forEach(card=>{
+    const match=!q||card.textContent.toLocaleLowerCase().includes(q);
+    card.hidden=!match;
+    if(match)shown++;
+   });
+   count.textContent=q?(shown+" / "+cards.length+" خبریں"):(cards.length+" خبریں");
+  };
+  search.addEventListener("input",apply);
+  clear?.addEventListener("click",()=>{search.value="";apply();search.focus();});
+  document.addEventListener("keydown",event=>{
+   if(event.key==="/"&&!event.ctrlKey&&!event.metaKey&&!event.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")){
+    event.preventDefault();search.focus();
+   }
+   if(event.key==="Escape"&&document.activeElement===search){search.value="";apply();search.blur();}
+  });
+  apply();
+ }
+ const top=document.createElement("button");
+ top.id="backToTop";top.type="button";top.setAttribute("aria-label","صفحے کے اوپر جائیں");top.title="اوپر جائیں";top.textContent="↑";
+ document.body.appendChild(top);
+ const refresh=()=>top.classList.toggle("is-visible",window.scrollY>500);
+ window.addEventListener("scroll",refresh,{passive:true});
+ top.addEventListener("click",()=>window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}));
+ refresh();
+})();
+
 </script>
 </body></html>
