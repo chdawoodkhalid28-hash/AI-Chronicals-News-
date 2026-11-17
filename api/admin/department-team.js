@@ -116,7 +116,10 @@ async function openAIChat(body) {
       .slice(0, 12000);
     const fallback = await generateGeminiText(
       "You are a newsroom specialist. Return a careful, structured response. Do not invent sources or citations. Mark uncertain claims for human verification.\n\n" + prompt,
-      { maxOutputTokens: 2048 }
+      {
+        maxOutputTokens: 2048,
+        responseMimeType: body.response_format?.type === "json_object" ? "application/json" : undefined
+      }
     );
     return {
       role: "assistant",
