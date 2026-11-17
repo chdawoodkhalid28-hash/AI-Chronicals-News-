@@ -29,7 +29,7 @@ h1,h2{margin-top:0}label{display:block;font-weight:bold;margin:12px 0 5px}input,
 <label for="desk">Assigned Desk</label><input id="desk" value="newsroom" maxlength="100">
 <label for="sources">Source URLs — ہر سطر میں ایک HTTPS URL</label><textarea id="sources" placeholder="https://official.gov.pk/news/123&#10;https://reputable-news.example/story"></textarea>
 <label><input id="official" type="checkbox" style="width:auto"> پہلا Source سرکاری / Official ہے</label>
-<button id="save" disabled>Draft کو PostgreSQL میں محفوظ کریں</button>
+<div class="actions"><button id="save" disabled>Draft کو PostgreSQL میں محفوظ کریں</button><button id="cancelEdit" type="button" hidden>ترمیم منسوخ کریں</button></div>
 <div id="saveStatus" class="status" role="status">پہلے Admin کی تصدیق کریں۔</div>
 </section>
 <section class="panel"><h2>News Desk — محفوظ شدہ خبریں</h2><div id="articles" class="muted">Database سے رابطہ قائم ہونے کے بعد فہرست یہاں آئے گی۔</div></section>
@@ -37,6 +37,7 @@ h1,h2{margin-top:0}label{display:block;font-weight:bold;margin:12px 0 5px}input,
 <script>
 const $=id=>document.getElementById(id);
 let password="";
+let editingId="";
 const statuses=[
  ["pending_verification","تصدیق زیرِ انتظار"],
  ["verified","تصدیق شدہ"],
@@ -61,6 +62,7 @@ function render(items){
   card.appendChild(node("div","ذرائع: "+(item.sources||[]).length,"meta"));
   for(const source of item.sources||[]){const a=node("a",source.source_title||source.publisher||source.source_url);a.href=source.source_url;a.target="_blank";a.rel="noopener noreferrer";a.dir="ltr";a.style.display="block";card.appendChild(a);}
   const actions=node("div","","actions");
+  const edit=node("button","خبر میں ترمیم");edit.type="button";edit.addEventListener("click",()=>{editingId=item.id;$("headline").value=item.headline||"";$("summary").value=item.summary||"";$("body").value=item.body||"";$("language").value=item.language||"ur";$("category").value=item.category||"general";$("desk").value=item.assigned_desk||"newsroom";$("sources").value=(item.sources||[]).map(x=>x.source_url).join("\n");$("official").checked=(item.sources||[]).some(x=>x.is_official);$("save").textContent="تبدیلیاں محفوظ کریں";$("cancelEdit").hidden=false;$("saveStatus").textContent="خبر میں ترمیم جاری ہے؛ محفوظ کرنے پر دوبارہ verification درکار ہوگی۔";window.scrollTo({top:0,behavior:"smooth"});});actions.appendChild(edit);const remove=node("button","خبر حذف کریں","danger");remove.type="button";remove.addEventListener("click",async()=>{if(!confirm("کیا آپ یہ خبر مستقل حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہوگا۔"))return;remove.disabled=true;try{await api("DELETE",{id:item.id,confirmDelete:true});if(editingId===item.id)resetForm();await load();}catch(e){alert(e.message);remove.disabled=false;}});actions.appendChild(remove);
   for(const [value,label] of statuses){
    const b=node("button",label);b.type="button";b.disabled=value===item.editorial_status;b.addEventListener("click",async()=>{
     if(value==="approved_not_published"&&!confirm("یہ صرف ادارتی منظوری ہوگی؛ خبر شائع نہیں ہوگی۔ جاری رکھیں؟"))return;
@@ -73,6 +75,8 @@ function render(items){
  }
 }
 async function load(){const data=await api("GET");render(data.items||[]);$("connectionStatus").textContent="Database connected. "+(data.items||[]).length+" records loaded. Publication DISABLED.";}
+function resetForm(){editingId="";$("headline").value="";$("summary").value="";$("body").value="";$("sources").value="";$("official").checked=false;$("save").textContent="Draft کو PostgreSQL میں محفوظ کریں";$("cancelEdit").hidden=true;}
+$("cancelEdit").addEventListener("click",resetForm);
 $("connect").addEventListener("click",async()=>{password=$("adminPassword").value;if(!password){$("connectionStatus").textContent="Admin password required.";return;}try{await load();$("save").disabled=false;$("refresh").disabled=false;}catch(e){password="";$("connectionStatus").textContent=e.message;}});
 $("refresh").addEventListener("click",()=>load().catch(e=>$("connectionStatus").textContent=e.message));
 $("save").addEventListener("click",async()=>{
@@ -80,11 +84,12 @@ $("save").addEventListener("click",async()=>{
  const sources=urls.map((url,i)=>({url,official:$("official").checked&&i===0}));
  $("save").disabled=true;
  try{
-  await api("POST",{article:{headline:$("headline").value,summary:$("summary").value,body:$("body").value,language:$("language").value,category:$("category").value,assignedDesk:$("desk").value,sources}});
-  $("saveStatus").textContent="Draft محفوظ ہوگیا؛ Pending Verification. Publication DISABLED.";
-  $("headline").value="";$("summary").value="";$("body").value="";$("sources").value="";$("official").checked=false;
-  await load();
- }catch(e){$("saveStatus").textContent=e.message;}
+  const article={headline:$("headline").value,summary:$("summary").value,body:$("body").value,language:$("language").value,category:$("category").value,assignedDesk:$("desk").value,sources};
+   if(editingId)await api("PATCH",{id:editingId,article});else await api("POST",{article});
+   $("saveStatus").textContent=(editingId?"تبدیلیاں محفوظ ہوگئیں؛ دوبارہ verification درکار ہے.":"Draft محفوظ ہوگیا؛ Pending Verification.")+" Publication DISABLED.";
+   resetForm();
+   await load();
+  }catch(e){$("saveStatus").textContent=e.message;}
  finally{$("save").disabled=false;}
 });
 </script></body></html>
