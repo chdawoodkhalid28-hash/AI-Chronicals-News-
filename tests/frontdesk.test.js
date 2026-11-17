@@ -34,7 +34,7 @@ test("front desk includes all six editorial workflow gates and admin control", (
 });
 
 test("director search, admin route and graphics libraries are wired", () => {
-  for (const marker of ['id="directorSearch"', 'id="directorCount"', 'href="/admin.html"', 'href="/graphics/department-templateflyers.html"', 'href="/graphics/ready-made-flyer-library.html"']) {
+  for (const marker of ['id="directorSearch"', 'id="directorCount"', 'href="/admin.html"', 'href="/admin-news.html"', '05 · News Management', 'href="/graphics/department-templateflyers.html"', 'href="/graphics/ready-made-flyer-library.html"']) {
     assert.ok(html.includes(marker), "missing front desk control/link: " + marker);
   }
 });
