@@ -103,8 +103,27 @@ async function openAIChat(body) {
         await new Promise(resolve => setTimeout(resolve, 900));
         continue;
       }
-      throw error;
+      break;
     }
+  }
+
+  // Gemini is a text-generation fallback only. It must never impersonate web search.
+  if (!body.web_search_options && process.env.GEMINI_API_KEY) {
+    const { generateGeminiText } = await import("../../lib/gemini.js");
+    const prompt = (body.messages || [])
+      .map(message => String(message.role || "user").toUpperCase() + ": " + String(message.content || ""))
+      .join("\n\n")
+      .slice(0, 12000);
+    const fallback = await generateGeminiText(
+      "You are a newsroom specialist. Return a careful, structured response. Do not invent sources or citations. Mark uncertain claims for human verification.\n\n" + prompt,
+      { maxOutputTokens: 2048 }
+    );
+    return {
+      role: "assistant",
+      content: fallback.text,
+      fallbackProvider: "gemini",
+      fallbackModel: fallback.model
+    };
   }
   throw lastError || new Error("Upstream AI request failed");
 }
