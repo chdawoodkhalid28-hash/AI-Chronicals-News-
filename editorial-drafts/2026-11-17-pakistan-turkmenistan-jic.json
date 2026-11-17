@@ -1,0 +1,35 @@
+{
+  "article": {
+    "headline": "پاکستان اور ترکمانستان کا تجارت، توانائی اور علاقائی رابطوں میں تعاون بڑھانے پر اتفاق",
+    "summary": "اسلام آباد میں پاکستان اور ترکمانستان کے چھٹے مشترکہ بین الحکومتی کمیشن اجلاس میں تجارت، سرمایہ کاری، توانائی، زراعت، خوراک کے تحفظ اور علاقائی رابطوں میں تعاون بڑھانے پر بات چیت ہوئی۔",
+    "body": "اسلام آباد، 17 نومبر 2026: پاکستان اور ترکمانستان نے تجارت، سرمایہ کاری، توانائی، زراعت، خوراک کے تحفظ، ٹرانسپورٹ اور علاقائی رابطوں سمیت مختلف شعبوں میں تعاون مزید مضبوط بنانے پر زور دیا ہے۔\n\nریڈیو پاکستان کے مطابق پاکستان کے نائب وزیراعظم و وزیر خارجہ اسحاق ڈار اور ترکمانستان کے وزیر خارجہ رشید مردوف نے چھٹے پاکستان–ترکمانستان مشترکہ بین الحکومتی کمیشن اجلاس کی مشترکہ صدارت کی۔ اجلاس میں دونوں ملکوں کے درمیان کاروباری روابط، ادارہ جاتی شراکت داری اور مشترکہ منصوبوں پر عمل درآمد کے لیے ورکنگ گروپس اور باقاعدہ رابطہ کاری کی اہمیت پر بھی زور دیا گیا۔\n\nپاکستان کے پریس انفارمیشن ڈیپارٹمنٹ کے مطابق وزیرِ تجارت جام کمال خان اور ترکمانستان کے وزیرِ تجارت دوردگلی سلیمانوف کی الگ ملاقات میں علاقائی تجارتی راہداریوں، منڈیوں تک رسائی اور دوطرفہ تجارت بڑھانے کے اقدامات زیرِ بحث آئے۔ اس ملاقات میں اسلام آباد اور اشک آباد کے درمیان براہِ راست پروازوں اور زرعی و غذائی مصنوعات کے لیے چارٹرڈ کارگو سروسز کی تجویز بھی زیرِ غور آئی۔\n\nیہ پیش رفت دونوں ملکوں کے درمیان تجارتی اور علاقائی رابطوں کو عملی شکل دینے کی کوششوں کا حصہ ہے۔ مجوزہ اقدامات کی حتمی پیش رفت متعلقہ اداروں اور مشترکہ ورکنگ گروپس کے آئندہ فیصلوں سے مشروط ہوگی۔\n\nادارتی نوٹ: خبر سرکاری ذرائع سے منسوب ہے۔ اشاعت سے پہلے اصل اعلامیوں، عہدوں کے درست املا اور مجوزہ اقدامات کی حیثیت کی آخری ادارتی جانچ ضروری ہے۔",
+    "language": "ur",
+    "category": "Pakistan",
+    "assignedDesk": "Pakistan",
+    "editorial_status": "pending_verification",
+    "publication_status": "disabled"
+  },
+  "sources": [
+    {
+      "url": "https://radio.gov.pk/17-11-2026/pakistan-turkmenistan-stress-stronger-business-institutional-ties",
+      "title": "Pakistan, Turkmenistan stress stronger business, institutional ties",
+      "publisher": "Radio Pakistan",
+      "official": true
+    },
+    {
+      "url": "https://pid.gov.pk/site/press_detail/34830",
+      "title": "PR No. 207 — Pakistan, Turkmenistan Discuss Regional Trade Corridors, Expansion of Bilateral Commerce",
+      "publisher": "Press Information Department, Government of Pakistan",
+      "official": true
+    }
+  ],
+  "editorial_status": "pending_verification",
+  "publication_status": "disabled",
+  "created_for": "website-news-management-import",
+  "created_at": "2026-11-17",
+  "notes": [
+    "This is a development-branch editorial draft only; it has not been inserted into Supabase.",
+    "Publication remains disabled.",
+    "Admin review of the cited official releases is required before changing editorial status."
+  ]
+}
