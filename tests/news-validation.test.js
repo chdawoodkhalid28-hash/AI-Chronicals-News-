@@ -34,3 +34,16 @@ test("infers a publisher domain when source metadata is omitted", () => {
   assert.equal(result.sources[0].publisher, "one.example");
   assert.equal(result.sources[1].publisher, "two.example");
 });
+test("ignores spoofed publisher labels and normalizes www hostnames", () => {
+  const result = validateArticleInput({
+    headline: "A sufficiently long headline",
+    sources: [
+      { url: "https://www.example.com/first", publisher: "Publisher One" },
+      { url: "https://example.com/second", publisher: "Publisher Two" }
+    ]
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.sources[0].publisher, "example.com");
+  assert.equal(result.sources[1].publisher, "example.com");
+  assert.equal(canMarkVerified(result.sources), false);
+});
