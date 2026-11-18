@@ -23,6 +23,60 @@ export default async function handler(req, res) {
     approvalQueuePersistence: process.env.BLOB_READ_WRITE_TOKEN ? "private-vercel-blob-with-local-browser-fallback" : "browser-local-only"
   };
 
+  if (req.query?.supabase === "all") {
+    if (!capabilities.supabaseConfigured) {
+      return res.status(503).json({
+        service: "AI Chronicals News",
+        ok: false,
+        provider: "supabase",
+        status: "not_configured",
+        probe: "read_only_select_all_tables",
+        tables: [],
+        capabilities
+      });
+    }
+    const tableNames = [
+      "news_articles",
+      "news_sources",
+      "news_verification_checks",
+      "editorial_events",
+      "department_outputs",
+      "media_assets"
+    ];
+    const tables = await Promise.all(tableNames.map(async (table) => {
+      try {
+        await supabaseRequest(table, {
+          query: new URLSearchParams({ select: "id", limit: "1" }).toString()
+        });
+        return { table, status: "connected" };
+      } catch (error) {
+        const upstreamStatus = Number.isInteger(error.statusCode) ? error.statusCode : null;
+        const status = upstreamStatus === 404
+          ? "schema_not_ready"
+          : upstreamStatus === 401 || upstreamStatus === 403
+            ? "credentials_rejected"
+            : error.code === "SUPABASE_URL_INVALID" || error.code === "SUPABASE_URL_HTTPS_REQUIRED"
+              ? "invalid_configuration"
+              : error.code === "SUPABASE_NETWORK_ERROR"
+                ? "network_error"
+                : "database_unavailable";
+        return { table, status, upstreamStatus, reasonCode: error.code || (upstreamStatus ? "SUPABASE_HTTP_" + upstreamStatus : "SUPABASE_REQUEST_FAILED") };
+      }
+    }));
+    const connected = tables.filter((item) => item.status === "connected").length;
+    return res.status(200).json({
+      service: "AI Chronicals News",
+      ok: connected === tableNames.length,
+      provider: "supabase",
+      status: connected === tableNames.length ? "all_tables_connected" : "partial_schema_or_access",
+      probe: "read_only_select_all_tables",
+      connectedTables: connected,
+      totalTables: tableNames.length,
+      tables,
+      capabilities
+    });
+  }
+
   if (req.query?.supabase === "1") {
     if (!capabilities.supabaseConfigured) {
       return res.status(503).json({
