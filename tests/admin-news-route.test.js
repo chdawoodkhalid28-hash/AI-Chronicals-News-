@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import handler from "../api/admin/news.js";
+import handler from "../api/admin/queue.js";
 
 function responseRecorder() {
   return {
@@ -27,16 +27,15 @@ test("news CRUD route rejects unauthenticated requests before database access", 
   globalThis.fetch = async () => { fetchCalls++; throw new Error("database must not be called"); };
   const res = responseRecorder();
 
-  await handler({ method: "GET", headers: {}, query: {} }, res);
+  await handler({ method: "GET", headers: {}, query: { resource: "news" } }, res);
 
   assert.equal(res.statusCode, 401);
-  assert.equal(res.body.ok, false);
-  assert.equal(res.body.publication, "DISABLED");
+  assert.equal(res.body.error, "Admin authentication failed");
   assert.equal(res.headers["Cache-Control"], "no-store");
   assert.equal(fetchCalls, 0);
 });
 
-test("news CRUD route delegates an authenticated request to the handler", async () => {
+test("news CRUD route delegates an authenticated request to newsroom handler", async () => {
   process.env.ADMIN_PASSWORD = "route-test-password";
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "route-test-db-key";
@@ -49,7 +48,7 @@ test("news CRUD route delegates an authenticated request to the handler", async 
   await handler({
     method: "GET",
     headers: { authorization: "Bearer route-test-password" },
-    query: {}
+    query: { resource: "news" }
   }, res);
 
   assert.equal(res.statusCode, 200);
