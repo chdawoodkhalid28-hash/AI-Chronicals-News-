@@ -43,6 +43,34 @@ footer{margin-top:18px;color:#9fb2cb;font-size:11px}
 @media(prefers-reduced-motion:reduce){.fx-layer:before,.fx-orbit,.live{animation:none!important}.dept,.editorial-photo{transition:none!important}}
 @media print{.fx-layer,.fx-orbit{display:none!important}.live{animation:none!important}}
 
+
+/* ACN VISUAL UPGRADE — master flyer cinematic finish */
+body{background-image:radial-gradient(ellipse at 12% 0%,#175b7b66,transparent 32%),radial-gradient(ellipse at 90% 10%,#703b8050,transparent 30%),linear-gradient(180deg,#050b16,#071626 55%,#050b16)}
+.toolbar{backdrop-filter:blur(16px);box-shadow:0 12px 32px #0006}
+.library-callout{box-shadow:0 0 30px #45e6f21b,inset 0 0 24px #45e6f20a}
+.dept{position:relative;isolation:isolate;box-shadow:0 18px 46px #0007,inset 0 1px #ffffff0b}
+.dept:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;padding:1px;background:linear-gradient(135deg,var(--a),transparent 35%,var(--b) 70%,var(--c));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75}
+.dhead{position:relative}.dhead:after{content:"";position:absolute;left:0;bottom:-8px;width:38%;height:2px;background:linear-gradient(90deg,var(--a),var(--b),transparent);box-shadow:0 0 12px var(--a)}
+.flyer{position:relative;overflow:hidden;box-shadow:0 18px 44px #0008,inset 0 0 70px #0005}
+.flyer:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(115deg,transparent 0 35%,#ffffff10 48%,transparent 58%),repeating-linear-gradient(0deg,transparent 0 32px,#ffffff08 33px),repeating-linear-gradient(90deg,transparent 0 42px,#ffffff07 43px);mix-blend-mode:screen}
+.flyer:after{content:"";position:absolute;z-index:2;left:-35%;top:-30%;width:24%;height:160%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,#ffffff22,transparent);pointer-events:none;animation:flyerSweep 8s ease-in-out infinite}
+@keyframes flyerSweep{0%,35%{left:-35%;opacity:0}48%{opacity:1}75%,100%{left:130%;opacity:0}}
+.editorial-photo{filter:saturate(1.14) contrast(1.06);transition:transform .7s,filter .7s}
+.dept:hover .editorial-photo{transform:scale(1.035);filter:saturate(1.25) contrast(1.1)}
+.motif{filter:drop-shadow(0 0 12px var(--a));opacity:.92}
+.topline{border-bottom:1px solid color-mix(in srgb,var(--a) 55%,transparent);text-shadow:0 0 18px var(--a)}
+.brand span{color:var(--a);text-shadow:0 0 16px var(--a)}
+.live{box-shadow:0 0 16px var(--a)}
+.headline{text-shadow:0 4px 24px #000a,0 0 22px color-mix(in srgb,var(--a) 28%,transparent)}
+.foot{border-top:1px solid color-mix(in srgb,var(--a) 45%,transparent)}
+.module{background:linear-gradient(145deg,#132b43,#091626);border-color:#345a75;box-shadow:inset 0 1px #ffffff0a}
+.variant{border-color:#3b6683;background:linear-gradient(110deg,#102b43,#1a1a38)}
+.variant b{color:var(--a)}
+.photo-credit{color:#b8cde0}
+.workflow{box-shadow:0 16px 40px #0005}
+@media(max-width:700px){.dept{padding:14px}.flyer{min-height:340px}.headline{font-size:clamp(26px,8vw,44px)}}
+@media(prefers-reduced-motion:reduce){.flyer:after{animation:none}.editorial-photo{transition:none}}
+
 </style>
 </head>
 <body>
