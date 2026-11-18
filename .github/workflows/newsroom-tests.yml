@@ -1,0 +1,28 @@
+name: Newsroom API and safety tests
+
+on:
+  push:
+    branches:
+      - ai-newsroom-foundation
+  pull_request:
+    branches:
+      - ai-newsroom-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+      - name: Run tests
+        run: npm test
