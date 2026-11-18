@@ -44,6 +44,24 @@ button:disabled{opacity:.6;cursor:wait}.muted{color:#69778b;font-size:13px;line-
  header strong{font-size:17px}
 }
 
+
+/* ACN VISUAL UPGRADE — admin newsroom workspace */
+:root{--admin-glow:0 0 26px #45e6f21b}
+body{background-image:radial-gradient(ellipse at 8% 0%,#15527a4a,transparent 30%),radial-gradient(ellipse at 95% 10%,#603b8240,transparent 27%),linear-gradient(180deg,#050b16,#081523 62%,#050b16)}
+header,.admin-header{background:radial-gradient(ellipse at 80% 0%,#45e6f21c,transparent 35%),linear-gradient(115deg,#071426,#123b5b 58%,#291c45)}
+.panel{position:relative;overflow:hidden;border-color:#315a78!important;background:linear-gradient(145deg,#112a44,#091626)!important;box-shadow:0 16px 38px #0005,inset 0 1px #ffffff09!important}
+.panel:after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,#45e6f2,#397eff,#b58aff,#ff5c91);opacity:.8;pointer-events:none}
+button,.button,a.button{transition:transform .18s,filter .18s,box-shadow .18s}
+button:hover,.button:hover,a.button:hover{filter:brightness(1.12);box-shadow:0 8px 22px #087da833}
+button:active,.button:active{transform:translateY(1px)}
+input,select,textarea{background:#07182a!important;border-color:#365b78!important;color:#f4f8ff!important}
+input:focus,select:focus,textarea:focus{outline:2px solid #45e6f2!important;outline-offset:2px;box-shadow:0 0 0 4px #45e6f21c!important}
+.status{box-shadow:inset 0 0 14px #45e6f20c}
+.department-progress{background:linear-gradient(90deg,#45e6f2,#397eff,#b58aff)!important;box-shadow:0 0 12px #45e6f244}
+.team-roster-grid>*{transition:transform .18s,border-color .18s}.team-roster-grid>*:hover{transform:translateY(-2px);border-color:#45e6f2}
+.newsroom-nav{box-shadow:0 8px 24px #0005}
+@media(prefers-reduced-motion:reduce){button,.button,a.button,.team-roster-grid>*{transition:none}}
+
 </style>
 </head>
 <body>
