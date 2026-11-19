@@ -332,3 +332,12 @@ Working branch: `ai-newsroom-foundation`
 - Historical middleware error aggregation points to the pre-fix deployment only. New middleware regression tests passed; a fresh runtime check remains required.
 - Owner-only acceptance still required: enter Admin password in News Management and verify draft create/list/edit/status/delete; test private Blob queue sync/decision/delete. Do not retrieve the password or execute these as the owner.
 - Do not run all 26 AI departments without separate cost approval; do not publish or post to social platforms.
+
+
+## 2026-11-19 — Gemini and runtime checks passed
+
+- Live Preview Gemini test passed on `gemini-3.5-flash-lite`: HTTP 200, `status: connected`, minimal 17-token response.
+- Live Supabase read-only probe passed again: all six newsroom tables connected.
+- Fresh 10-minute Vercel runtime error aggregation returned no errors after the middleware fix. The previously recorded exception belongs to the older deployment.
+- The Gemini model/timeout change passed the full relevant GitHub Actions workflows, including the new Gemini safety test file.
+- Remaining owner-only acceptance: authenticated News Management CRUD and private Blob approval-queue create/sync/decision/delete. Full 26-team live run remains blocked pending explicit cost approval. Publishing/social posting remain disabled; Production untouched.
