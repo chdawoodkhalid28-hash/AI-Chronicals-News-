@@ -80,7 +80,7 @@ test("graphics generation refuses to incur image-generation cost if private stor
   await handler({
     method: "POST",
     headers: { authorization: "Bearer graphics-test-password" },
-    body: { prompt: "A sufficiently long synthetic graphics prompt", director: "Agriculture" }
+    body: { prompt: "A sufficiently long synthetic graphics prompt", director: "Agriculture & Rural Affairs", storyBeat: "agriculture" }
   }, res);
 
   assert.equal(res.statusCode, 503);
