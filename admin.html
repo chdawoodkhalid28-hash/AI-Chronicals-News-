@@ -151,6 +151,7 @@ button:focus,a:focus,input:focus,textarea:focus,select:focus{outline:3px solid #
 <p class="muted">ہر ڈپارٹمنٹ رپورٹ میں Graphics Designer کا visual brief اور presentation plan شامل ہوگا۔ اصل تصویر صرف متعلقہ رپورٹ کے Generate Graphics بٹن پر Admin کی کارروائی سے بنے گی؛ کوئی تصویر یا ویڈیو خودکار طور پر شائع نہیں ہوگی۔</p>
 <p class="muted">پہلے Assignment Center سے نیوز روم رن مکمل کریں، پھر Research رپورٹ میں مطلوبہ شعبے کا graphics action استعمال کریں۔ استعمال شدہ تصویر، ماخذ اور حقوق کی حیثیت کی جانچ اشاعت سے پہلے لازم ہے۔</p>
 <p><a href="/graphics/department-templateflyers.html" target="_blank" rel="noopener">10 Department Master TemplateFlyers — تمام شعبہ جاتی ماسٹر گرافکس کھولیں</a></p><p><a href="/graphics/drafts/newsroom-layout-final-review.html" target="_blank" rel="noopener">Newsroom Layout — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/departmental-templates-final-review.html" target="_blank" rel="noopener">Departmental Templates — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/breaking-news-final-review.html" target="_blank" rel="noopener">Breaking News Graphics — Final Review Draft کھولیں</a></p><p><a href="/graphics/broadcast-vfx-template-suite.html" target="_blank" rel="noopener">Broadcast VFX Template Suite کھولیں</a></p><p class="muted">یہ تمام لنکس review/preview assets ہیں؛ اشاعت سے پہلے ایڈمن کی منظوری، story-specific verified copy اور image rights check لازم ہے۔</p><p class="muted">اس Draft میں newsroom dashboard، Breaking News، lower-third، social card، vertical story، data explainer اور editorial status slate شامل ہیں۔ متن براہ راست تبدیل اور Print / Save PDF کیا جا سکتا ہے۔</p>
+<div class="panel"><h3>نجی Graphics Library</h3><p class="muted">محفوظ شدہ گرافکس صرف Admin تصدیق کے بعد نجی Blob storage سے کھلیں گے۔ ہر نئی تصویر کے حقوق کی حیثیت پہلے Pending Review ہوگی۔</p><button id="loadGraphicsLibrary" type="button">محفوظ گرافکس لوڈ کریں</button><div id="graphicsLibraryStatus" class="status" role="status">ابھی لائبریری لوڈ نہیں ہوئی۔</div><div id="graphicsLibrary" class="department-progress"></div></div>
 <a href="#researchPanel">تازہ Research Report دیکھیں</a>
 </section>
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
@@ -253,6 +254,10 @@ function renderReport(data){
            image.alt=graphic.altText||"AI-generated editorial graphic";
            image.style.cssText="display:block;width:100%;max-width:640px;height:auto;border-radius:12px;margin:12px 0;";
            card.insertBefore(image,graphicButton);
+           if(result.asset){
+             const assetInfo=addText(card,"p","نجی اسٹوریج میں محفوظ: "+result.asset.id+" | حقوق: Pending Review","report-meta");
+             card.insertBefore(assetInfo,graphicButton);
+           }
            const download=document.createElement("a");
            download.href=image.src;download.download=(key||"newsroom")+".png";download.textContent="گرافک ڈاؤن لوڈ کریں";
            card.insertBefore(download,graphicButton);
@@ -634,6 +639,33 @@ button.addEventListener("click",async()=>{
   }finally{
     button.disabled=false;
   }
+});
+
+document.getElementById("loadGraphicsLibrary").addEventListener("click",async()=>{
+  const status=document.getElementById("graphicsLibraryStatus");
+  const root=document.getElementById("graphicsLibrary");
+  const password=activeAdminPassword||document.getElementById("password").value.trim();
+  if(!password){status.textContent="پہلے Admin Panel میں password درج کرکے تصدیق کریں۔";return;}
+  const button=document.getElementById("loadGraphicsLibrary");button.disabled=true;
+  status.textContent="نجی گرافکس لائبریری لوڈ ہو رہی ہے…";root.replaceChildren();
+  try{
+    const response=await fetch("/api/admin/graphics",{headers:{Authorization:"Bearer "+password,Accept:"application/json"}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||"Graphics library request failed");
+    if(!Array.isArray(data.items)||!data.items.length){status.textContent="ابھی کوئی گرافک محفوظ نہیں۔";return;}
+    for(const item of data.items){
+      const card=document.createElement("article");card.className="team-roster-card";
+      const title=document.createElement("b");title.textContent=item.alt_text||"Newsroom graphic";card.appendChild(title);
+      const meta=document.createElement("small");meta.textContent="حقوق: "+item.rights_status+" | "+new Date(item.created_at).toLocaleString();card.appendChild(meta);
+      const imageResponse=await fetch("/api/admin/graphics?id="+encodeURIComponent(item.id),{headers:{Authorization:"Bearer "+password}});
+      if(!imageResponse.ok)throw new Error("Saved image could not be loaded: "+item.id);
+      const objectUrl=URL.createObjectURL(await imageResponse.blob());
+      const image=document.createElement("img");image.src=objectUrl;image.alt=item.alt_text||"Saved newsroom graphic";image.loading="lazy";image.style.cssText="width:100%;height:auto;border-radius:8px;margin-top:8px";card.appendChild(image);
+      root.appendChild(card);
+    }
+    status.textContent=data.items.length+" نجی گرافکس لوڈ ہوئے۔";
+  }catch(error){status.textContent="گرافکس لائبریری لوڈ نہیں ہوئی: "+error.message;}
+  finally{button.disabled=false;}
 });
 </script>
 </body>
