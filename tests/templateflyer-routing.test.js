@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { resolveTemplate } from "../api/admin/templateflyer-routing.js";
-import graphicsHandler from "../api/admin/graphics.js";
+import graphicsHandler, { createGraphicsHandler } from "../api/admin/graphics.js";
 import { readFile } from "node:fs/promises";
 
 test("fixed directors retain their approved master", async () => {
@@ -92,6 +92,9 @@ test("graphics API rejects unmapped routing before any image-generation request"
     globalThis.fetch = originalFetch;
     if (originalPassword === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = originalPassword;
     if (originalKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = originalKey;
+    if (originalBlob === undefined) delete process.env.BLOB_READ_WRITE_TOKEN; else process.env.BLOB_READ_WRITE_TOKEN = originalBlob;
+    if (originalSupabaseUrl === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = originalSupabaseUrl;
+    if (originalSupabaseKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY1; else process.env.SUPABASE_SERVICE_ROLE_KEY1 = originalSupabaseKey;
   }
 });
 
@@ -108,6 +111,9 @@ test("graphics API passes assigned desk routing and preserves the response contr
   const originalFetch = globalThis.fetch;
   const originalPassword = process.env.ADMIN_PASSWORD;
   const originalKey = process.env.OPENAI_API_KEY;
+  const originalBlob = process.env.BLOB_READ_WRITE_TOKEN;
+  const originalSupabaseUrl = process.env.SUPABASE_URL;
+  const originalSupabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY1;
   let providerPrompt = "";
   globalThis.fetch = async (_url, options) => {
     providerPrompt = JSON.parse(options.body).prompt;
@@ -115,6 +121,12 @@ test("graphics API passes assigned desk routing and preserves the response contr
   };
   process.env.ADMIN_PASSWORD = "unit-test-admin";
   process.env.OPENAI_API_KEY = "unit-test-placeholder";
+  process.env.BLOB_READ_WRITE_TOKEN = "unit-test-blob";
+  process.env.SUPABASE_URL = "https://unit-test.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "unit-test-db-key";
+  const testGraphicsHandler = createGraphicsHandler({
+    persistImage: async () => ({ id: "123e4567-e89b-12d3-a456-426614174000", rightsStatus: "pending_review", storage: "private-vercel-blob" })
+  });
   const response = {
     statusCode: 200,
     headers: {},
@@ -123,7 +135,7 @@ test("graphics API passes assigned desk routing and preserves the response contr
     json(body) { this.body = body; return this; }
   };
   try {
-    await graphicsHandler({
+    await testGraphicsHandler({
       method: "POST",
       headers: { authorization: "Bearer unit-test-admin" },
       body: { prompt: "A sufficiently long test prompt for a graphics request", director: "Research", assignedDesk: "Politics", storyBeat: "" }
