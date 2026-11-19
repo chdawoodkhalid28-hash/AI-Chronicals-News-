@@ -2,8 +2,22 @@ export const config = {
   matcher: ["/connectors.html"]
 };
 
+function headerValue(request, name) {
+  const headers = request && request.headers;
+  if (!headers) return "";
+  if (typeof headers.get === "function") return headers.get(name) || "";
+  const target = name.toLowerCase();
+  const key = Object.keys(headers).find(item => item.toLowerCase() === target);
+  return key ? String(headers[key] || "") : "";
+}
+
 function readCookie(request, name) {
-  const cookieHeader = request.headers.get("cookie") || "";
+  const cookieStore = request && request.cookies;
+  if (cookieStore && typeof cookieStore.get === "function") {
+    const found = cookieStore.get(name);
+    if (found) return typeof found === "string" ? found : String(found.value || "");
+  }
+  const cookieHeader = headerValue(request, "cookie");
   for (const part of cookieHeader.split(";")) {
     const separator = part.indexOf("=");
     if (separator < 0) continue;
@@ -18,6 +32,14 @@ function decodeBase64Url(value) {
   const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
   const binary = atob(padded);
   return Uint8Array.from(binary, character => character.charCodeAt(0));
+}
+
+function redirectToAdmin(request) {
+  const forwardedHost = headerValue(request, "x-forwarded-host") || headerValue(request, "host");
+  const forwardedProto = headerValue(request, "x-forwarded-proto") || "https";
+  const fallbackOrigin = forwardedHost ? forwardedProto + "://" + forwardedHost : "https://ai-chronicals-news.vercel.app";
+  const requestUrl = request && typeof request.url === "string" ? request.url : fallbackOrigin + "/";
+  return Response.redirect(new URL("/admin.html#assignmentPanel", requestUrl), 302);
 }
 
 export default async function middleware(request) {
@@ -54,5 +76,5 @@ export default async function middleware(request) {
   }
 
   if (authorized) return;
-  return Response.redirect(new URL("/admin.html#assignmentPanel", request.url), 302);
+  return redirectToAdmin(request);
 }
