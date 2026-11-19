@@ -1,4 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
+import { get } from "@vercel/blob";
+import { supabaseRequest } from "../../lib/supabase-rest.js";
+import { persistGeneratedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
 
 function safeEqual(a, b) {
@@ -9,15 +12,65 @@ function safeEqual(a, b) {
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+  if (req.method !== "POST" && req.method !== "GET") {
+    res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
+
+  if (req.method === "GET") {
+    if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+        !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      return res.status(503).json({ error: "Private graphics storage is not fully configured" });
+    }
+    try {
+      const assetId = typeof req.query?.id === "string" ? req.query.id : "";
+      if (!assetId) {
+        const items = await supabaseRequest("media_assets", {
+          query: new URLSearchParams({
+            select: "id,media_type,alt_text,rights_status,created_at",
+            order: "created_at.desc",
+            limit: "50"
+          }).toString()
+        });
+        return res.status(200).json({ ok: true, items: items || [], storage: "private", publication: "DISABLED" });
+      }
+      if (!/^[0-9a-f-]{36}$/i.test(assetId)) {
+        return res.status(400).json({ error: "A valid media asset ID is required" });
+      }
+      const rows = await supabaseRequest("media_assets", {
+        query: new URLSearchParams({
+          select: "id,blob_pathname,media_type,rights_status",
+          id: "eq." + assetId,
+          limit: "1"
+        }).toString()
+      });
+      const asset = rows && rows[0];
+      if (!asset) return res.status(404).json({ error: "Media asset not found" });
+      const blob = await get(asset.blob_pathname, { access: "private", useCache: false });
+      if (!blob || blob.statusCode !== 200 || !blob.stream) {
+        return res.status(404).json({ error: "Private media object not found" });
+      }
+      const bytes = Buffer.from(await new Response(blob.stream).arrayBuffer());
+      res.setHeader("Content-Type", asset.media_type === "image" ? "image/png" : "application/octet-stream");
+      res.setHeader("Content-Disposition", 'inline; filename="newsroom-graphic.png"');
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      res.setHeader("Cache-Control", "private, no-store");
+      return res.status(200).send(bytes);
+    } catch (error) {
+      return res.status(Number.isInteger(error.statusCode) ? error.statusCode : 502)
+        .json({ error: "Private graphics library request failed", detail: error.message });
+    }
+  }
+
   if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
+  if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+      !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+    return res.status(503).json({ error: "Private graphics storage is not fully configured; refusing to generate an unpersisted asset" });
+  }
 
   const body = req.body || {};
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
@@ -74,17 +127,26 @@ export default async function handler(req, res) {
     }
     const image = data && data.data && data.data[0] && data.data[0].b64_json;
     if (!image) throw new Error("Image provider returned no image data");
+    const asset = await persistGeneratedImage({
+      imageData: image,
+      headline,
+      director: route.director,
+      altText: typeof body.altText === "string" ? body.altText : headline
+    });
     return res.status(200).json({
       ok: true,
       mimeType: "image/png",
       imageData: image,
+      asset,
       templateName: route.template,
       director: route.director,
       storyBeat,
-      assignedDesk: route.assignedDesk || ""
+      assignedDesk: route.assignedDesk || "",
+      rightsStatus: "pending_review",
+      publication: "DISABLED"
     });
   } catch (error) {
-    return res.status(error.status || 502).json({
+    return res.status(error.status || error.statusCode || 502).json({
       error: "Graphics generation failed",
       detail: error.message
     });
