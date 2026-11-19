@@ -88,3 +88,14 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Runtime error aggregation still displays the historical middleware exception from deployment `dpl_6P7AdMmnhyYoCa49CPDKRpbV3ZX7`, last seen before the fix was deployed. The new middleware code passed automated regression tests; a fresh post-deployment error window is required to certify the runtime fix.
 
 **Release decision remains Preview-only.** Live database connectivity is now verified; remaining acceptance includes the new Gemini probe, owner-authenticated CRUD/queue round-trip, fresh runtime error check, and cost-approved controlled agent test. Production remains untouched.
+
+
+## 19 November 2026 — Gemini and runtime verification passed
+
+- Preview deployment `dpl_3UvejFsAKzxVBsL3175yP1cLzB5r` (commit `ae3a265b739e01a2e342e65d6739132c2d1739e2`) reached READY.
+- Live `GET /api/health?gemini=1` returned HTTP 200 with `status: connected`, model `gemini-3.5-flash-lite`, and a 17-token minimal test response. The model change resolved the previous Gemini timeout.
+- Live `GET /api/health?supabase=all` again returned HTTP 200 with all 6 tables connected.
+- Fresh Vercel runtime error aggregation for the latest 10-minute window returned no runtime errors. The old middleware error remains only in historical aggregation from the pre-fix deployment.
+- Automated GitHub Actions passed on code commit `c8587c431bfff80fffa321214a61e82e0115f631`: Newsroom Test Suite, Newsroom API and safety tests, Backend source checks, and Department Team Safeguard Tests. The commit adds Gemini model/request safety regression tests.
+
+**Still not certified:** owner-entered Admin authentication, live News Management CRUD round-trip, private Blob queue create/decision/delete, and a cost-approved 26-department execution. No Production release or public publishing occurred.
