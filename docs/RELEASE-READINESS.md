@@ -60,3 +60,18 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Production branch `main` remains untouched; no Production promotion, news publication, or social posting occurred.
 
 **Current release decision: BLOCKED pending correction of the Preview Supabase Project URL, successful live database probe, owner-entered authenticated News Management/queue acceptance, and review of the separate Cloudflare failure if Cloudflare is part of the target hosting plan.**
+
+
+## 19 November 2026 — Middleware hardening and Supabase Preview configuration
+
+- Fixed the Preview middleware runtime failure caused by assuming request headers always expose a `.get()` method. The middleware now safely handles missing headers, plain-object headers, and Web-Headers-like requests.
+- Added `tests/middleware.test.js` for those three request shapes.
+- GitHub Actions for commit `78f8179269f90fce238a4387f28bf1bda891aa1d` passed: Newsroom Test Suite, Newsroom API and safety tests, Backend source checks, and Department Team Safeguard Tests.
+- Vercel Preview deployment for commit `78f8179269f90fce238a4387f28bf1bda891aa1d` reached READY. Production was not changed.
+- Corrected the Preview-only `SUPABASE_URL` environment variable using the previously owner-supplied project URL. Existing Supabase service-role credentials were not read, changed, or exposed. A new deployment and read-only health probe are required to confirm database connectivity.
+- The existing Supabase key has a prior recorded authentication rejection. If the read-only probe still reports `credentials_rejected`, the owner must replace the Preview service-role key directly in Vercel using the current Supabase Project Settings → API key. Never paste the key into chat or source control.
+- The six-table migration exists in `supabase/migrations/202611160001_newsroom_core.sql`, but the live migration state has not been independently confirmed. Apply it in the Supabase SQL Editor if the read-only probe reports `schema_not_ready`.
+- The Admin News Management page uses `/api/admin/queue?resource=news`; the shared authenticated route delegates to the PostgreSQL CRUD handler. Automated tests cover this route and its unauthenticated rejection. The live authenticated CRUD round-trip still requires the owner to enter the password in their own browser.
+- Full 26-department execution remains gated: the existing run may issue about 157 model requests. No live multi-agent run, image generation, news publication, or social posting was triggered in this pass.
+
+**Current release decision: Preview-only.** Next acceptance gates: deploy the corrected Preview environment, run `/api/health?supabase=all`, resolve any remaining credential/schema result, and complete owner-authenticated News Management and private queue acceptance. Production remains untouched.
