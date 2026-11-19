@@ -92,9 +92,6 @@ test("graphics API rejects unmapped routing before any image-generation request"
     globalThis.fetch = originalFetch;
     if (originalPassword === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = originalPassword;
     if (originalKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = originalKey;
-    if (originalBlob === undefined) delete process.env.BLOB_READ_WRITE_TOKEN; else process.env.BLOB_READ_WRITE_TOKEN = originalBlob;
-    if (originalSupabaseUrl === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = originalSupabaseUrl;
-    if (originalSupabaseKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY1; else process.env.SUPABASE_SERVICE_ROLE_KEY1 = originalSupabaseKey;
   }
 });
 
@@ -149,5 +146,8 @@ test("graphics API passes assigned desk routing and preserves the response contr
     globalThis.fetch = originalFetch;
     if (originalPassword === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = originalPassword;
     if (originalKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = originalKey;
+    if (originalBlob === undefined) delete process.env.BLOB_READ_WRITE_TOKEN; else process.env.BLOB_READ_WRITE_TOKEN = originalBlob;
+    if (originalSupabaseUrl === undefined) delete process.env.SUPABASE_URL; else process.env.SUPABASE_URL = originalSupabaseUrl;
+    if (originalSupabaseKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY1; else process.env.SUPABASE_SERVICE_ROLE_KEY1 = originalSupabaseKey;
   }
 });
