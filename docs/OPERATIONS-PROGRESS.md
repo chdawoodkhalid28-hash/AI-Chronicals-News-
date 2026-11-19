@@ -321,3 +321,14 @@ Working branch: `ai-newsroom-foundation`
 - No production release, autonomous publication, social posting, or image/video generation was performed.
 
 **Current state:** Preview-only release candidate; backend source and CI checks pass, but live Supabase and authenticated owner acceptance are not yet confirmed.
+
+
+## 2026-11-19 — Supabase connected and Gemini model hardening
+
+- Restored the owner-supplied Supabase Project URL in Vercel Preview only; no secret key was retrieved or changed.
+- Live Preview `/api/health?supabase=all` returned HTTP 200 and confirmed all 6 newsroom tables connected.
+- Live smoke checks returned HTTP 200 for the homepage, main Admin Panel, News Management page, and 10-department TemplateFlyer page.
+- The Gemini health probe for the former model timed out. Updated the source default to the user's requested `gemini-3.5-flash-lite` and increased the request timeout to 45 seconds; added regression tests. Awaiting the new deployment and live check.
+- Historical middleware error aggregation points to the pre-fix deployment only. New middleware regression tests passed; a fresh runtime check remains required.
+- Owner-only acceptance still required: enter Admin password in News Management and verify draft create/list/edit/status/delete; test private Blob queue sync/decision/delete. Do not retrieve the password or execute these as the owner.
+- Do not run all 26 AI departments without separate cost approval; do not publish or post to social platforms.
