@@ -10,7 +10,8 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
-export default async function handler(req, res) {
+export function createGraphicsHandler({ persistImage = persistGeneratedImage } = {}) {
+return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST" && req.method !== "GET") {
     res.setHeader("Allow", "GET, POST");
@@ -67,10 +68,6 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
-  if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
-      !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
-    return res.status(503).json({ error: "Private graphics storage is not fully configured; refusing to generate an unpersisted asset" });
-  }
 
   const body = req.body || {};
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
@@ -97,6 +94,10 @@ export default async function handler(req, res) {
       storyBeat,
       reason: route.reason
     });
+  }
+  if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+      !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+    return res.status(503).json({ error: "Private graphics storage is not fully configured; refusing to generate an unpersisted asset" });
   }
 
   const finalPrompt = [
@@ -127,7 +128,7 @@ export default async function handler(req, res) {
     }
     const image = data && data.data && data.data[0] && data.data[0].b64_json;
     if (!image) throw new Error("Image provider returned no image data");
-    const asset = await persistGeneratedImage({
+    const asset = await persistImage({
       imageData: image,
       headline,
       director: route.director,
@@ -151,4 +152,7 @@ export default async function handler(req, res) {
       detail: error.message
     });
   }
+};
 }
+
+export default createGraphicsHandler();
