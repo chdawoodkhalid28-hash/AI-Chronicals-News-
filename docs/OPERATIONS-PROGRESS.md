@@ -307,3 +307,17 @@ Working branch: `ai-newsroom-foundation`
 - The 24-hour Vercel runtime-error aggregate returned no errors. A separate Preview runtime-log query could not run because the Vercel Hobby plan does not retain the requested window; this is not a clean-log assertion.
 - Vercel deployment history also shows a READY Production-target deployment created from `ai-newsroom-foundation` commit `79fa344`. This is an observed deployment record, not an action performed during this verification. Production was not changed by this run; review the Vercel Production Branch setting before any further push/deploy.
 - No code, environment secrets, Production settings, `main`, publication state, or story records were changed. No news was published. Remaining backend acceptance items: authenticated admin CRUD round-trip, full-table/schema verification, transactional failure-path review, current-commit automated tests, and confirmation of the Production Branch configuration.
+
+
+## 2026-11-19 — Preview middleware repair and database configuration follow-up
+
+- Repaired `middleware.js` so missing or non-standard request headers no longer crash the exported middleware handler.
+- Added three request-shape regression tests in `tests/middleware.test.js`.
+- GitHub Actions passed on `78f8179269f90fce238a4387f28bf1bda891aa1d`: Newsroom Test Suite, Newsroom API and safety tests, Backend source checks, and Department Team Safeguard Tests.
+- Vercel Preview deployment for that commit reached READY. Production/main was not modified.
+- Corrected only the Preview `SUPABASE_URL` variable using the owner-provided project URL. Existing service-role keys were not retrieved, rotated, or modified.
+- Pending after the new deployment: read-only six-table Supabase probe; authenticated owner-side News Management CRUD; private Blob approval-queue write/decision/delete round-trip; live 26-team synthetic workflow (cost-gated); final security and mobile/desktop acceptance.
+- If the database probe reports `credentials_rejected`, owner must update the Preview service-role key directly in Vercel. If it reports `schema_not_ready`, apply `supabase/migrations/202611160001_newsroom_core.sql` in Supabase SQL Editor.
+- No production release, autonomous publication, social posting, or image/video generation was performed.
+
+**Current state:** Preview-only release candidate; backend source and CI checks pass, but live Supabase and authenticated owner acceptance are not yet confirmed.
