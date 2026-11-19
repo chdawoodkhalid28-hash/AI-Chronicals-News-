@@ -75,3 +75,16 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Full 26-department execution remains gated: the existing run may issue about 157 model requests. No live multi-agent run, image generation, news publication, or social posting was triggered in this pass.
 
 **Current release decision: Preview-only.** Next acceptance gates: deploy the corrected Preview environment, run `/api/health?supabase=all`, resolve any remaining credential/schema result, and complete owner-authenticated News Management and private queue acceptance. Production remains untouched.
+
+
+## 19 November 2026 — Live Preview smoke-test results
+
+- Preview deployment `dpl_B33LMGoTJbrJ8JiVSn7L13dQpzwK` (commit `b9436374a1c0579e4d4f74de08481c2596bd34c5`) reached READY.
+- Live read-only `GET /api/health?supabase=all` returned HTTP 200: all six configured tables responded successfully — `news_articles`, `news_sources`, `news_verification_checks`, `editorial_events`, `department_outputs`, and `media_assets`.
+- The Preview health endpoint reports admin password, OpenAI key, Gemini key, private Blob token, and Supabase configuration present. Values were not exposed.
+- Homepage, `/admin.html`, `/admin-news.html`, and `/graphics/department-templateflyers.html` returned HTTP 200.
+- The Gemini live probe using the previous `gemini-3.8-flash` setting timed out at the 20-second client timeout. Source has now been updated to the owner-preferred, lower-cost `gemini-3.5-flash-lite` model with a 45-second request timeout and regression tests. Its live result must be checked on the next READY Preview deployment.
+- An unauthenticated `GET /api/admin/access` returned HTTP 405, as expected for the POST-only login endpoint. Authenticated News Management and private Blob queue operations were not attempted because they require the owner-entered admin password.
+- Runtime error aggregation still displays the historical middleware exception from deployment `dpl_6P7AdMmnhyYoCa49CPDKRpbV3ZX7`, last seen before the fix was deployed. The new middleware code passed automated regression tests; a fresh post-deployment error window is required to certify the runtime fix.
+
+**Release decision remains Preview-only.** Live database connectivity is now verified; remaining acceptance includes the new Gemini probe, owner-authenticated CRUD/queue round-trip, fresh runtime error check, and cost-approved controlled agent test. Production remains untouched.
