@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#061326">
+<title>AI Chronicals News — World News Editorial Template</title>
+<style>
+:root{--navy:#061326;--navy2:#0b2039;--red:#d71920;--gold:#d7b15b;--white:#f7f8fc;--muted:#b7c0ce}
+*{box-sizing:border-box}body{margin:0;background:#030b18;color:var(--white);font:16px/1.45 Arial,sans-serif;padding:22px}
+.toolbar{max-width:1200px;margin:0 auto 14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#b9c8da;font-size:12px}
+.toolbar a,button{border:1px solid #d7b15b;background:#10243c;color:#fff;padding:9px 13px;border-radius:5px;text-decoration:none;cursor:pointer}
+.canvas{width:min(1200px,100%);aspect-ratio:1.205;margin:auto;position:relative;overflow:hidden;background:linear-gradient(180deg,#07182e 0 38%,#061326 38% 100%);border:1px solid #263d59;box-shadow:0 20px 65px #000a}
+.mast{height:38%;position:relative;overflow:hidden;background:radial-gradient(ellipse at 68% 40%,#0b4e87 0,#082b50 35%,#061326 72%)}
+.mast:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#3a83bb66 .8px,transparent .8px);background-size:8px 8px;opacity:.3;mask-image:linear-gradient(90deg,transparent,#000)}
+.brand{position:absolute;z-index:4;left:4%;top:13%;direction:ltr;text-transform:uppercase}
+.brand small{display:block;font-size:clamp(9px,1.7vw,20px);font-weight:900;font-style:italic;letter-spacing:-.03em}
+.brand strong{display:block;font-size:clamp(32px,8vw,88px);line-height:.93;font-weight:1000;font-style:italic;letter-spacing:-.06em}
+.brand em{display:block;margin-top:9px;color:#b4bdca;font-size:clamp(9px,1.9vw,21px);font-weight:800}
+.brand:before{content:"";position:absolute;left:-5%;top:0;width:5%;height:65%;background:var(--red);transform:skew(-17deg)}
+.globe{position:absolute;width:48%;aspect-ratio:1;right:8%;top:-7%;border-radius:50%;border:1px solid #1783c7;box-shadow:inset 0 0 55px #0085df55,0 0 35px #0c8be866;background:repeating-linear-gradient(0deg,transparent 0 14px,#2388c755 15px 16px),repeating-linear-gradient(90deg,transparent 0 24px,#2388c755 25px 26px),radial-gradient(circle at 35% 35%,#0e6097,#04162c 72%)}
+.globe:before,.globe:after{content:"";position:absolute;inset:4% 22%;border:1px solid #238bd1;border-radius:50%;transform:scaleX(.48)}
+.globe:after{inset:0 4%;transform:none;border-color:#1678ba}
+.orbit{position:absolute;z-index:2;width:70%;height:38%;right:-2%;top:16%;border:3px solid transparent;border-bottom-color:#ff3b35;border-top-color:#ff3b3533;border-radius:50%;transform:rotate(-18deg);filter:drop-shadow(0 0 6px #ff332e)}
+.spark{position:absolute;right:25%;top:10%;width:9px;height:9px;background:#fff;border-radius:50%;box-shadow:0 0 8px 5px #44baff,0 0 28px 12px #168eff}
+.category{position:absolute;z-index:4;bottom:0;left:2%;width:32%;height:16%;background:linear-gradient(100deg,#c9161d,#8e0c14);clip-path:polygon(8% 0,100% 0,88% 100%,0 100%);display:flex;align-items:center;padding-left:6%;font-weight:900;font-size:clamp(9px,1.7vw,18px);text-transform:uppercase}
+.content{position:absolute;inset:38% 0 0;padding:3% 3% 2%;display:grid;grid-template-columns:1fr 1.05fr;grid-template-rows:1fr auto auto;gap:2% 3%}
+.story{grid-column:1;grid-row:1;align-self:center;direction:ltr}
+.story h1{font-family:Impact,"Arial Narrow",Arial,sans-serif;font-stretch:condensed;text-transform:uppercase;font-size:clamp(22px,5.1vw,59px);line-height:1.02;margin:0 0 2%;letter-spacing:-.025em;max-width:98%}
+.goldline{height:3px;width:62%;background:linear-gradient(90deg,#f0c86d,transparent);margin:3% 0}
+.story p{color:#d5dce6;font-size:clamp(9px,1.65vw,18px);max-width:95%;margin:0}
+.verify{margin-top:5%;border:1px solid var(--gold);padding:2.2%;display:flex;align-items:center;gap:3%;font-size:clamp(8px,1.15vw,13px);color:#dfe5ed}
+.shield{color:#f4d27c;font-size:clamp(18px,3vw,30px)}
+.photo{grid-column:2;grid-row:1;min-height:0;position:relative;border:2px solid #a83232;border-radius:15px;background:radial-gradient(circle at 50% 45%,#18314c,#0b1b30 72%);box-shadow:0 0 0 4px #d21e2633,inset 0 0 35px #0009;display:grid;place-items:center;overflow:hidden}
+.photo:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 45%,#f4433622 46%,transparent 48%),repeating-linear-gradient(0deg,transparent 0 28px,#9fc9ed0b 29px)}
+.photo-inner{text-align:center;color:#9ba8b9;font-weight:800;font-size:clamp(10px,1.8vw,19px);z-index:1}
+.photo-inner span{display:block;font-size:clamp(34px,7vw,72px);color:#8292a8}
+.meta{grid-column:1/3;grid-row:2;display:flex;gap:3%;border:1px solid #65758b;padding:1.5% 2%;align-items:center;color:#d9e0e9;font-size:clamp(8px,1.3vw,14px)}
+.meta div{flex:1;border-right:1px solid #42526a;padding-right:2%;direction:ltr}
+.meta b{color:#ef2429;font-size:1.4em;margin-right:6px}
+.caption{grid-column:2;grid-row:3;border-left:2px solid #d7b15b;padding-left:3%;font-size:clamp(8px,1.25vw,13px);color:#e1e6ee;align-self:center}
+.source{grid-column:1;grid-row:3;border-top:2px solid #d7b15b;padding-top:2%;font-size:clamp(8px,1.2vw,13px);color:#e3e8ef}
+.source b{color:#ef252a}
+@media(max-width:620px){body{padding:8px}.canvas{aspect-ratio:1/1.2}.mast{height:31%}.content{inset:31% 0 0;grid-template-columns:1fr 1fr;grid-template-rows:1.1fr auto auto;gap:2%;padding:3%}.story h1{font-size:clamp(18px,5.5vw,30px)}.story p{font-size:clamp(8px,2vw,11px)}.verify{font-size:7px}.photo{border-radius:8px}.meta{font-size:7px}.category{height:15%;width:38%}.globe{width:53%;right:2%;top:-4%}.orbit{width:85%;right:-10%}}
+@media print{body{padding:0;background:#fff}.toolbar{display:none}.canvas{width:100%;box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="toolbar"><span>AI CHRONICALS NEWS · WORLD NEWS EDITORIAL CONCEPT · Editable sample copy</span><span><a href="/graphics/department-templateflyers.html">← All TemplateFlyers</a> <button onclick="window.print()">Print / Save PDF</button></span></div>
+<main class="canvas" aria-label="World news editorial template">
+<section class="mast"><div class="globe"></div><div class="orbit"></div><div class="spark"></div><div class="brand"><small>AI CHRONICALS NEWS</small><strong>NEWS</strong><em>Be Informed. Be Ahead.</em></div><div class="category">▤ &nbsp; CATEGORY LABEL</div></section>
+<section class="content">
+<div class="story"><h1 contenteditable="true">YOUR HEADLINE<br>GOES HERE</h1><div class="goldline"></div><p contenteditable="true">Write a short summary or key details of the news story here. Keep it concise, engaging, and easy to read for your audience.</p><div class="verify"><span class="shield">◆</span><b>VERIFIED STORY DETAILS</b><span>Our team has verified this information for accuracy.</span></div></div>
+<div class="photo"><div class="photo-inner"><span>▧</span>PHOTO / IMAGE<br>PLACEHOLDER</div></div>
+<div class="meta"><div><b>📍</b> LOCATION<br><span contenteditable="true">Your Location</span></div><div><b>▦</b> DATE<br><span contenteditable="true">DD MMM YYYY</span></div><div><b>◷</b> TIME<br><span contenteditable="true">00:00 AM/PM</span></div></div>
+<div class="caption" contenteditable="true">📷 &nbsp; Write a brief caption or context for the image.</div>
+<div class="source"><b>◎ SOURCE:</b> <span contenteditable="true">Your Source Here</span>　　<b>DATE:</b> <span contenteditable="true">DD MMM YYYY</span></div>
+</section></main>
+</body></html>
