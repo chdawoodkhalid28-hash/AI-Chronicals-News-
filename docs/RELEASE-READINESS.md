@@ -99,3 +99,15 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Automated GitHub Actions passed on code commit `c8587c431bfff80fffa321214a61e82e0115f631`: Newsroom Test Suite, Newsroom API and safety tests, Backend source checks, and Department Team Safeguard Tests. The commit adds Gemini model/request safety regression tests.
 
 **Still not certified:** owner-entered Admin authentication, live News Management CRUD round-trip, private Blob queue create/decision/delete, and a cost-approved 26-department execution. No Production release or public publishing occurred.
+
+## 20 November 2026 — Latest Preview release verification
+
+- Preview deployment `dpl_GEf8snA3y8u4j2W2gtMypbAk4Nmn` (commit `f4a0c789487e83eb156b448cfa9d9b5b1efb2aa6`) reached READY.
+- The reference-based World News Editorial Template and the navy/red/gold theme are present in the deployed homepage, Admin Panel, News Management page, and TemplateFlyer library. The template route returns HTTP 200.
+- Live smoke checks returned HTTP 200 for homepage, `/admin.html`, `/admin-news.html`, `/graphics/department-templateflyers.html`, `/graphics/world-news-editorial-template.html`, and `/api/health`.
+- Live Supabase read-only health probe returned HTTP 200 with all six tables connected, including `media_assets`. Gemini live health probe returned HTTP 200, connected on `gemini-3.5-flash-lite`, with a 17-token minimal response.
+- On the deployed commit, GitHub Actions passed: Newsroom Test Suite, Backend source checks, and Newsroom API and safety tests. The most recent cancelled suite runs were superseded by this successful run.
+- Still requires owner-only acceptance: sign in with the admin password in the owner's browser, execute authenticated News CRUD and private graphics upload/retrieval checks. No password or secret was requested in chat.
+- Full 26-department live execution remains gated pending explicit cost approval (historical estimate about 157 model requests). News publication, social posting, video generation, and Production deployment remain disabled/not performed.
+
+**Release decision: Preview verified; Production remains untouched.**
