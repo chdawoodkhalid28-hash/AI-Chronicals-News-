@@ -111,3 +111,14 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Full 26-department live execution remains gated pending explicit cost approval (historical estimate about 157 model requests). News publication, social posting, video generation, and Production deployment remain disabled/not performed.
 
 **Release decision: Preview verified; Production remains untouched.**
+
+## 20 November 2026 — Post-admin-login acceptance test update
+
+- Owner confirmed Admin login was checked successfully; no credentials were shared in chat.
+- Re-ran live read-only Supabase probe: HTTP 200, all 6/6 tables connected, including `media_assets`.
+- Confirmed capability flags report Admin password, OpenAI key, Gemini key, Blob token, and Supabase configured. Secret values were not read or logged.
+- Latest GitHub workflows on commit `952733ac`: `Newsroom Test Suite`, `Backend source checks`, and `Newsroom API and safety tests` all completed successfully.
+- Inspected CRUD implementation: authenticated news API supports GET/POST/PATCH/DELETE, enforces validation and verification status rules, records editorial events, and keeps `publication_status=disabled`; article deletion requires explicit `confirmDelete=true`. Private graphics GET/list and private Blob read require Admin bearer authorization and configured storage.
+- Preview runtime logs for the latest 30 minutes: no error/fatal logs. Aggregated 24-hour error view still shows one historical middleware TypeError on deployment `dpl_6P7AdMmnhyYoCa49CPDKRpbV3ZX7` (last occurrence 2026-11-19 14:53 UTC); no matching errors appeared in the latest 30-minute log window. Treat as historical, not proof of a current fault.
+- Live authenticated News CRUD round-trip and private Blob upload/download were not executed from this automation session: deployment fetch/authenticated mutation channel did not provide the owner's app session token. Do not claim these live writes passed. Next step is an authenticated session-driven test from the owner's logged-in Admin browser, with a disposable draft and test image, then cleanup.
+- Full 26-director live run remains unexecuted pending explicit cost approval. Publishing, social posting, video generation and Production deployment remain disabled.
