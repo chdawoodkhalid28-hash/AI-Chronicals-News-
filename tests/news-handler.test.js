@@ -136,7 +136,7 @@ test("POST rejects an invalid article before any database write", async () => {
   globalThis.fetch = async () => { calls++; throw new Error("unexpected database call"); };
   const res = responseRecorder();
 
-  await handleNewsRequest({ method: "POST", body: { article: { headline: "Too short", sources: [] } } }, res);
+  await handleNewsRequest({ method: "POST", body: { article: { headline: "Short", sources: [] } } }, res);
 
   assert.equal(res.statusCode, 400);
   assert.equal(res.body.publication, "DISABLED");
