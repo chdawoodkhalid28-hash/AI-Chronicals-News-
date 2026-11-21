@@ -148,7 +148,7 @@ test("PATCH refuses verification without two independent publishers or one offic
     if (table === "news_articles" && method === "GET") {
       return [{ id: ARTICLE_ID, editorial_status: "pending_verification" }];
     }
-    if (table === "news_sources") return [{ publisher: "same.example", is_official: false }];
+    if (table === "news_sources") return [{ publisher: "same.example", is_official: true, source_url: "https://untrusted.example/story" }];
     return [];
   });
   const res = responseRecorder();
