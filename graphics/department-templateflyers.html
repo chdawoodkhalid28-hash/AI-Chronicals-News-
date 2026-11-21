@@ -240,6 +240,7 @@ button{background:linear-gradient(110deg,#087fbd,#455ee4 55%,#a23fc1)!important;
     const beat=beatSelect?.value||"";
     let target=department?routeByDepartment[department]||null:null;
     let reason="";
+    if(department==="Agriculture & Rural Affairs" && (beat==="weather" || beat==="disaster")) target="p5";
     if(department && !target && beat) target=routeByBeat[beat];
     if(department && !target) reason="یہ cross-functional Department ہے؛ متعلقہ خبر کا Story Beat منتخب کریں تاکہ درست Master Template دکھایا جا سکے۔";
     document.querySelectorAll(".dept").forEach(card=>{card.hidden=Boolean(target)&&card.id!==target;});
