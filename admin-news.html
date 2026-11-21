@@ -67,14 +67,14 @@ a{color:#e5c77f}
 <div id="connectionStatus" class="status" role="status">Password صرف اس صفحے کی موجودہ نشست میں استعمال ہوگا؛ براؤزر میں محفوظ نہیں کیا جائے گا۔</div>
 </section>
 <section class="panel">
-<h2>نیا خبر ڈرافٹ</h2><p class="muted">ہر خبر کم از کم ایک HTTPS source کے ساتھ محفوظ ہوگی۔ ابتدائی حیثیت Pending Verification ہے۔ تصدیق کے لیے دو آزاد ذرائع یا ایک واضح سرکاری ذریعہ لازم ہے۔ اشاعت ہمیشہ بند رہے گی۔</p>
+<h2>نیا خبر ڈرافٹ</h2><p class="muted">خبر Source URL کے بغیر بھی Draft کے طور پر محفوظ ہو سکتی ہے۔ Source شامل ہونے تک حیثیت Sources Pending رہے گی؛ تصدیق کے لیے دو آزاد ذرائع یا ایک واضح سرکاری ذریعہ لازم ہے۔ اشاعت ہمیشہ بند رہے گی۔</p>
 <label for="headline">سرخی</label><input id="headline" maxlength="240" placeholder="خبر کی سرخی">
 <label for="summary">خلاصہ</label><textarea id="summary" maxlength="1200"></textarea>
 <label for="body">خبر کا مکمل مسودہ</label><textarea id="body" maxlength="30000"></textarea>
 <label for="language">زبان</label><select id="language"><option value="ur">اردو</option><option value="en">English</option></select>
 <label for="category">شعبہ / Category</label><input id="category" value="general" maxlength="80">
 <label for="desk">Assigned Desk</label><input id="desk" value="newsroom" maxlength="100">
-<label for="sources">Source URLs — ہر سطر میں ایک HTTPS URL</label><textarea id="sources" placeholder="https://official.gov.pk/news/123&#10;https://reputable-news.example/story"></textarea>
+<label for="sources">Source URLs — اختیاری؛ ہر سطر میں ایک HTTPS URL</label><textarea id="sources" placeholder="Source موجود ہو تو یہاں HTTPS URL درج کریں؛ ورنہ خالی چھوڑ دیں"></textarea>
 <label><input id="official" type="checkbox" style="width:auto"> پہلا Source سرکاری / Official ہے</label>
 <div class="actions"><button id="save" disabled>Draft کو PostgreSQL میں محفوظ کریں</button><button id="cancelEdit" type="button" hidden>ترمیم منسوخ کریں</button></div>
 <div id="saveStatus" class="status" role="status">پہلے Admin کی تصدیق کریں۔</div>
@@ -104,9 +104,9 @@ function render(items){
  if(!items.length){root.textContent="ابھی کوئی خبر محفوظ نہیں۔";return;}
  for(const item of items){
   const card=node("article","", "article");card.appendChild(node("h3",item.headline));
-  card.appendChild(node("div","حیثیت: "+item.editorial_status+" | اشاعت: "+item.publication_status,"meta"));
+  const visibleStatus=(item.editorial_status==="pending_verification"&&!(item.sources||[]).length)?"Draft — Sources Pending":item.editorial_status;card.appendChild(node("div","حیثیت: "+visibleStatus+" | اشاعت: "+item.publication_status,"meta"));
   if(item.summary)card.appendChild(node("p",item.summary));
-  card.appendChild(node("div","ذرائع: "+(item.sources||[]).length,"meta"));
+  card.appendChild(node("div","ذرائع: "+(item.sources||[]).length+((item.sources||[]).length?"":" · ابھی Source شامل نہیں؛ Verification بند ہے"),"meta"));
   for(const source of item.sources||[]){const a=node("a",source.source_title||source.publisher||source.source_url);a.href=source.source_url;a.target="_blank";a.rel="noopener noreferrer";a.dir="ltr";a.style.display="block";card.appendChild(a);}
   const actions=node("div","","actions");
   const edit=node("button","خبر میں ترمیم");edit.type="button";edit.addEventListener("click",()=>{editingId=item.id;$("headline").value=item.headline||"";$("summary").value=item.summary||"";$("body").value=item.body||"";$("language").value=item.language||"ur";$("category").value=item.category||"general";$("desk").value=item.assigned_desk||"newsroom";$("sources").value=(item.sources||[]).map(x=>x.source_url).join("\n");$("official").checked=(item.sources||[]).some(x=>x.is_official);$("save").textContent="تبدیلیاں محفوظ کریں";$("cancelEdit").hidden=false;$("saveStatus").textContent="خبر میں ترمیم جاری ہے؛ محفوظ کرنے پر دوبارہ verification درکار ہوگی۔";window.scrollTo({top:0,behavior:"smooth"});});actions.appendChild(edit);const remove=node("button","خبر حذف کریں","danger");remove.type="button";remove.addEventListener("click",async()=>{if(!confirm("کیا آپ یہ خبر مستقل حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہوگا۔"))return;remove.disabled=true;try{await api("DELETE",{id:item.id,confirmDelete:true});if(editingId===item.id)resetForm();await load();}catch(e){alert(e.message);remove.disabled=false;}});actions.appendChild(remove);
@@ -133,7 +133,7 @@ $("save").addEventListener("click",async()=>{
  try{
   const article={headline:$("headline").value,summary:$("summary").value,body:$("body").value,language:$("language").value,category:$("category").value,assignedDesk:$("desk").value,sources};
    if(editingId)await api("PATCH",{id:editingId,article});else await api("POST",{article});
-   $("saveStatus").textContent=(editingId?"تبدیلیاں محفوظ ہوگئیں؛ دوبارہ verification درکار ہے.":"Draft محفوظ ہوگیا؛ Pending Verification.")+" Publication DISABLED.";
+   const noSources=sources.length===0; $("saveStatus").textContent=(editingId?"تبدیلیاں محفوظ ہوگئیں؛ دوبارہ verification درکار ہے.":(noSources?"Draft محفوظ ہوگیا؛ Sources Pending.":"Draft محفوظ ہوگیا؛ Pending Verification."))+" Publication DISABLED.";
    resetForm();
    await load();
   }catch(e){$("saveStatus").textContent=e.message;}
