@@ -108,6 +108,29 @@ test("POST creates a pending article, its sources and an editorial event", async
   assert.equal(calls[2].table, "editorial_events");
 });
 
+test("POST saves a source-less draft without inserting empty source rows", async () => {
+  const calls = mockDatabase(({ table, method, body }) => {
+    if (table === "news_articles" && method === "POST") {
+      assert.equal(body.editorial_status, "pending_verification");
+      assert.equal(body.publication_status, "disabled");
+      return { data: [{ id: ARTICLE_ID, ...body }] };
+    }
+    return { data: [] };
+  });
+  const res = responseRecorder();
+
+  await handleNewsRequest({
+    method: "POST",
+    body: { article: articleInput({ sources: [] }) }
+  }, res);
+
+  assert.equal(res.statusCode, 201);
+  assert.equal(res.body.item.sources.length, 0);
+  assert.equal(res.body.item.editorial_status, "pending_verification");
+  assert.equal(res.body.publication, "DISABLED");
+  assert.deepEqual(calls.map(call => call.table), ["news_articles", "editorial_events"]);
+});
+
 test("POST rejects an invalid article before any database write", async () => {
   let calls = 0;
   globalThis.fetch = async () => { calls++; throw new Error("unexpected database call"); };
