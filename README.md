@@ -83,7 +83,8 @@ The five specialist roles are separate model invocations coordinated by the depa
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`) — required for authenticated Admin APIs.
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management and media metadata persistence. Keep service-role keys server-side only.
 - `BLOB_READ_WRITE_TOKEN` — required for private approval-queue and generated-graphics storage.
-- `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.\n- `OFFICIAL_SOURCE_DOMAINS` — optional comma-separated trusted official publisher hostnames (for example, `gov.pk,example.gov`); only server-configured domains can qualify for the one-official-source verification path.
+- `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.
+- `OFFICIAL_SOURCE_DOMAINS` — optional comma-separated trusted official publisher hostnames (for example, `gov.pk,example.gov`); only server-configured domains can qualify for the one-official-source verification path.
 - `GEMINI_API_KEY` — required for Gemini-powered research/department workflows.
 
 `/api/health` reports configuration presence without exposing values. `/api/health?supabase=all` performs read-only connectivity checks against the six newsroom tables. `/api/health?gemini=1` makes a minimal live Gemini request and may incur API usage.
