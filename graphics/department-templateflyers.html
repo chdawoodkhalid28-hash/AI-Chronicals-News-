@@ -68,6 +68,20 @@ button{background:linear-gradient(110deg,#087fbd,#455ee4 55%,#a23fc1)!important;
 <header><div class="eyebrow">Cinematic digital newsroom · broadcast VFX master visual system</div><h1>AI CHRONICALS NEWS</h1><p>10 independent department Master TemplateFlyers. Each desk has its own visual language, colour signature, editorial hierarchy, original vector art and a rights-checked reference photograph — unified by one cinematic digital-news identity.</p></header>
 <main>
 <div class="toolbar"><div class="chips"><span class="chip">10 MASTER FLYERS</span><span class="chip">26 DIRECTOR WORKFLOWS ROUTED</span><span class="chip">URDU + ENGLISH READY</span><span class="chip">ADMIN APPROVAL ONLY</span><span class="chip">BROADCAST VFX LAYERS</span></div><div class="toolbar-actions" role="group" aria-label="Flyer actions"><div class="format-switch" role="group" aria-label="Preview format"><button type="button" class="format-button is-active" data-format="wide" aria-pressed="true">16:9 Wide</button><button type="button" class="format-button" data-format="square" aria-pressed="false">1:1 Square</button><button type="button" class="format-button" data-format="story" aria-pressed="false">9:16 Story</button></div><button type="button" id="save-edits">Save edits</button><button type="button" id="reset-edits" class="secondary-button">Reset samples</button><button type="button" id="print-flyers">Print / Save PDF</button></div><span id="edit-status" class="edit-status" role="status" aria-live="polite">Edits stay on this device until saved.</span></div>
+<section class="workflow" id="department-template-picker" style="margin:18px 0">
+<h2>Find the correct TemplateFlyer for your Department</h2>
+<p style="color:#c2cde4">اپنا Department منتخب کریں؛ متعلقہ Master Template فوراً دکھایا جائے گا۔ Cross-functional teams کے لیے Story Beat بھی منتخب کریں۔</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+<label>Department / Director<select id="department-select" style="width:100%;padding:12px;border-radius:8px;background:#09152e;color:white;border:1px solid #6078b8">
+<option value="">تمام Departments — تمام Templates دکھائیں</option>
+<option>Newsroom / Editor-in-Chief</option><option>Assignment Desk</option><option>Pakistan</option><option>Provincial & Local</option><option>Politics</option><option>World</option><option>Crime & Public Safety</option><option>Courts & Legal Affairs</option><option>Business & Economy</option><option>Finance & Markets</option><option>Sports</option><option>Technology & AI</option><option>Science & Health</option><option>Climate & Environment</option><option>Education</option><option>Agriculture & Rural Affairs</option><option>Research</option><option>Open-Source Verification</option><option>Fact-Check</option><option>Urdu & English</option><option>Copy Editing</option><option>Photo & Visuals</option><option>Audience & Social Media</option><option>SEO & Distribution</option><option>Ethics & Standards</option><option>Security & Privacy</option>
+</select></label>
+<label>Story Beat (Dynamic routing)<select id="storybeat-select" style="width:100%;padding:12px;border-radius:8px;background:#09152e;color:white;border:1px solid #6078b8">
+<option value="">Story Beat منتخب کریں (اگر ضرورت ہو)</option><option value="politics">Politics & Government</option><option value="courts">Courts & Judiciary</option><option value="crime">Crime & Public Safety</option><option value="business">Business & Economy</option><option value="weather">Weather & Disasters</option><option value="health">Health & Science</option><option value="education">Education</option><option value="sports">Sports</option><option value="entertainment">Entertainment & Culture</option><option value="world">World & Foreign Affairs</option>
+</select></label></div>
+<div id="department-template-result" class="status" role="status" style="margin-top:12px">تمام 10 Master Templates دکھائے جا رہے ہیں۔</div>
+<button type="button" id="show-all-templates">تمام 10 Templates دکھائیں</button>
+</section>
 <div class="library-callout" style="margin:16px 0;padding:16px 18px;border:1px solid #4a78a0;border-radius:14px;background:linear-gradient(110deg,#122b49,#251d45);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><div><strong style="color:#8cecff">READY-MADE CANVA FLYERS</strong><div style="font-size:12px;color:#c9d9ec;margin-top:4px">قومی خبر، معیشت، سیاست، کھیل، امن و امان اور سائبر کرائم — چھ editable copies الگ فولڈر میں محفوظ ہیں۔</div></div><a href="/graphics/ready-made-flyer-library.html" style="display:inline-block;padding:10px 14px;border-radius:8px;background:linear-gradient(110deg,#237bf0,#28c8db);color:#fff;text-decoration:none;font-weight:900;font-size:12px">Open Ready-made Library →</a></div>
 <div style="margin:16px 0;padding:16px 18px;border:1px solid #a98545;border-radius:12px;background:linear-gradient(110deg,#07182e,#12365a);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><div><strong style="color:#f0ce82">NEW · WORLD NEWS EDITORIAL STYLE</strong><div style="font-size:12px;color:#d3deeb;margin-top:4px">آپ کے بھیجے گئے reference design پر مبنی Navy, Red اور Gold newsroom template — editable sample headline, image area, verification, location, date and source</div></div><a href="/graphics/world-news-editorial-template.html" style="display:inline-block;padding:10px 14px;border-radius:6px;background:linear-gradient(100deg,#a90e18,#d71920);border:1px solid #d7b15b;color:#fff;text-decoration:none;font-weight:900;font-size:12px">Preview World News Template →</a></div>
 <div class="intro"><h2>Department Master TemplateFlyers</h2><p>Editable sample copy · illustrative reference photos · replace with story-specific verified images before publication</p></div>
@@ -211,6 +225,41 @@ button{background:linear-gradient(110deg,#087fbd,#455ee4 55%,#a23fc1)!important;
 (()=> {
   const grid=document.querySelector(".grid");
   const status=document.getElementById("edit-status");
+  const departmentSelect=document.getElementById("department-select");
+  const beatSelect=document.getElementById("storybeat-select");
+  const routeByDepartment={
+    "Politics":"p1","World":"p10","Crime & Public Safety":"p3","Courts & Legal Affairs":"p2",
+    "Business & Economy":"p4","Finance & Markets":"p4","Sports":"p8","Technology & AI":"p6",
+    "Science & Health":"p6","Climate & Environment":"p5","Education":"p7",
+    "Agriculture & Rural Affairs":"p4"
+  };
+  const routeByBeat={politics:"p1",courts:"p2",crime:"p3",business:"p4",weather:"p5",health:"p6",education:"p7",sports:"p8",entertainment:"p9",world:"p10"};
+  const templateNames={p1:"Politics & Government",p2:"Courts & Judiciary",p3:"Crime & Public Safety",p4:"Business & Economy",p5:"Weather & Disasters",p6:"Health & Science",p7:"Education",p8:"Sports",p9:"Entertainment & Culture",p10:"World & Foreign Affairs"};
+  const applyDepartmentFilter=()=>{
+    const department=departmentSelect?.value||"";
+    const beat=beatSelect?.value||"";
+    let target=department?routeByDepartment[department]||null:null;
+    let reason="";
+    if(department && !target && beat) target=routeByBeat[beat];
+    if(department && !target) reason="یہ cross-functional Department ہے؛ متعلقہ خبر کا Story Beat منتخب کریں تاکہ درست Master Template دکھایا جا سکے۔";
+    document.querySelectorAll(".dept").forEach(card=>{card.hidden=Boolean(target)&&card.id!==target;});
+    if(status){
+      if(!department) setStatus("تمام 10 Master Templates دکھائے جا رہے ہیں۔");
+      else if(target) setStatus(department+" → "+templateNames[target]+" · متعلقہ Template Preview دکھایا گیا۔");
+      else setStatus(reason);
+    }
+    if(target) document.getElementById(target)?.scrollIntoView({behavior:"smooth",block:"start"});
+  };
+  departmentSelect?.addEventListener("change",applyDepartmentFilter);
+  beatSelect?.addEventListener("change",applyDepartmentFilter);
+  document.getElementById("show-all-templates")?.addEventListener("click",()=>{
+    if(departmentSelect)departmentSelect.value="";
+    if(beatSelect)beatSelect.value="";
+    document.querySelectorAll(".dept").forEach(card=>card.hidden=false);
+    setStatus("تمام 10 Master Templates دکھائے جا رہے ہیں۔");
+    document.querySelector(".intro")?.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+
   const editable=[...document.querySelectorAll(".edit[contenteditable='true']")];
   const storageKey="acn-templateflyer-edits-v1";
   editable.forEach((node,index)=>{node.dataset.editKey=String(index);node.setAttribute("aria-label","Editable flyer text "+(index+1));});
