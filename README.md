@@ -16,7 +16,8 @@ Official website and AI newsroom foundation for AI Chronicals News.
 - `api/admin/department-team.js`: authenticated independent department Search & Research plus Director-coordinated newsroom package pipeline.
 - `api/admin/agent.js`: original 26-director review endpoint retained for specialist review workflows.
 - `api/admin/draft.js`: legacy draft endpoint; not used by the current department-team dashboard.
-- `api/admin/queue.js`: authenticated private Blob approval-queue API (list, save, update admin decision, delete).
+- `api/admin/queue.js`: authenticated private Blob approval-queue API (list, save, update admin decision, delete); also routes authenticated News Management requests to PostgreSQL.
+- `admin-news.html`: News Management screen for creating, editing, reviewing and deleting article drafts. Source URLs are optional at initial draft stage; a source-less item remains `pending_verification` and cannot be marked verified.
 
 ## Newsroom hierarchy
 Buland is the central AI coordinator and is not counted among the 26 department directors. Each director owns a dedicated department workflow:
@@ -56,7 +57,7 @@ For each admin assignment:
 5. Each department returns an unpublished package containing its research dossier, source links, key facts, timeline/context, claims needing verification, headline, article, social caption, graphics creative brief/image prompt/caption/alt text, presentation order, social variants, SEO metadata, findings, action plan, and recommendation.
 6. The dashboard gathers successes and failures, displays readable department report cards with source links, retains raw JSON details, and offers JSON exports for the admin.
 
-The five specialist roles are separate model invocations coordinated by the department Director; they are not persistent background services. This is a meaningful separation of AI tasks, but not five long-running agents with their own hosting or memory. Graphics briefs include a prompt. An admin can optionally generate an actual image on demand from each department report using the authenticated `api/admin/graphics` endpoint (`gpt-image-1`, medium quality, 1024×1024); images are returned to the browser for review/download and are not automatically published or stored in Blob. Image generation may incur API usage costs. The system does not grant image licensing or factual authenticity.
+The five specialist roles are separate model invocations coordinated by the department Director; they are not persistent background services. This is a meaningful separation of AI tasks, but not five long-running agents with their own hosting or memory. Graphics briefs include a prompt. An admin can optionally generate an actual image on demand from each department report using the authenticated `api/admin/graphics` endpoint (`gpt-image-1`, medium quality, 1024×1024). Generated images are saved to private Vercel Blob storage and their metadata is saved in Supabase `media_assets`; the API also returns a review copy to the browser. Each asset is marked `pending_review` for rights review. Generation may incur API usage costs. Storage does not grant image licensing or factual authenticity.
 
 ## Editorial safeguards and known limitations
 - Every result is marked `PENDING_ADMIN_APPROVAL`; publication is disabled.
@@ -68,6 +69,8 @@ The five specialist roles are separate model invocations coordinated by the depa
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows. Department runs are throttled in batches of two, with a short pause between batches; transient upstream failures receive one retry and requests have a timeout. These safeguards reduce but do not eliminate rate-limit failures.
 - The legacy public Blob store is not used for draft persistence.
+- Source URLs may be omitted when initially saving an unpublished draft. Such records are displayed as `Draft — Sources Pending`; source requirements remain enforced before verification (two distinct publisher hosts or one explicitly official source). Editing an article resets it to `pending_verification`.
+- `approved_not_published` is an editorial state only. Publication status is forced to `disabled` by the News Management API.
 - No news is automatically published. Do not enable publishing or production deployment without explicit admin approval.
 
 ## Graphics and department TemplateFlyers
@@ -77,9 +80,13 @@ The five specialist roles are separate model invocations coordinated by the depa
 - Preview-only; no automatic publishing. All stories remain pending explicit admin approval.
 
 ## Required Vercel environment variables
-- `OPENAI_API_KEY`
-- `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`)
-- `BLOB_READ_WRITE_TOKEN` (connected to the private newsroom Blob store)
+- `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`) — required for authenticated Admin APIs.
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management and media metadata persistence. Keep service-role keys server-side only.
+- `BLOB_READ_WRITE_TOKEN` — required for private approval-queue and generated-graphics storage.
+- `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.
+- `GEMINI_API_KEY` — required for Gemini-powered research/department workflows.
+
+`/api/health` reports configuration presence without exposing values. `/api/health?supabase=all` performs read-only connectivity checks against the six newsroom tables. `/api/health?gemini=1` makes a minimal live Gemini request and may incur API usage.
 
 Never put secrets in source files, commits, browser code, logs, or chat messages.
 
@@ -89,7 +96,7 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - If a run stops after some departments have completed, the dashboard renders and attempts to save a clearly marked partial report. Missing departments can be retried from the report; successful retries update the same local queue record. Missing departments must be completed before editorial assessment.
 - The public health endpoint is surfaced through a safe admin diagnostics panel. It reports only whether required environment variables are present; it never returns secret values.
 - Department PASS status is now gated on a valid evidence-audit structure, at least one claim check, a recognized audit status, and no declared verification gaps. Malformed or incomplete audits are HOLD, not PASS.
-- All six JavaScript API handlers are configured as ES modules; every `require()` call was removed from the API source and Node crypto uses the native `node:crypto` import. The latest preview deployment passed live health and API method-guard checks, with no runtime error logs in the checked 30-minute window. A full live 26-department run, real upstream OpenAI calls, and cross-device persistence have not yet been verified.
+- All six JavaScript API handlers are configured as ES modules; every `require()` call was removed from the API source and Node crypto uses the native `node:crypto` import. The latest Preview branch has a READY deployment and public health plus all-six-table Supabase read-only checks have passed. The Vercel runtime-error query returned no errors in its selected 24-hour window. Authenticated News CRUD, private Blob round-trip, full live 26-department run, real upstream OpenAI graphics generation, and cross-device persistence still require an authenticated end-to-end test. Vercel Hobby runtime-log retention can prevent longer log-window queries.
 
 ## Graphics review and newsroom UI
 - Public homepage visual system: dark broadcast newsroom theme with HUD styling, cinematic accents, departmental desk overview, and a design-only Breaking News lower-third preview.
