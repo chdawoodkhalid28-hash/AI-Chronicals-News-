@@ -69,7 +69,7 @@ The five specialist roles are separate model invocations coordinated by the depa
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows. Department runs are throttled in batches of two, with a short pause between batches; transient upstream failures receive one retry and requests have a timeout. These safeguards reduce but do not eliminate rate-limit failures.
 - The legacy public Blob store is not used for draft persistence.
-- Source URLs may be omitted when initially saving an unpublished draft. Such records are displayed as `Draft — Sources Pending`; source requirements remain enforced before verification (two distinct publisher hosts or one explicitly official source). Editing an article resets it to `pending_verification`.
+- Source URLs may be omitted when initially saving an unpublished draft. Such records are displayed as `Draft — Sources Pending`; source requirements remain enforced before verification (two distinct publisher hosts or one source whose hostname matches the server-side `OFFICIAL_SOURCE_DOMAINS` allowlist; client-supplied official flags are ignored). Editing an article resets it to `pending_verification`.
 - `approved_not_published` is an editorial state only. Publication status is forced to `disabled` by the News Management API.
 - No news is automatically published. Do not enable publishing or production deployment without explicit admin approval.
 
@@ -83,7 +83,7 @@ The five specialist roles are separate model invocations coordinated by the depa
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`) — required for authenticated Admin APIs.
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management and media metadata persistence. Keep service-role keys server-side only.
 - `BLOB_READ_WRITE_TOKEN` — required for private approval-queue and generated-graphics storage.
-- `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.
+- `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.\n- `OFFICIAL_SOURCE_DOMAINS` — optional comma-separated trusted official publisher hostnames (for example, `gov.pk,example.gov`); only server-configured domains can qualify for the one-official-source verification path.
 - `GEMINI_API_KEY` — required for Gemini-powered research/department workflows.
 
 `/api/health` reports configuration presence without exposing values. `/api/health?supabase=all` performs read-only connectivity checks against the six newsroom tables. `/api/health?gemini=1` makes a minimal live Gemini request and may incur API usage.
