@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { validateArticleInput, canMarkVerified } from "../lib/news-validation.js";
 
-test("requires HTTPS sources and a valid headline", () => {
+test("requires a valid headline and rejects malformed or non-HTTPS sources", () => {
   assert.equal(validateArticleInput({ headline: "Short", sources: ["https://example.com"] }).ok, false);
   assert.equal(validateArticleInput({ headline: "A verified headline", sources: ["http://example.com"] }).ok, false);
 });
@@ -45,5 +45,20 @@ test("ignores spoofed publisher labels and normalizes www hostnames", () => {
   assert.equal(result.ok, true);
   assert.equal(result.sources[0].publisher, "example.com");
   assert.equal(result.sources[1].publisher, "example.com");
+  assert.equal(canMarkVerified(result.sources), false);
+});
+
+
+test("allows a source-less draft but never treats it as verified", () => {
+  const result = validateArticleInput({
+    headline: "A sufficiently detailed draft headline",
+    summary: "Unverified draft",
+    body: "Draft awaiting source links",
+    sources: []
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.sources.length, 0);
+  assert.equal(result.article.editorial_status, "pending_verification");
+  assert.equal(result.article.publication_status, "disabled");
   assert.equal(canMarkVerified(result.sources), false);
 });
