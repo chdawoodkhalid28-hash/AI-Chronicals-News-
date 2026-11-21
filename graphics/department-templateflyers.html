@@ -263,7 +263,7 @@ button{background:linear-gradient(110deg,#087fbd,#455ee4 55%,#a23fc1)!important;
   const editable=[...document.querySelectorAll(".edit[contenteditable='true']")];
   const storageKey="acn-templateflyer-edits-v1";
   editable.forEach((node,index)=>{node.dataset.editKey=String(index);node.setAttribute("aria-label","Editable flyer text "+(index+1));});
-  const setStatus=(message)=>{if(status)status.textContent=message;};
+  const setStatus=(message)=>{if(status)status.textContent=message;const result=document.getElementById("department-template-result");if(result)result.textContent=message;};
   const readSaved=()=>{try{return JSON.parse(localStorage.getItem(storageKey)||"{}");}catch{return {};}};
   const restore=()=>{const saved=readSaved();editable.forEach(node=>{const key=node.dataset.editKey;if(Object.prototype.hasOwnProperty.call(saved,key))node.textContent=saved[key];});};
   const save=()=>{const saved={};editable.forEach(node=>saved[node.dataset.editKey]=node.innerText);try{localStorage.setItem(storageKey,JSON.stringify(saved));setStatus("Saved on this device · "+new Date().toLocaleTimeString());}catch{setStatus("Could not save locally. Copy your text before leaving.");}};
