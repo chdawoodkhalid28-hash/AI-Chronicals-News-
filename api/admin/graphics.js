@@ -10,7 +10,12 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
-export function createGraphicsHandler({\n  persistImage = persistGeneratedImage,\n  listMediaAssets = query => supabaseRequest("media_assets", { query }),\n  findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),\n  getPrivateBlob = get\n} = {}) {
+export function createGraphicsHandler({
+  persistImage = persistGeneratedImage,
+  listMediaAssets = query => supabaseRequest("media_assets", { query }),
+  findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
+  getPrivateBlob = get
+} = {}) {
 return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST" && req.method !== "GET") {
