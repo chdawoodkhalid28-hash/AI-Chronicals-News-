@@ -104,3 +104,13 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - Admin Graphics & Presentation panel links to the three separate review drafts under `graphics/drafts/`.
 - Review drafts are not production approvals. Verified story copy, image rights, sources and administrator sign-off are required before publication.
 - Development changes are held on `ai-newsroom-foundation`; do not merge or deploy to Production without explicit admin approval.
+
+
+## Free-first AI Chronicals News automation (separate from AI Workforce Enterprise)
+- The newsroom has its own independent free-first automation in `lib/free-newsroom-autopilot.js`, curriculum in `training/free-newsroom-curriculum.json`, and tests in `test/free-newsroom-autopilot.test.js`.
+- The workflow `.github/workflows/newsroom-free-autopilot.yml` can run manually or daily at 08:00 Pakistan time. It runs repository tests and produces a downloadable training-readiness report; it does not call paid AI APIs, publish stories, generate videos, or modify production.
+- All 26 newsroom directors receive the same auditable training modules for verification, writing, visual rights, Urdu/English quality, and security/privacy. Department plans are static training plans, not autonomous background model agents.
+- Google News and RSS are discovery resources only. A source must still be opened, attributed, checked for date/context, and independently verified before an editor can mark a claim verified. Wikimedia Commons and Openverse assets require license/attribution review at the original source.
+- GitHub Actions, Vercel, Supabase, and storage free tiers have quotas and changing terms. This workflow uses GitHub Actions only; it does not promise unlimited free compute or AI inference. Free AI inference is not enabled by default.
+- The existing research/team endpoints may still require `GEMINI_API_KEY` and may incur usage. Graphics generation may require `OPENAI_API_KEY` and may incur usage. The new autopilot does not call either endpoint. Do not run a full 26-department AI package or generate images until the user explicitly authorizes possible usage.
+- This workflow is a first automation foundation, not proof that the complete public website, admin CRUD, private Blob persistence, or external social distribution are fully operational. Those require separate authenticated integration tests.
