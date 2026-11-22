@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "project": "AI Chronicals News",
+  "scope": "Newsroom automation only; independent from AI Workforce Enterprise",
+  "executionPolicy": {
+    "defaultMode": "free-first",
+    "paidApis": "blocked",
+    "externalModelCalls": "disabled",
+    "publishing": "disabled",
+    "videoGeneration": "disabled",
+    "adminApprovalRequired": true,
+    "maxDepartmentsPerRun": 26
+  },
+  "freeResources": [
+    {
+      "name": "Official publisher websites",
+      "url": "https://www.google.com/search?q=official+government+news+sources",
+      "use": "Primary-source discovery; confirm domain and publication date"
+    },
+    {
+      "name": "Google News",
+      "url": "https://news.google.com/",
+      "use": "Discovery only; open and verify original publishers"
+    },
+    {
+      "name": "RSS",
+      "url": "https://www.rssboard.org/",
+      "use": "Feed discovery and ingestion standards"
+    },
+    {
+      "name": "Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/",
+      "use": "Media discovery; check each asset license and attribution"
+    },
+    {
+      "name": "Openverse",
+      "url": "https://openverse.org/",
+      "use": "Creative Commons media discovery; verify license at source"
+    },
+    {
+      "name": "GitHub Skills",
+      "url": "https://skills.github.com/",
+      "use": "Free repository and workflow learning"
+    },
+    {
+      "name": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/",
+      "use": "Web platform and accessibility standards"
+    },
+    {
+      "name": "OWASP Cheat Sheet Series",
+      "url": "https://cheatsheetseries.owasp.org/",
+      "use": "Application security practices"
+    }
+  ],
+  "directors": [
+    "Newsroom / Editor-in-Chief",
+    "Assignment Desk",
+    "Pakistan",
+    "Provincial & Local",
+    "Politics",
+    "World",
+    "Crime & Public Safety",
+    "Courts & Legal Affairs",
+    "Business & Economy",
+    "Finance & Markets",
+    "Sports",
+    "Technology & AI",
+    "Science & Health",
+    "Climate & Environment",
+    "Education",
+    "Agriculture & Rural Affairs",
+    "Research",
+    "Open-Source Verification",
+    "Fact-Check",
+    "Urdu & English",
+    "Copy Editing",
+    "Photo & Visuals",
+    "Audience & Social Media",
+    "SEO & Distribution",
+    "Ethics & Standards",
+    "Security & Privacy"
+  ],
+  "modules": [
+    {
+      "id": "verification",
+      "title": "Source verification",
+      "exercise": "Record publisher, original URL, timestamp, evidence, and a second independent publisher or an allowlisted official source.",
+      "pass": "No unsupported claim is labelled verified."
+    },
+    {
+      "id": "writing",
+      "title": "News writing",
+      "exercise": "Write a neutral headline, concise summary, attributed body, and separate confirmed facts from unknowns.",
+      "pass": "No invented quote, source, statistic, or footage."
+    },
+    {
+      "id": "rights",
+      "title": "Visual rights",
+      "exercise": "Record asset origin, license, attribution, crop/edit restrictions, and consent/privacy risks.",
+      "pass": "No asset enters publish-ready state without rights review."
+    },
+    {
+      "id": "urdu",
+      "title": "Urdu and English quality",
+      "exercise": "Review names, dates, figures, transliteration, Nastaliq rendering, and meaning consistency.",
+      "pass": "No material translation drift."
+    },
+    {
+      "id": "security",
+      "title": "Security and privacy",
+      "exercise": "Check authentication boundaries, secret handling, input validation, logs, and personal-data minimization.",
+      "pass": "No secret or private draft is exposed."
+    }
+  ]
+}
