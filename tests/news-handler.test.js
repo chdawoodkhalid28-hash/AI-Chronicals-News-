@@ -171,8 +171,8 @@ test("PATCH records a verified editorial status while keeping publication disabl
     }
     if (table === "news_sources") {
       return [
-        { publisher: "one.example", is_official: false },
-        { publisher: "two.example", is_official: false }
+        { publisher: "one.example", is_official: false, source_url: "https://one.example/story" },
+        { publisher: "two.example", is_official: false, source_url: "https://two.example/story" }
       ];
     }
     if (table === "news_articles" && method === "PATCH") {
