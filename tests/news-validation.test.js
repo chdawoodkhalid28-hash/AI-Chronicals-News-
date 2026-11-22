@@ -14,7 +14,7 @@ test("normalizes valid article payload and keeps publication disabled", () => {
 });
 test("requires two sources or one official source for verification", () => {
   assert.equal(canMarkVerified([{ is_official: false }]), false);
-  assert.equal(canMarkVerified([{ is_official: false, publisher: "one.example" }, { is_official: false, publisher: "two.example" }]), true);
+  assert.equal(canMarkVerified([{ source_url: "https://one.example/a", publisher: "one.example" }, { source_url: "https://two.example/b", publisher: "two.example" }]), true);
   assert.equal(canMarkVerified([{ is_official: true, source_url: "https://untrusted.example/story" }]), false);
 });
 test("deduplicates sources and rejects credentials in URLs", () => {
@@ -25,8 +25,8 @@ test("deduplicates sources and rejects credentials in URLs", () => {
 });
 
 test("requires distinct publisher domains for the two-source verification path", () => {
-  assert.equal(canMarkVerified([{ publisher: "publisher.example" }, { publisher: "publisher.example" }]), false);
-  assert.equal(canMarkVerified([{ publisher: "one.example" }, { publisher: "two.example" }]), true);
+  assert.equal(canMarkVerified([{ source_url: "https://publisher.example/a", publisher: "one.example" }, { source_url: "https://publisher.example/b", publisher: "two.example" }]), false);
+  assert.equal(canMarkVerified([{ source_url: "https://one.example/a", publisher: "same-label.example" }, { source_url: "https://two.example/b", publisher: "same-label.example" }]), true);
 });
 test("infers a publisher domain when source metadata is omitted", () => {
   const result = validateArticleInput({ headline: "A sufficiently long headline", sources: ["https://one.example/a", "https://two.example/b"] });
@@ -85,4 +85,20 @@ test("ignores client-supplied official flags and trusts only configured official
   assert.equal(canMarkVerified(trusted.sources), true);
   if (previous === undefined) delete process.env.OFFICIAL_SOURCE_DOMAINS;
   else process.env.OFFICIAL_SOURCE_DOMAINS = previous;
+});
+
+
+test("verification ignores legacy publisher labels and derives distinct hosts from stored URLs", () => {
+  assert.equal(canMarkVerified([
+    { source_url: "https://same.example/a", publisher: "first-publisher.example" },
+    { source_url: "https://same.example/b", publisher: "second-publisher.example" }
+  ]), false);
+  assert.equal(canMarkVerified([
+    { source_url: "https://one.example/a", publisher: "same-label.example" },
+    { source_url: "https://two.example/b", publisher: "same-label.example" }
+  ]), true);
+  assert.equal(canMarkVerified([
+    { source_url: "http://one.example/a", publisher: "one.example" },
+    { source_url: "https://two.example/b", publisher: "two.example" }
+  ]), false);
 });
