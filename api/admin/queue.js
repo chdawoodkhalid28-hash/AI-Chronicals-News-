@@ -44,7 +44,7 @@ async function readAllRecords() {
       if (!blob.pathname.endsWith(".json")) continue;
       try {
         const item = await readRecord(blob.pathname);
-        if (item && validateItem(item)) found.push(item);
+        if (item && validateItem(item)) found.push(sanitizeItem(item));
       } catch {
         // Skip an unreadable/corrupt record without failing the entire admin queue.
       }
@@ -97,10 +97,11 @@ export default async function handler(req, res) {
       }
       const item = await readRecord(recordPath(id));
       if (!item || !validateItem(item)) return res.status(404).json({ error: "Queue record not found" });
-      item.decision = decision;
-      item.decisionAt = new Date().toISOString();
-      await writeRecord(item);
-      return res.status(200).json({ ok: true, item, publication: "DISABLED" });
+      const safeItem = sanitizeItem(item);
+      safeItem.decision = decision;
+      safeItem.decisionAt = new Date().toISOString();
+      await writeRecord(safeItem);
+      return res.status(200).json({ ok: true, item: safeItem, publication: "DISABLED" });
     }
 
     if (req.method === "DELETE") {
