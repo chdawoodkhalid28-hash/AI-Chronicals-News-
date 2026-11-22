@@ -10,7 +10,7 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
-export function createGraphicsHandler({ persistImage = persistGeneratedImage } = {}) {
+export function createGraphicsHandler({\n  persistImage = persistGeneratedImage,\n  listMediaAssets = query => supabaseRequest("media_assets", { query }),\n  findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),\n  getPrivateBlob = get\n} = {}) {
 return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST" && req.method !== "GET") {
@@ -30,28 +30,20 @@ return async function handler(req, res) {
     try {
       const assetId = typeof req.query?.id === "string" ? req.query.id : "";
       if (!assetId) {
-        const items = await supabaseRequest("media_assets", {
-          query: new URLSearchParams({
-            select: "id,media_type,alt_text,rights_status,created_at",
-            order: "created_at.desc",
-            limit: "50"
-          }).toString()
-        });
+        const items = await listMediaAssets(new URLSearchParams({
+          select: "id,media_type,alt_text,rights_status,created_at",
+          order: "created_at.desc",
+          limit: "50"
+        }).toString());
         return res.status(200).json({ ok: true, items: items || [], storage: "private", publication: "DISABLED" });
       }
       if (!/^[0-9a-f-]{36}$/i.test(assetId)) {
         return res.status(400).json({ error: "A valid media asset ID is required" });
       }
-      const rows = await supabaseRequest("media_assets", {
-        query: new URLSearchParams({
-          select: "id,blob_pathname,media_type,rights_status",
-          id: "eq." + assetId,
-          limit: "1"
-        }).toString()
-      });
+      const rows = await findMediaAsset(assetId);
       const asset = rows && rows[0];
       if (!asset) return res.status(404).json({ error: "Media asset not found" });
-      const blob = await get(asset.blob_pathname, { access: "private", useCache: false });
+      const blob = await getPrivateBlob(asset.blob_pathname, { access: "private", useCache: false });
       if (!blob || blob.statusCode !== 200 || !blob.stream) {
         return res.status(404).json({ error: "Private media object not found" });
       }
