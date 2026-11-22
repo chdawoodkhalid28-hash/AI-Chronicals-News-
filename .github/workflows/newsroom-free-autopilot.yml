@@ -1,0 +1,41 @@
+name: AI Chronicals News — Free Autopilot
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily at 03:00 UTC (08:00 Pakistan Standard Time).
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-chronicals-news-free-autopilot
+  cancel-in-progress: true
+
+jobs:
+  newsroom-training-and-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out newsroom repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run newsroom tests
+        run: npm test
+      - name: Build free training readiness report
+        run: |
+          mkdir -p reports
+          node lib/free-newsroom-autopilot.js > reports/free-newsroom-autopilot.json
+      - name: Upload training readiness report
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-newsroom-autopilot-${{ github.run_number }}
+          path: reports/free-newsroom-autopilot.json
+          if-no-files-found: error
+          retention-days: 14
