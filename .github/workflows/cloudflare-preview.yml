@@ -23,8 +23,40 @@ jobs:
         with:
           node-version: 22
 
-      - name: Test Cloudflare preview worker
-        run: node --test tests/cloudflare-worker.test.js
+      - name: Test Cloudflare preview worker and admin sessions
+        run: node --test tests/cloudflare-worker.test.js tests/cloudflare-admin-auth.test.js
 
       - name: Deploy temporary preview without account credentials
-        run: npx --yes wrangler@4.102.0 deploy --temporary --config wrangler.jsonc
+        shell: bash
+        run: |
+          set -o pipefail
+          npx --yes wrangler@4.102.0 deploy --temporary --config wrangler.jsonc 2>&1 | tee /tmp/wrangler-deploy.log
+          PREVIEW_URL="$(grep -Eo 'https://ai-chronicals-news-test\\.[a-z0-9-]+\\.workers\\.dev' /tmp/wrangler-deploy.log | tail -n 1)"
+          test -n "$PREVIEW_URL"
+          echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+          echo "Temporary preview URL: $PREVIEW_URL"
+
+      - name: Smoke test the live Cloudflare preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --retry 10 --retry-delay 3 --retry-connrefused --fail --silent --show-error "$PREVIEW_URL/api/health" -o /tmp/health.json
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const h = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8"));
+            if (h.status !== "partial-preview" || h.backendMigration !== "in_progress" || h.publishing !== "DISABLED" || h.ok !== false) {
+              throw new Error("Live health response did not match the safe preview contract");
+            }
+            console.log("Live health endpoint: PASS");
+          '
+          curl --retry 10 --retry-delay 3 --retry-connrefused --fail --silent --show-error "$PREVIEW_URL/admin.html" -o /tmp/admin.html
+          grep -qi '<html' /tmp/admin.html
+          echo "Static admin page delivery: PASS"
+          STATUS="$(curl --silent --show-error --output /tmp/admin-api.json --write-out '%{http_code}' "$PREVIEW_URL/api/admin/queue")"
+          test "$STATUS" = "401"
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const body = JSON.parse(fs.readFileSync("/tmp/admin-api.json", "utf8"));
+            if (body.error !== "Admin session required") throw new Error("Unauthenticated admin API was not rejected");
+            console.log("Live unauthenticated admin API denial: PASS");
+          '
