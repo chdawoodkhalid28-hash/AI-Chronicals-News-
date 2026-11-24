@@ -443,18 +443,31 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
     const data=await response.json();
     if(!response.ok||!data||!data.capabilities)throw new Error(data&&data.error||"Health endpoint returned an invalid response");
     const c=data.capabilities;
+    let geminiTest=null;
+    if(c.geminiKeyConfigured){
+      try{
+        const testResponse=await fetch("/api/health?gemini=1",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
+        geminiTest=await testResponse.json();
+        if(!testResponse.ok)geminiTest.ok=false;
+      }catch(testError){
+        geminiTest={ok:false,error:testError.message};
+      }
+    }
     output.textContent=[
       "API status: "+(data.status||"unknown"),
       "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
       "OpenAI API key: "+(c.openAIKeyConfigured?"configured (quota may still be exhausted)":"not configured"),
-      "Gemini API key: "+(c.geminiKeyConfigured?"configured — fallback ready":"MISSING"),
-      "Gemini model: "+(c.geminiProvider||"default model"),
-      "Provider policy: Gemini fallback is enabled for text, drafts and grounded research",
-      "Blob token (presence only): "+(c.blobTokenConfigured?"configured — private server queue available":"not configured"),
+      "Gemini API key: "+(c.geminiKeyConfigured?"configured":"MISSING"),
+      "Gemini configured model: "+(c.geminiProvider||"default model"),
+      "Gemini live text test: "+(geminiTest?(geminiTest.ok?"CONNECTED":"UNAVAILABLE"):"not run"),
+      "Gemini model used: "+(geminiTest&&geminiTest.model||"not confirmed"),
+      "Provider policy: Gemini text fallback is enabled; grounded research remains source-gated",
+      "Blob token (presence only): "+(c.blobTokenConfigured?"configured":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
-      "Checked: "+(data.checkedAt||"unknown")
-    ].join("\\n");
+      "Checked: "+(data.checkedAt||"unknown"),
+      geminiTest&&!geminiTest.ok?"Gemini detail: "+(geminiTest.error||geminiTest.status||"unknown error"):""
+    ].filter(Boolean).join("\\n");
   }catch(error){output.textContent="تشخیص ناکام: "+error.message;}
   finally{button.disabled=false;}
 });
