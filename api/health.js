@@ -43,7 +43,9 @@ export default async function handler(req, res) {
       "news_verification_checks",
       "editorial_events",
       "department_outputs",
-      "media_assets"
+      "media_assets",
+      "approval_queue",
+      "department_knowledge"
     ];
     const tables = await Promise.all(tableNames.map(async (table) => {
       try {
