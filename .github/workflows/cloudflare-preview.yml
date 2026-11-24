@@ -49,9 +49,17 @@ jobs:
             }
             console.log("Live health endpoint: PASS");
           '
-          curl --retry 10 --retry-delay 3 --retry-connrefused --fail --silent --show-error "$PREVIEW_URL/admin.html" -o /tmp/admin.html
-          grep -qi '<html' /tmp/admin.html
-          echo "Static admin page delivery: PASS"
+          for PAGE in /index.html /admin.html; do
+            PAGE_STATUS="$(curl --silent --show-error --output /tmp/page.html --dump-header /tmp/page.headers --write-out '%{http_code}' "$PREVIEW_URL$PAGE")"
+            echo "Static asset $PAGE returned HTTP $PAGE_STATUS"
+            if [ "$PAGE_STATUS" != "200" ]; then
+              cat /tmp/page.headers
+              head -c 1000 /tmp/page.html || true
+              exit 1
+            fi
+            grep -qi '<html' /tmp/page.html
+          done
+          echo "Static index and admin page delivery: PASS"
           STATUS="$(curl --silent --show-error --output /tmp/admin-api.json --write-out '%{http_code}' "$PREVIEW_URL/api/admin/queue")"
           test "$STATUS" = "401"
           node --input-type=module -e '
