@@ -19,18 +19,18 @@ test("health endpoint is explicit that preview backend is not migrated", async (
   assert.equal(response.status, 200);
   assert.equal(body.status, "partial-preview");
   assert.equal(body.ok, false);
-  assert.equal(body.backendMigration, "not_started");
+  assert.equal(body.backendMigration, "in_progress");
   assert.equal(body.publishing, "DISABLED");
 });
 
-test("admin APIs fail closed instead of pretending to work", async () => {
+test("unmigrated admin APIs require a valid session before returning migration status", async () => {
   const response = await worker.fetch(
     new Request("https://preview.example/api/admin/queue", { method: "GET" }),
     { ASSETS: assetBinding() }
   );
   const body = await response.json();
-  assert.equal(response.status, 503);
-  assert.equal(body.error, "CLOUDFLARE_BACKEND_MIGRATION_PENDING");
+  assert.equal(response.status, 401);
+  assert.equal(body.error, "Admin session required");
 });
 
 test("public static paths are served through the assets binding", async () => {
