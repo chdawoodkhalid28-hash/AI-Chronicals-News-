@@ -4,7 +4,5 @@
   "scripts": {
     "test": "node --test"
   },
-  "dependencies": {
-    "@vercel/blob": "^2.3.1"
-  }
+  "dependencies": {}
 }
