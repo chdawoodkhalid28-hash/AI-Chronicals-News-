@@ -67,6 +67,20 @@ Required remediation:
 
 The Cloudflare preview explicitly returns `publishing: DISABLED`, and the queue sanitizer forces publication to disabled / pending admin approval. Keep this behavior until the editorial verification, legal review, approval, and publishing controls are migrated and tested end-to-end.
 
+## Cloudflare session foundation added on the migration branch
+
+The preview now includes `cloudflare/admin-auth.js` and Worker routes for:
+
+- `POST /api/admin/access`: verifies the configured admin password and issues a 30-minute signed session cookie.
+- `GET /api/admin/session`: verifies the signed session and expiry.
+- `POST /api/admin/logout`: expires a valid session cookie.
+- Login and logout require a same-origin `Origin` header.
+- Session cookies are HttpOnly, Secure, SameSite=Strict, and scoped to `/api/admin`.
+- The session secret and admin password are read only from Worker environment secrets; they are not committed to the repository.
+- Unmigrated admin endpoints remain unavailable and return 401 without a valid session, then 503 with a valid session to make the migration boundary explicit.
+
+GitHub Actions verified 6 tests passing (3 session-security tests and 3 Worker-routing tests). This is a preview foundation only: no Cloudflare secrets have been configured and no real administrator login has been tested against a claimed account.
+
 ## Migration acceptance gates
 
 Do not switch production DNS or disable Vercel until all gates pass:
@@ -84,9 +98,9 @@ Do not switch production DNS or disable Vercel until all gates pass:
 
 Cloudflare temporary static preview: deployed according to GitHub Actions logs.
 Cloudflare live endpoint response: not independently verified by automated retrieval (bot-blocked).
-Cloudflare backend/API migration: not started.
+Cloudflare backend/API migration: in progress; session foundation is the first slice, remaining API handlers are not migrated.
 R2 storage: not configured.
 Supabase on Cloudflare: not configured or tested.
-Admin session migration: not started.
+Admin session migration: preview implementation added and 6/6 automated tests pass; Worker secrets and real-browser login test remain pending.
 Production DNS cutover: not performed.
 Publishing: disabled.
