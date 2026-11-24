@@ -114,3 +114,10 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - GitHub Actions, Vercel, Supabase, and storage free tiers have quotas and changing terms. This workflow uses GitHub Actions only; it does not promise unlimited free compute or AI inference. Free AI inference is not enabled by default.
 - The existing research/team endpoints may still require `GEMINI_API_KEY` and may incur usage. Graphics generation may require `OPENAI_API_KEY` and may incur usage. The new autopilot does not call either endpoint. Do not run a full 26-department AI package or generate images until the user explicitly authorizes possible usage.
 - This workflow is a first automation foundation, not proof that the complete public website, admin CRUD, private Blob persistence, or external social distribution are fully operational. Those require separate authenticated integration tests.
+
+
+## Autonomous newsroom operations & bounded self-healing
+- Operations config: `config/newsroom-autonomous-operations.json`. It maps discovery, assignment, research, verification, writing, editorial review, graphics, approval, publishing, monitoring, and repair stages.
+- Monitoring/recovery helpers: `lib/newsroom-operations.js`. It classifies common failures and only plans bounded retries (2), malformed-item quarantine, or diagnostic reports.
+- Guardrails deliberately prevent autonomous source-code edits, secret/permission changes, publication during repair, or deletion of user content.
+- Scheduled workflow creates both free training and operations readiness reports. Publishing remains disabled; real RSS ingestion, model-backed writing, database persistence, external social distribution, and complete self-healing need separate integration work and cannot be claimed operational yet.
