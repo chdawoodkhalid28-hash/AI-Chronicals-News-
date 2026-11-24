@@ -37,8 +37,7 @@ test("private graphics library rejects unauthenticated reads before database acc
 
 test("private graphics library returns metadata without public Blob URLs", async () => {
   process.env.ADMIN_PASSWORD = "graphics-test-password";
-  process.env.BLOB_READ_WRITE_TOKEN = "test-blob-token";
-  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+    process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   globalThis.fetch = async (url, options) => {
     assert.match(String(url), /\/rest\/v1\/media_assets\?/);
@@ -70,9 +69,9 @@ test("private graphics library returns metadata without public Blob URLs", async
 test("graphics generation refuses to incur image-generation cost if private storage is missing", async () => {
   process.env.ADMIN_PASSWORD = "graphics-test-password";
   process.env.OPENAI_API_KEY = "test-openai-key";
-  process.env.BLOB_READ_WRITE_TOKEN = "";
-  process.env.SUPABASE_URL = "https://test-project.supabase.co";
-  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+    process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY1;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   let calls = 0;
   globalThis.fetch = async () => { calls++; throw new Error("image generation must not run"); };
   const res = responseRecorder();
