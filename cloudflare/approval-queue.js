@@ -90,6 +90,10 @@ async function readAllRecords(bucket) {
 }
 
 async function readJson(request) {
+  const declaredLength = Number(request.headers.get("Content-Length") || 0);
+  if (declaredLength > MAX_RECORD_BYTES) {
+    throw Object.assign(new Error("Request body is too large"), { status: 413 });
+  }
   const raw = await request.text();
   if (new TextEncoder().encode(raw).byteLength > MAX_RECORD_BYTES) {
     throw Object.assign(new Error("Request body is too large"), { status: 413 });
@@ -99,6 +103,12 @@ async function readJson(request) {
 }
 
 export async function handleQueueRequest(request, env) {
+  if (["POST", "PATCH", "DELETE"].includes(request.method)) {
+    const origin = request.headers.get("Origin");
+    if (!origin || origin !== new URL(request.url).origin) {
+      return json(403, { ok: false, error: "Same-origin request required" });
+    }
+  }
   const bucket = env.APPROVAL_QUEUE;
   if (!bucket) return json(503, { ok: false, error: "PRIVATE_R2_BUCKET_NOT_CONFIGURED" });
 
