@@ -161,14 +161,16 @@ export default async function handler(req, res) {
   try {
     // Retrieve only Admin-approved internal knowledge. Retrieved records are context, never proof.
     let retrievedKnowledge = [];
-    let memoryRetrievalStatus = process.env.BLOB_READ_WRITE_TOKEN ? "AVAILABLE" : "NOT_CONFIGURED";
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const supabaseConfigured = Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY));
+    let memoryRetrievalStatus = supabaseConfigured ? "AVAILABLE" : "NOT_CONFIGURED";
+    if (supabaseConfigured) {
       try {
         retrievedKnowledge = await knowledgeStore.search({
           department,
           query: instruction + " " + centralBrief,
           limit: 5
         });
+        memoryRetrievalStatus = "CONNECTED";
       } catch {
         memoryRetrievalStatus = "TEMPORARILY_UNAVAILABLE";
       }
@@ -362,7 +364,7 @@ export default async function handler(req, res) {
       publication: "DISABLED",
       memoryRetrieval: {
         status: memoryRetrievalStatus,
-        mode: "private-blob-keyword-rag",
+        mode: "supabase-private-keyword-rag",
         vectorEmbeddings: false,
         recordsRetrieved: retrievedKnowledge.length,
         recordIds: retrievedKnowledge.map(item => item.id)
