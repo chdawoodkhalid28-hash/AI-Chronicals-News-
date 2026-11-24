@@ -1,0 +1,31 @@
+{
+  "name": "AI Chronicals News Autonomous Newsroom",
+  "scope": "AI Chronicals News only",
+  "independentFrom": ["AI Workforce Enterprise"],
+  "schedule": { "dailyPakistanTime": "08:00", "cronUtc": "0 3 * * *" },
+  "stages": [
+    {"id":"discover","owner":"News Scanner","mode":"free-rss-official-source-discovery","status":"scaffolded"},
+    {"id":"assign","owner":"Buland Newsroom Coordinator","mode":"department-routing","status":"scaffolded"},
+    {"id":"research","owner":"Research Teams","mode":"source-evidence-gathering","status":"needs-free-source-ingestion"},
+    {"id":"verify","owner":"Verification & Fact Check","mode":"two-source-or-allowlisted-official-source","status":"scaffolded"},
+    {"id":"write","owner":"News Writing Teams","mode":"draft-generation","status":"needs-model-or-rule-based-writer"},
+    {"id":"edit","owner":"Editorial, Urdu, Legal, Ethics","mode":"multi-check-review","status":"scaffolded"},
+    {"id":"graphics","owner":"Graphics Teams","mode":"HTML-SVG-template-routing","status":"scaffolded"},
+    {"id":"approve","owner":"Admin","mode":"human-approval-gate","status":"enabled"},
+    {"id":"publish","owner":"Distribution","mode":"web-and-authorized-social","status":"disabled-until-integration-and-approval"},
+    {"id":"monitor","owner":"Health Watchdog","mode":"tests-logs-health-check","status":"enabled"},
+    {"id":"repair","owner":"Safe Self-Healer","mode":"bounded-retries-cache-cleanup-quarantine","status":"enabled"}
+  ],
+  "guardrails": {
+    "paidApiCalls": false,
+    "autoPublishing": false,
+    "videoGeneration": false,
+    "autoModifyApplicationSource": false,
+    "autoChangeSecretsOrPermissions": false,
+    "maxRetries": 2,
+    "adminApprovalRequired": true,
+    "unverifiedNewsCannotPublish": true,
+    "repairAllowed": ["retryTransientJob", "cleanGeneratedTemporaryArtifacts", "quarantineMalformedQueueItem", "createDiagnosticReport"],
+    "repairForbidden": ["modifySourceCodeAutomatically", "changeSecrets", "changeAuthPermissions", "publishNews", "deleteUserContent"]
+  }
+}
