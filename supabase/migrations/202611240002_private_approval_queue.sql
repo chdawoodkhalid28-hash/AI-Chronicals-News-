@@ -15,3 +15,6 @@ grant all on table public.approval_queue to service_role;
 
 comment on table public.approval_queue is
   'Private admin-only editorial approval queue. Publication remains disabled.';
+
+-- Refresh PostgREST so newly created tables are immediately visible to the API.
+notify pgrst, 'reload schema';
