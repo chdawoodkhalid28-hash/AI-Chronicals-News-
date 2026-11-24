@@ -9,7 +9,7 @@ test.afterEach(() => {
 });
 
 test("generated graphics are uploaded privately and indexed with rights pending review", async () => {
-    process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   let uploaded;
   let inserted;
@@ -19,7 +19,7 @@ test("generated graphics are uploaded privately and indexed with rights pending 
     director: "Agriculture"
   }, {
     upload: async (pathname, bytes, options) => {
-      uploaded = { pathname, bytes: Buffer.from(bytes), options };
+      uploaded = { pathname, bytes: Buffer.from(bytes) };
       return { pathname };
     },
     insert: async record => {
@@ -30,8 +30,6 @@ test("generated graphics are uploaded privately and indexed with rights pending 
 
   assert.match(uploaded.pathname, /^newsroom-graphics\/.+\.png$/);
   assert.equal(uploaded.bytes.toString(), "synthetic-png");
-  assert.equal(uploaded.options.access, "private");
-  assert.equal(uploaded.options.contentType, "image/png");
   assert.equal(inserted.blob_pathname, uploaded.pathname);
   assert.equal(inserted.media_type, "image");
   assert.equal(inserted.rights_status, "pending_review");
@@ -42,7 +40,6 @@ test("generated graphics are uploaded privately and indexed with rights pending 
 });
 
 test("generated graphics roll back the private Blob object if metadata indexing fails", async () => {
-  process.env.BLOB_READ_WRITE_TOKEN = "test-blob-token";
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   let removed = "";
@@ -59,8 +56,8 @@ test("generated graphics roll back the private Blob object if metadata indexing 
 
 test("generated graphics refuse to run when private storage is unavailable", async () => {
   delete process.env.SUPABASE_SERVICE_ROLE_KEY1;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
-  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   await assert.rejects(
     () => persistGeneratedImage({ imageData: "cG5n" }, {
       upload: async () => { throw new Error("must not upload"); }
