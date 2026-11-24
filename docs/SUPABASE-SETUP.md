@@ -3,7 +3,7 @@
 ## Architecture
 - Supabase PostgreSQL is the authoritative database for articles, source records, verification checks, editorial history, department outputs and media metadata.
 - Supabase Storage is used for private newsroom graphics/media objects; the `newsroom-private-media` bucket must remain private.
-- The separate approval queue still uses private Vercel Blob storage until that queue is migrated; do not expose either storage credential.
+- The admin approval queue is stored in a private Supabase PostgreSQL table with RLS enabled and no anon/authenticated access.
 - Vercel hosts the server-side API. The browser never receives a Supabase secret/service-role key.
 - GitHub stores source code and migrations.
 - Publishing is hard-disabled in the database schema and API. `approved_not_published` is an editorial decision, not a publish command.
@@ -53,4 +53,4 @@ If the response is HTTP 503 with `status: "schema_not_ready"`, the migration has
 4. Optional: set `SUPABASE_MEDIA_BUCKET=newsroom-private-media` in Vercel Preview. This is the default and can be omitted.
 5. Redeploy Preview after the migration and verify the private graphics library while logged in as Admin.
 
-Note: the approval queue in `api/admin/queue.js` still uses private Vercel Blob and continues to require `BLOB_READ_WRITE_TOKEN`. This change migrates the graphics/media library only; it does not remove that remaining dependency. The graphics-generation endpoint also still requires an image-provider API key, so do not use it if you want to avoid paid generation costs.
+## Private approval queue (free Supabase PostgreSQL)\n1. In Supabase SQL Editor, run [202611240002_private_approval_queue.sql](../supabase/migrations/202611240002_private_approval_queue.sql).\n2. The migration creates a private `approval_queue` table, enables RLS, and grants access only to the server-side `service_role`.\n3. The admin queue API now reads and writes queue records through Supabase; `BLOB_READ_WRITE_TOKEN` is no longer required for the graphics library or approval queue.\n4. Redeploy Preview after applying both private-storage migrations and confirm Admin queue read/write.\n\nThe graphics-generation endpoint still requires an image-provider API key. No image generation is performed by the storage migration, and publication remains disabled.
