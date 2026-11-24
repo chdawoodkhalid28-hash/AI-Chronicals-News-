@@ -1,3 +1,5 @@
+import { handleAdminAuth, verifyAdminSession } from "./admin-auth.js";
+
 const json = (status, payload) => new Response(JSON.stringify(payload, null, 2), {
   status,
   headers: {
@@ -17,24 +19,38 @@ export default {
         status: "partial-preview",
         ok: false,
         mode: "cloudflare-static-preview",
-        backendMigration: "not_started",
+        backendMigration: "in_progress",
         capabilities: {
           staticAssets: Boolean(env.ASSETS),
+          adminSessionConfigured: Boolean(env.ADMIN_PASSWORD && env.ADMIN_SESSION_SECRET),
           adminApi: false,
           approvalQueue: false,
           supabase: false,
           privateMediaStorage: false
         },
         publishing: "DISABLED",
-        message: "This is an isolated static preview. Backend routes are intentionally disabled until their Cloudflare adapters and bindings are migrated."
+        message: "Admin session foundation is available; newsroom APIs and storage remain disabled until migrated and tested."
       });
+    }
+
+    if (url.pathname.startsWith("/api/admin/")) {
+      const authResponse = await handleAdminAuth(request, env);
+      if (authResponse) return authResponse;
+      if (await verifyAdminSession(request, env)) {
+        return json(503, {
+          ok: false,
+          error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
+          message: "Admin session verified. This newsroom API is not migrated yet."
+        });
+      }
+      return json(401, { ok: false, error: "Admin session required" });
     }
 
     if (url.pathname.startsWith("/api/")) {
       return json(503, {
         ok: false,
         error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
-        message: "This preview does not execute the existing Vercel serverless API. Use the existing Vercel deployment for operational admin workflows."
+        message: "This preview does not execute the existing Vercel serverless API."
       });
     }
 
