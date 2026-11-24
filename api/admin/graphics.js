@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { get } from "@vercel/blob";
+import { getPrivateSupabaseObject } from "../../lib/supabase-storage.js";
 import { supabaseRequest } from "../../lib/supabase-rest.js";
 import { persistGeneratedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
@@ -14,7 +14,7 @@ export function createGraphicsHandler({
   persistImage = persistGeneratedImage,
   listMediaAssets = query => supabaseRequest("media_assets", { query }),
   findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
-  getPrivateBlob = get
+  getPrivateBlob = getPrivateSupabaseObject
 } = {}) {
 return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -28,7 +28,7 @@ return async function handler(req, res) {
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
 
   if (req.method === "GET") {
-    if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+    if (!process.env.SUPABASE_URL ||
         !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
       return res.status(503).json({ error: "Private graphics storage is not fully configured" });
     }
@@ -53,7 +53,7 @@ return async function handler(req, res) {
         return res.status(404).json({ error: "Private media object not found" });
       }
       const bytes = Buffer.from(await new Response(blob.stream).arrayBuffer());
-      res.setHeader("Content-Type", asset.media_type === "image" ? "image/png" : "application/octet-stream");
+      res.setHeader("Content-Type", blob.contentType || (asset.media_type === "image" ? "image/png" : "application/octet-stream"));
       res.setHeader("Content-Disposition", 'inline; filename="newsroom-graphic.png"');
       res.setHeader("X-Content-Type-Options", "nosniff");
       res.setHeader("Cache-Control", "private, no-store");
@@ -92,7 +92,7 @@ return async function handler(req, res) {
       reason: route.reason
     });
   }
-  if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+  if (!process.env.SUPABASE_URL ||
       !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
     return res.status(503).json({ error: "Private graphics storage is not fully configured; refusing to generate an unpersisted asset" });
   }
