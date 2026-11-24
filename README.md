@@ -5,7 +5,7 @@ Official website and AI newsroom foundation for AI Chronicals News.
 ## Hosting and branches
 - Repository: `chdawoodkhalid28-hash/AI-Chronicals-News-`
 - Production branch: `main`
-- Development / preview branch: `ai-newsroom-foundation`
+- Development / preview branch: `feat/supabase-private-media-storage`
 - All current newsroom development is kept on the preview branch. Do not merge to `main` or enable production publishing without explicit admin authorization.
 
 ## Main application files
