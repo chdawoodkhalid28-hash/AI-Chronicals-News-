@@ -39,7 +39,7 @@ test("generated graphics are uploaded privately and indexed with rights pending 
   assert.equal(asset.rightsStatus, "pending_review");
 });
 
-test("generated graphics roll back the private Blob object if metadata indexing fails", async () => {
+test("generated graphics roll back the private Supabase object if metadata indexing fails", async () => {
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   let removed = "";
