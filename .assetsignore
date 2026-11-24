@@ -17,3 +17,12 @@ package.json
 package-lock.json
 README.md
 wrangler.jsonc
+# Keep internal tooling, unpublished drafts, schemas, and legacy admin pages out of public assets.
+config/
+supabase/
+test/
+training/
+editorial-drafts/
+graphics/drafts/
+admin-news.html
+middleware.js
