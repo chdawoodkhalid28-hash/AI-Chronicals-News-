@@ -69,7 +69,7 @@ The Cloudflare preview explicitly returns `publishing: DISABLED`, and the queue 
 
 ## Cloudflare session foundation added on the migration branch
 
-The preview now includes `cloudflare/admin-auth.js` and Worker routes for:
+The preview now includes `cloudflare/admin-auth.js`, `cloudflare/approval-queue.js`, and Worker routes for:
 
 - `POST /api/admin/access`: verifies the configured admin password and issues a 30-minute signed session cookie.
 - `GET /api/admin/session`: verifies the signed session and expiry.
@@ -77,16 +77,18 @@ The preview now includes `cloudflare/admin-auth.js` and Worker routes for:
 - Login and logout require a same-origin `Origin` header.
 - Session cookies are HttpOnly, Secure, SameSite=Strict, and scoped to `/api/admin`.
 - The session secret and admin password are read only from Worker environment secrets; they are not committed to the repository.
-- Unmigrated admin endpoints remain unavailable and return 401 without a valid session, then 503 with a valid session to make the migration boundary explicit.
+- `GET/POST/PATCH/DELETE /api/admin/queue` is now implemented against a private R2 binding named `APPROVAL_QUEUE`; it preserves the existing queue schema, caps records at 3 MB, limits the returned queue to 20 records, and forces publication to remain disabled.
+- Queue endpoints require a verified signed session. Without the R2 binding, they fail closed with `PRIVATE_R2_BUCKET_NOT_CONFIGURED`.
+- Other unmigrated admin endpoints remain unavailable and return 401 without a valid session, then 503 with a valid session to make the migration boundary explicit.
 
-GitHub Actions verified 6 tests passing (3 session-security tests and 3 Worker-routing tests). This is a preview foundation only: no Cloudflare secrets have been configured and no real administrator login has been tested against a claimed account.
+GitHub Actions verified 9 tests passing so far (3 session-security tests, 3 Worker-routing tests, and 3 queue adapter tests); the new 9-test CI run is in progress after the R2 queue adapter was added. Queue tests use a mocked R2 binding. This is a preview foundation only: no Cloudflare secrets or real R2 bucket have been configured and no real administrator login has been tested against a claimed account.
 
 ## Migration acceptance gates
 
 Do not switch production DNS or disable Vercel until all gates pass:
 
 1. Shared Worker authentication/session middleware and negative security tests.
-2. Private R2 read/write/list/delete tests and authorization tests.
+2. Private R2 read/write/list/delete tests against a real configured bucket and authorization tests (mocked binding tests are present; real bucket binding remains pending).
 3. Supabase connectivity and schema/policy checks.
 4. Ported API route contract tests for queue, newsroom, departments, drafts, graphics, knowledge, and health.
 5. Admin login, session expiry, logout, queue CRUD, and mobile/desktop front-desk tests.
@@ -99,7 +101,7 @@ Do not switch production DNS or disable Vercel until all gates pass:
 Cloudflare temporary static preview: deployed according to GitHub Actions logs.
 Cloudflare live endpoint response: not independently verified by automated retrieval (bot-blocked).
 Cloudflare backend/API migration: in progress; session foundation is the first slice, remaining API handlers are not migrated.
-R2 storage: not configured.
+R2 storage: adapter implemented and mock-tested; real private bucket/binding not configured.
 Supabase on Cloudflare: not configured or tested.
 Admin session migration: preview implementation added and 6/6 automated tests pass; Worker secrets and real-browser login test remain pending.
 Production DNS cutover: not performed.
