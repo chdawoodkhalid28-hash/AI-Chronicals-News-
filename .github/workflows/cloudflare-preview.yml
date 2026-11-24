@@ -50,7 +50,7 @@ jobs:
             console.log("Live health endpoint: PASS");
           '
           for PAGE in /index.html /admin.html; do
-            PAGE_STATUS="$(curl --silent --show-error --output /tmp/page.html --dump-header /tmp/page.headers --write-out '%{http_code}' "$PREVIEW_URL$PAGE")"
+            PAGE_STATUS="$(curl --retry 10 --retry-delay 3 --retry-all-errors --silent --show-error --output /tmp/page.html --dump-header /tmp/page.headers --write-out '%{http_code}' "$PREVIEW_URL$PAGE")"
             echo "Static asset $PAGE returned HTTP $PAGE_STATUS"
             if [ "$PAGE_STATUS" != "200" ]; then
               cat /tmp/page.headers
