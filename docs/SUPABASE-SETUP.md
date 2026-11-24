@@ -2,7 +2,8 @@
 
 ## Architecture
 - Supabase PostgreSQL is the authoritative database for articles, source records, verification checks, editorial history, department outputs and media metadata.
-- Vercel Blob remains private media/object storage; do not store public media URLs or expose private Blob tokens.
+- Supabase Storage is used for private newsroom graphics/media objects; the `newsroom-private-media` bucket must remain private.
+- The separate approval queue still uses private Vercel Blob storage until that queue is migrated; do not expose either storage credential.
 - Vercel hosts the server-side API. The browser never receives a Supabase secret/service-role key.
 - GitHub stores source code and migrations.
 - Publishing is hard-disabled in the database schema and API. `approved_not_published` is an editorial decision, not a publish command.
@@ -43,3 +44,13 @@ After applying the migration and confirming the Preview variables, open:
 Expected success: HTTP 200 with `provider: "supabase"`, `status: "connected"`, and `probe: "read_only_select"`. This performs only a `SELECT id ... LIMIT 1` against `news_articles`; it does not return article data or expose credentials.
 
 If the response is HTTP 503 with `status: "schema_not_ready"`, the migration has not been applied to the connected project (or the API schema cache needs a refresh). Apply the migration in Supabase SQL Editor and retry the probe. A `credentials_rejected` response means the key is wrong or not accepted; `database_unavailable` indicates a connection/project issue.
+
+
+## Private media bucket (free Supabase Storage)
+1. In Supabase SQL Editor, run [202611240001_private_media_bucket.sql](../supabase/migrations/202611240001_private_media_bucket.sql).
+2. The migration creates (or enforces) a private `newsroom-private-media` bucket with a 10 MiB file limit and image MIME allow-list. It adds no anon/authenticated policies; server-side service-role access only.
+3. The graphics API uploads and reads private objects through Supabase Storage using the existing server-only `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or legacy `SUPABASE_SERVICE_ROLE_KEY`).
+4. Optional: set `SUPABASE_MEDIA_BUCKET=newsroom-private-media` in Vercel Preview. This is the default and can be omitted.
+5. Redeploy Preview after the migration and verify the private graphics library while logged in as Admin.
+
+Note: the approval queue in `api/admin/queue.js` still uses private Vercel Blob and continues to require `BLOB_READ_WRITE_TOKEN`. This change migrates the graphics/media library only; it does not remove that remaining dependency. The graphics-generation endpoint also still requires an image-provider API key, so do not use it if you want to avoid paid generation costs.
