@@ -1,14 +1,16 @@
-name: Cloudflare preview deployment
+name: Cloudflare temporary preview deployment
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-test-deployment
 
 permissions:
   contents: read
 
 jobs:
-  deploy-preview:
-    name: Deploy isolated Cloudflare preview
+  deploy-temporary-preview:
+    name: Deploy isolated temporary Cloudflare preview
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
@@ -24,8 +26,5 @@ jobs:
       - name: Test Cloudflare preview worker
         run: node --test tests/cloudflare-worker.test.js
 
-      - name: Deploy preview environment only
-        run: npx --yes wrangler@4 deploy --config wrangler.jsonc --env preview
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Deploy temporary preview without account credentials
+        run: npx --yes wrangler@4.102.0 deploy --temporary --config wrangler.jsonc
