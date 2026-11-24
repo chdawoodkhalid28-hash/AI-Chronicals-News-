@@ -1,4 +1,5 @@
 import { handleAdminAuth, verifyAdminSession } from "./admin-auth.js";
+import { handleQueueRequest } from "./approval-queue.js";
 
 const json = (status, payload) => new Response(JSON.stringify(payload, null, 2), {
   status,
@@ -23,27 +24,29 @@ export default {
         capabilities: {
           staticAssets: Boolean(env.ASSETS),
           adminSessionConfigured: Boolean(env.ADMIN_PASSWORD && env.ADMIN_SESSION_SECRET),
+          approvalQueueStorageConfigured: Boolean(env.APPROVAL_QUEUE),
           adminApi: false,
-          approvalQueue: false,
+          approvalQueue: Boolean(env.APPROVAL_QUEUE),
           supabase: false,
           privateMediaStorage: false
         },
         publishing: "DISABLED",
-        message: "Admin session foundation is available; newsroom APIs and storage remain disabled until migrated and tested."
+        message: "Signed admin sessions and the private R2 approval queue adapter are available; remaining newsroom APIs and production bindings are not yet migrated."
       });
     }
 
     if (url.pathname.startsWith("/api/admin/")) {
       const authResponse = await handleAdminAuth(request, env);
       if (authResponse) return authResponse;
-      if (await verifyAdminSession(request, env)) {
-        return json(503, {
-          ok: false,
-          error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
-          message: "Admin session verified. This newsroom API is not migrated yet."
-        });
+      if (!(await verifyAdminSession(request, env))) {
+        return json(401, { ok: false, error: "Admin session required" });
       }
-      return json(401, { ok: false, error: "Admin session required" });
+      if (url.pathname === "/api/admin/queue") return handleQueueRequest(request, env);
+      return json(503, {
+        ok: false,
+        error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
+        message: "Admin session verified. This newsroom API is not migrated yet."
+      });
     }
 
     if (url.pathname.startsWith("/api/")) {
