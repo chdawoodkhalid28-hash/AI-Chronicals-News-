@@ -45,7 +45,8 @@ test("rejects invalid passwords and tampered or expired sessions", async () => {
   });
   const response = await handleAdminAuth(login, env);
   const token = response.headers.get("set-cookie").match(/acn_admin_session=([^;]+)/)[1];
-  const tampered = token.slice(0, -1) + (token.endsWith("a") ? "b" : "a");
+  const [payload, signature] = token.split(".");
+  const tampered = payload + "." + (signature[0] === "a" ? "b" : "a") + signature.slice(1);
   assert.equal(await verifyAdminSession(new Request(origin, { headers: { Cookie: "acn_admin_session=" + tampered } }), env), false);
   assert.equal(await verifyAdminSession(new Request(origin, { headers: { Cookie: "acn_admin_session=" + token } }), env, Date.now() + 31 * 60 * 1000), false);
 });
