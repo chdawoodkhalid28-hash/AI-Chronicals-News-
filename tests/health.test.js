@@ -130,3 +130,25 @@ test("Gemini health probe classifies empty candidate responses without exposing 
   assert.equal(res.body.diagnostic.finishReason, "MAX_TOKENS");
   assert.equal(JSON.stringify(res.body).includes("test-gemini-key"), false);
 });
+
+test("full Supabase probe checks private approval and department knowledge tables too", async () => {
+  process.env.SUPABASE_URL = "https://example.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  const requestedTables = [];
+  globalThis.fetch = async url => {
+    const parsed = new URL(String(url));
+    requestedTables.push(parsed.pathname.split("/").pop());
+    return new Response("[]", { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "all" } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.ok, true);
+  assert.equal(res.body.connectedTables, 8);
+  assert.equal(res.body.totalTables, 8);
+  assert.deepEqual(new Set(requestedTables), new Set([
+    "news_articles", "news_sources", "news_verification_checks",
+    "editorial_events", "department_outputs", "media_assets",
+    "approval_queue", "department_knowledge"
+  ]));
+});
