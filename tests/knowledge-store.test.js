@@ -16,23 +16,19 @@ test("knowledge scoring returns approved knowledge only", () => {
   assert.deepEqual(matches.map(item => item.id), ["a"]);
 });
 
-test("knowledge store writes private records and retrieves approved department plus global memory", async () => {
+test("knowledge store writes private Supabase records and searches approved department plus global memory", async () => {
   const records = new Map();
   const writes = [];
   const store = createKnowledgeStore({
-    putBlob: async (pathname, body, options) => {
-      writes.push({ pathname, options });
-      records.set(pathname, JSON.parse(body));
-      return { pathname };
+    insertRecord: async record => {
+      writes.push(record);
+      records.set(record.id, record);
+      return [record];
     },
-    listBlobs: async ({ prefix }) => ({
-      blobs: [...records.keys()].filter(pathname => pathname.startsWith(prefix)).map(pathname => ({ pathname })),
-      hasMore: false
-    }),
-    getBlob: async pathname => ({
-      statusCode: 200,
-      stream: new Response(JSON.stringify(records.get(pathname))).body
-    })
+    listRecords: async query => {
+      assert.match(query, /department=in/);
+      return [...records.values()];
+    }
   });
 
   const global = await store.save({
@@ -63,7 +59,7 @@ test("knowledge store writes private records and retrieves approved department p
   });
 
   assert.equal(writes.length, 4);
-  assert.ok(writes.every(write => write.options.access === "private"));
+  assert.ok(writes.every(record => record.id && record.department));
   assert.equal(global.department, "global");
   assert.equal(local.department, "agriculture_desk");
 
@@ -75,7 +71,7 @@ test("knowledge store writes private records and retrieves approved department p
 });
 
 test("knowledge store rejects non-HTTPS sources and invalid departments", async () => {
-  const store = createKnowledgeStore({ putBlob: async () => { throw new Error("must not write"); } });
+  const store = createKnowledgeStore({ insertRecord: async () => { throw new Error("must not write"); } });
   await assert.rejects(
     store.save({ department: "newsroom", title: "Bad source", content: "Some content", sourceUrl: "http://example.com" }),
     /HTTPS/
