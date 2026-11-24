@@ -87,9 +87,8 @@ test("graphics generation refuses to incur image-generation cost if private stor
 });
 
 
-test("private graphics library reads bytes through the private Blob path", async () => {
+test("private graphics library reads bytes through private Supabase Storage", async () => {
   process.env.ADMIN_PASSWORD = "graphics-test-password";
-  process.env.BLOB_READ_WRITE_TOKEN = "test-blob-token";
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
   const calls = [];
