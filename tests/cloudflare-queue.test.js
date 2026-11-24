@@ -55,7 +55,7 @@ test("session-protected R2 approval queue supports create, list, decision and de
   };
   const origin = "https://preview.example";
   const cookie = await adminCookie(env);
-  const headers = { Cookie: "acn_admin_session=" + cookie, "Content-Type": "application/json" };
+  const headers = { Cookie: "acn_admin_session=" + cookie, "Content-Type": "application/json", Origin: origin };
 
   const created = await worker.fetch(new Request(origin + "/api/admin/queue", {
     method: "POST", headers, body: JSON.stringify({ item: item() })
@@ -84,6 +84,24 @@ test("session-protected R2 approval queue supports create, list, decision and de
   }), env);
   assert.equal(deleted.status, 200);
   assert.equal(bucket.records.size, 0);
+});
+
+test("queue rejects cross-origin state changes even with a valid session", async () => {
+  const env = {
+    ADMIN_PASSWORD: "test-password-only",
+    ADMIN_SESSION_SECRET: "test-session-secret-only",
+    APPROVAL_QUEUE: makeBucket(),
+    ASSETS: { async fetch() { return new Response("asset"); } }
+  };
+  const origin = "https://preview.example";
+  const cookie = await adminCookie(env);
+  const response = await worker.fetch(new Request(origin + "/api/admin/queue", {
+    method: "POST",
+    headers: { Cookie: "acn_admin_session=" + cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ item: item() })
+  }), env);
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error, "Same-origin request required");
 });
 
 test("queue refuses access when private R2 bucket is not configured", async () => {
