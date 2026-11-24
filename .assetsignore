@@ -1,0 +1,19 @@
+# Cloudflare uploads only public website assets from the repository root.
+# Keep server code, workflows, tests, and operational documentation private.
+.github/
+.git/
+.wrangler/
+node_modules/
+api/
+cloudflare/
+docs/
+lib/
+scripts/
+tests/
+.env*
+.gitignore
+.assetsignore
+package.json
+package-lock.json
+README.md
+wrangler.jsonc
