@@ -31,11 +31,11 @@ jobs:
       - name: Build free training readiness report
         run: |
           mkdir -p reports
-          node lib/free-newsroom-autopilot.js > reports/free-newsroom-autopilot.json
+          node --input-type=module -e 'import { buildNewsroomOperationsReport } from "./lib/newsroom-operations.js"; console.log(JSON.stringify(buildNewsroomOperationsReport(), null, 2))' > reports/newsroom-operations-report.json
       - name: Upload training readiness report
         uses: actions/upload-artifact@v4
         with:
           name: free-newsroom-autopilot-${{ github.run_number }}
-          path: reports/free-newsroom-autopilot.json
+          path: reports/*.json
           if-no-files-found: error
           retention-days: 14
