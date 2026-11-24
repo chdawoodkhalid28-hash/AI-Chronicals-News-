@@ -83,6 +83,8 @@ test("approval queue writes records to Supabase with publication disabled", asyn
 });
 
 test("approval queue rejects unauthenticated requests before database access", async () => {
+  delete process.env.ADMIN_PASSWORD;
+  delete process.env.ADMINPASSWORD;
   let calls = 0;
   globalThis.fetch = async () => { calls++; throw new Error("must not access database"); };
   const res = responseRecorder();
