@@ -34,3 +34,6 @@ grant all on table public.department_knowledge to service_role;
 
 comment on table public.department_knowledge is
   'Private internal knowledge and evaluation records for newsroom departments.';
+
+-- Refresh PostgREST so newly created tables are immediately visible to the API.
+notify pgrst, 'reload schema';
