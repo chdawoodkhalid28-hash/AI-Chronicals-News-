@@ -66,69 +66,72 @@ function safeEqual(a, b) {
 }
 
 async function openAIChat(body) {
-  let lastError;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + process.env.OPENAI_API_KEY,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(55000)
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        const message = data && data.error && data.error.message ? data.error.message : "Upstream AI request failed";
-        const error = new Error(message);
-        error.status = response.status;
-        if (attempt === 0 && (response.status === 429 || response.status >= 500)) {
+  let lastError = null;
+  if (process.env.OPENAI_API_KEY) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + process.env.OPENAI_API_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(55000)
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          const error = new Error(data?.error?.message || "Upstream AI request failed");
+          error.status = response.status;
+          if (attempt === 0 && (response.status === 429 || response.status >= 500)) {
+            await new Promise(resolve => setTimeout(resolve, 900));
+            lastError = error;
+            continue;
+          }
+          throw error;
+        }
+        const message = data.choices?.[0]?.message;
+        if (!message || typeof message.content !== "string" || !message.content.trim()) {
+          throw new Error("AI returned an empty response");
+        }
+        return message;
+      } catch (error) {
+        lastError = error;
+        if (attempt === 0 && (!error.status || error.status >= 500)) {
           await new Promise(resolve => setTimeout(resolve, 900));
-          lastError = error;
           continue;
         }
-        throw error;
+        break;
       }
-      const message = data.choices && data.choices[0] && data.choices[0].message;
-      if (!message || typeof message.content !== "string" || !message.content.trim()) {
-        const error = new Error("AI returned an empty response");
-        error.status = 502;
-        throw error;
-      }
-      return message;
-    } catch (error) {
-      lastError = error;
-      if (attempt === 0 && (!error.status || error.status >= 500)) {
-        await new Promise(resolve => setTimeout(resolve, 900));
-        continue;
-      }
-      break;
     }
   }
 
-  // Gemini is a text-generation fallback only. It must never impersonate web search.
-  if (!body.web_search_options && process.env.GEMINI_API_KEY) {
-    const { generateGeminiText } = await import("../../lib/gemini.js");
+  if (process.env.GEMINI_API_KEY) {
+    const { generateGeminiText, generateGeminiResearch } = await import("../../lib/gemini.js");
     const prompt = (body.messages || [])
       .map(message => String(message.role || "user").toUpperCase() + ": " + String(message.content || ""))
       .join("\n\n")
       .slice(0, 12000);
-    const fallback = await generateGeminiText(
-      "You are a newsroom specialist. Return a careful, structured response. Do not invent sources or citations. Mark uncertain claims for human verification.\n\n" + prompt,
+    if (body.web_search_options) {
+      const result = await generateGeminiResearch(prompt, { maxOutputTokens: 4096, temperature: 0.2 });
+      return {
+        role: "assistant",
+        content: result.text,
+        annotations: result.sources.map(source => ({ url_citation: { title: source.title, url: source.url } })),
+        fallbackProvider: "gemini",
+        fallbackModel: result.model
+      };
+    }
+    const result = await generateGeminiText(
+      "You are a newsroom specialist. Return careful structured output. Do not invent sources or citations. Mark uncertain claims for human verification.\n\n" + prompt,
       {
         maxOutputTokens: 2048,
         responseMimeType: body.response_format?.type === "json_object" ? "application/json" : undefined
       }
     );
-    return {
-      role: "assistant",
-      content: fallback.text,
-      fallbackProvider: "gemini",
-      fallbackModel: fallback.model
-    };
+    return { role: "assistant", content: result.text, fallbackProvider: "gemini", fallbackModel: result.model };
   }
-  throw lastError || new Error("Upstream AI request failed");
+  throw lastError || new Error("No AI provider is configured. Add GEMINI_API_KEY to enable the newsroom.");
 }
 
 export default async function handler(req, res) {
@@ -141,7 +144,7 @@ export default async function handler(req, res) {
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
-  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
+  if (!process.env.OPENAI_API_KEY && !process.env.GEMINI_API_KEY) return res.status(503).json({ error: "No AI provider configured. Add GEMINI_API_KEY." });
 
   const body = req.body || {};
   const department = body.department;
