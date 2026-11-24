@@ -128,7 +128,7 @@ test("queue rejects malformed records and unsupported decisions", async () => {
   };
   const origin = "https://preview.example";
   const cookie = await adminCookie(env);
-  const headers = { Cookie: "acn_admin_session=" + cookie, "Content-Type": "application/json" };
+  const headers = { Cookie: "acn_admin_session=" + cookie, "Content-Type": "application/json", Origin: origin };
 
   const invalid = await worker.fetch(new Request(origin + "/api/admin/queue", {
     method: "POST", headers, body: JSON.stringify({ item: { id: "../escape" } })
