@@ -40,7 +40,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --retry 10 --retry-delay 3 --retry-connrefused --fail --silent --show-error "$PREVIEW_URL/api/health" -o /tmp/health.json
+          HEALTH_STATUS="$(curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error --output /tmp/health.json --write-out '%{http_code}' "$PREVIEW_URL/api/health" || true)"
+          echo "Live health endpoint returned HTTP $HEALTH_STATUS"
+          if [ "$HEALTH_STATUS" != "200" ]; then
+            cat /tmp/health.json || true
+            exit 1
+          fi
           node --input-type=module -e '
             import fs from "node:fs";
             const h = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8"));
