@@ -31,7 +31,7 @@ jobs:
         run: |
           set -o pipefail
           npx --yes wrangler@4.102.0 deploy --temporary --config wrangler.jsonc 2>&1 | tee /tmp/wrangler-deploy.log
-          PREVIEW_URL="$(grep -Eo 'https://ai-chronicals-news-test\\.[a-z0-9-]+\\.workers\\.dev' /tmp/wrangler-deploy.log | tail -n 1)"
+          PREVIEW_URL="$(grep -Eo 'https://ai-chronicals-news-test\.[a-z0-9-]+\.workers\.dev' /tmp/wrangler-deploy.log | tail -n 1)"
           test -n "$PREVIEW_URL"
           echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
           echo "Temporary preview URL: $PREVIEW_URL"
