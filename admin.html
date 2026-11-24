@@ -446,7 +446,10 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
     output.textContent=[
       "API status: "+(data.status||"unknown"),
       "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
-      "OpenAI API key: "+(c.openAIKeyConfigured?"configured":"MISSING"),
+      "OpenAI API key: "+(c.openAIKeyConfigured?"configured (quota may still be exhausted)":"not configured"),
+      "Gemini API key: "+(c.geminiKeyConfigured?"configured — fallback ready":"MISSING"),
+      "Gemini model: "+(c.geminiProvider||"default model"),
+      "Provider policy: Gemini fallback is enabled for text, drafts and grounded research",
       "Blob token (presence only): "+(c.blobTokenConfigured?"configured — private server queue available":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
