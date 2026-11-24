@@ -13,14 +13,16 @@ export default async function handler(req, res) {
     process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD
   );
 
+  const supabaseConfigured = Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY));
+
   const capabilities = {
     adminPasswordConfigured: hasAdminPassword,
     openAIKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     geminiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiProvider: DEFAULT_MODEL,
     blobTokenConfigured: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-    supabaseConfigured: Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)),
-    approvalQueuePersistence: capabilities.supabaseConfigured ? "supabase-postgres" : "browser-local-only"
+    supabaseConfigured,
+    approvalQueuePersistence: supabaseConfigured ? "supabase-postgres" : "browser-local-only"
   };
 
   if (req.query?.supabase === "all") {
