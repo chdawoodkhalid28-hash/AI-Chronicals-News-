@@ -24,7 +24,7 @@ jobs:
           node-version: 22
 
       - name: Test Cloudflare preview worker and admin sessions
-        run: node --test tests/cloudflare-worker.test.js tests/cloudflare-admin-auth.test.js
+        run: node --test tests/cloudflare-worker.test.js tests/cloudflare-admin-auth.test.js tests/cloudflare-queue.test.js
 
       - name: Deploy temporary preview without account credentials
         shell: bash
