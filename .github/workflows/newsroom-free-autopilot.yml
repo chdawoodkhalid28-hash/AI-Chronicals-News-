@@ -24,14 +24,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install locked dependencies
+      - name: Install dependencies
         run: npm install
       - name: Run newsroom tests
         run: npm test
       - name: Run free RSS candidate scanner
         run: |
           mkdir -p reports
-          node --input-type=module -e 'import { scanFeeds } from "./lib/free-rss-scanner.js"; const report=await scanFeeds(); console.log(JSON.stringify(report,null,2))' > reports/rss-candidates.json
+          node --input-type=module -e 'import { scanFeeds } from "./lib/free-rss-scanner.js"; import { routeCandidates } from "./lib/newsroom-routing.js"; const report=await scanFeeds(); report.candidates=routeCandidates(report.candidates); console.log(JSON.stringify(report,null,2))' > reports/rss-candidates.json
       - name: Build free training readiness report
         run: |
           mkdir -p reports
