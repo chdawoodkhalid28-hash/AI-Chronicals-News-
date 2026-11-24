@@ -8,10 +8,5 @@
     "directory": "./",
     "binding": "ASSETS",
     "run_worker_first": ["/api/*"]
-  },
-  "env": {
-    "preview": {
-      "name": "ai-chronicals-news-test-preview"
-    }
   }
 }
