@@ -16,7 +16,7 @@ Official website and AI newsroom foundation for AI Chronicals News.
 - `api/admin/department-team.js`: authenticated independent department Search & Research plus Director-coordinated newsroom package pipeline.
 - `api/admin/agent.js`: original 26-director review endpoint retained for specialist review workflows.
 - `api/admin/draft.js`: legacy draft endpoint; not used by the current department-team dashboard.
-- `api/admin/queue.js`: authenticated private Blob approval-queue API (list, save, update admin decision, delete); also routes authenticated News Management requests to PostgreSQL.
+- `api/admin/queue.js`: authenticated Supabase PostgreSQL approval-queue API (list, save, update admin decision, delete); also routes authenticated News Management requests to PostgreSQL.
 - `admin-news.html`: News Management screen for creating, editing, reviewing and deleting article drafts. Source URLs are optional at initial draft stage; a source-less item remains `pending_verification` and cannot be marked verified.
 
 ## Newsroom hierarchy
@@ -63,8 +63,8 @@ The five specialist roles are separate model invocations coordinated by the depa
 - Every result is marked `PENDING_ADMIN_APPROVAL`; publication is disabled.
 - A model's web-search citations do not prove that every linked page was opened or independently authenticated. Claims needing verification must remain visible.
 - AI assessments are not external human verification. Primary-source review and real-world confirmation may still be required.
-- The admin dashboard stores completed run records and review decisions in a private Vercel Blob store (`ai-chronicals-news-private-persistence`, region `bom1`, access `private`) through the authenticated `/api/admin/queue` endpoint. The browser localStorage queue remains as a local fallback and JSON import/export backup; use the admin Sync control to load and merge records across devices.
-- Queue API access requires the admin bearer password. Queue records are private and are never exposed as public Blob URLs. The API supports list, save, update decision, and delete. Admin approval is a review state only; it does not publish a story. All queue records are forced to `PENDING_ADMIN_APPROVAL` and `publication: DISABLED` when saved.
+- The admin dashboard stores completed run records and review decisions in the Supabase PostgreSQL `approval_queue` table through the authenticated `/api/admin/queue` endpoint. The browser localStorage queue remains as a local fallback and JSON import/export backup; use the admin Sync control to load and merge records across devices.
+- Queue API access requires the admin bearer password. Supabase Row Level Security restricts server-side queue access; service-role credentials remain server-side. The API supports list, save, update decision, and delete. Admin approval is a review state only; it does not publish a story. All queue records are forced to `PENDING_ADMIN_APPROVAL` and `publication: DISABLED` when saved.
 - The older public Blob store (`ai-chronicals-news-media`, region `bom1`) is retained as a legacy store and must not be used for private newsroom drafts or approval decisions.
 - The admin browser tab must remain open until the run completes.
 - A full run can consume substantial model API usage because it performs central research plus 26 department search and package workflows. Department runs are throttled in batches of two, with a short pause between batches; transient upstream failures receive one retry and requests have a timeout. These safeguards reduce but do not eliminate rate-limit failures.
@@ -82,12 +82,12 @@ The five specialist roles are separate model invocations coordinated by the depa
 ## Required Vercel environment variables
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`) — required for authenticated Admin APIs.
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management and media metadata persistence. Keep service-role keys server-side only.
-- `BLOB_READ_WRITE_TOKEN` — required for private approval-queue and generated-graphics storage.
+- `BLOB_READ_WRITE_TOKEN` — used only by any enabled Vercel Blob-backed private media workflow; it is not required for the Supabase PostgreSQL approval queue.
 - `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.
 - `OFFICIAL_SOURCE_DOMAINS` — optional comma-separated trusted official publisher hostnames (for example, `gov.pk,example.gov`); only server-configured domains can qualify for the one-official-source verification path.
-- `GEMINI_API_KEY` — required for Gemini-powered research/department workflows.
+- `GEMINI_API_KEY` — enables Gemini 2.5 Flash text generation and Google Search-grounded research. Buland, department workflows and the draft endpoint can fall back to Gemini when OpenAI is unavailable or quota-limited.
 
-`/api/health` reports configuration presence without exposing values. `/api/health?supabase=all` performs read-only connectivity checks against the six newsroom tables. `/api/health?gemini=1` makes a minimal live Gemini request and may incur API usage.
+`/api/health` reports configuration presence without exposing values. `/api/health?supabase=all` performs read-only connectivity checks against all eight newsroom tables. `/api/health?gemini=1` makes a minimal live Gemini request and may incur API usage.
 
 Never put secrets in source files, commits, browser code, logs, or chat messages.
 
@@ -97,7 +97,7 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - If a run stops after some departments have completed, the dashboard renders and attempts to save a clearly marked partial report. Missing departments can be retried from the report; successful retries update the same local queue record. Missing departments must be completed before editorial assessment.
 - The public health endpoint is surfaced through a safe admin diagnostics panel. It reports only whether required environment variables are present; it never returns secret values.
 - Department PASS status is now gated on a valid evidence-audit structure, at least one claim check, a recognized audit status, and no declared verification gaps. Malformed or incomplete audits are HOLD, not PASS.
-- All six JavaScript API handlers are configured as ES modules; every `require()` call was removed from the API source and Node crypto uses the native `node:crypto` import. The latest Preview branch has a READY deployment and public health plus all-six-table Supabase read-only checks have passed. The Vercel runtime-error query returned no errors in its selected 24-hour window. Authenticated News CRUD, private Blob round-trip, full live 26-department run, real upstream OpenAI graphics generation, and cross-device persistence still require an authenticated end-to-end test. Vercel Hobby runtime-log retention can prevent longer log-window queries.
+- All six JavaScript API handlers are configured as ES modules; every `require()` call was removed from the API source and Node crypto uses the native `node:crypto` import. The latest Preview branch has a READY deployment and public health plus all-eight-table Supabase read-only checks have passed. The Vercel runtime-error query returned no errors in its selected 24-hour window. Authenticated News CRUD, private Blob round-trip, full live 26-department run, real upstream OpenAI graphics generation, and cross-device persistence still require an authenticated end-to-end test. Vercel Hobby runtime-log retention can prevent longer log-window queries.
 
 ## Graphics review and newsroom UI
 - Public homepage visual system: dark broadcast newsroom theme with HUD styling, cinematic accents, departmental desk overview, and a design-only Breaking News lower-third preview.
@@ -111,8 +111,8 @@ Never put secrets in source files, commits, browser code, logs, or chat messages
 - The workflow `.github/workflows/newsroom-free-autopilot.yml` can run manually or daily at 08:00 Pakistan time. It runs repository tests and produces a downloadable training-readiness report; it does not call paid AI APIs, publish stories, generate videos, or modify production.
 - All 26 newsroom directors receive the same auditable training modules for verification, writing, visual rights, Urdu/English quality, and security/privacy. Department plans are static training plans, not autonomous background model agents.
 - Google News and RSS are discovery resources only. A source must still be opened, attributed, checked for date/context, and independently verified before an editor can mark a claim verified. Wikimedia Commons and Openverse assets require license/attribution review at the original source.
-- GitHub Actions, Vercel, Supabase, and storage free tiers have quotas and changing terms. This workflow uses GitHub Actions only; it does not promise unlimited free compute or AI inference. Free AI inference is not enabled by default.
-- The existing research/team endpoints may still require `GEMINI_API_KEY` and may incur usage. Graphics generation may require `OPENAI_API_KEY` and may incur usage. The new autopilot does not call either endpoint. Do not run a full 26-department AI package or generate images until the user explicitly authorizes possible usage.
+- GitHub Actions, Vercel, Supabase, and storage free tiers have quotas and changing terms. This workflow uses GitHub Actions only; it does not promise unlimited free compute or AI inference. Gemini may have free-tier availability subject to Google's current model, region, rate and quota limits; it is not unlimited free inference.
+- The research/team endpoints use OpenAI when available and fall back to `GEMINI_API_KEY` for text and Google Search-grounded research. Graphics generation remains a separate action and may require `OPENAI_API_KEY` and incur usage. The new autopilot does not call either endpoint. A full 26-department AI package can consume provider quota.
 - This workflow is a first automation foundation, not proof that the complete public website, admin CRUD, private Blob persistence, or external social distribution are fully operational. Those require separate authenticated integration tests.
 
 
