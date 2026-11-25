@@ -174,6 +174,20 @@ test("POST rejects an invalid article before any database write", async () => {
   assert.equal(calls, 0);
 });
 
+test("PATCH edit restores original article and sources if event insert fails", async () => {
+  const calls = mockDatabase(({ table, method }) => {
+    if (table === "news_articles" && method === "GET") return [{ id: ARTICLE_ID, headline: "Original", editorial_status: "draft" }];
+    if (table === "news_sources" && method === "GET") return [{ article_id: ARTICLE_ID, source_url: "https://old.example", publisher: "old.example" }];
+    if (table === "editorial_events" && method === "POST") return { status: 500, data: { message: "event failed" } };
+    return { data: [] };
+  });
+  const res = responseRecorder();
+  await handleNewsRequest({ method: "PATCH", body: { id: ARTICLE_ID, article: articleInput() } }, res);
+  assert.equal(res.statusCode, 502);
+  assert.deepEqual(calls.slice(-2).map(c => [c.table, c.method]), [["news_sources", "POST"], ["news_articles", "PATCH"]]);
+  assert.equal(calls.at(-1).body.headline, "Original");
+});
+
 test("PATCH refuses verification without two independent publishers or one official source", async () => {
   const calls = mockDatabase(({ table, method }) => {
     if (table === "news_articles" && method === "GET") {
