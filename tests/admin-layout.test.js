@@ -78,3 +78,13 @@ test("Knowledge department selector covers all 26 backend department keys plus G
   assert.equal(new Set(uiKeys).size, uiKeys.length, "duplicate department option");
   assert.deepEqual(uiKeys.filter(key => key !== "global").sort(), backendKeys.sort());
 });
+
+
+test("system diagnostics performs read-only Supabase schema and Gemini live checks", () => {
+  assert.ok(html.includes("/api/health?supabase=all"));
+  assert.ok(html.includes("/api/health?gemini=1"));
+  assert.ok(html.includes("Supabase schema probe:"));
+  assert.ok(html.includes("Supabase table details:"));
+  assert.ok(html.includes("expected columns verified"));
+  assert.ok(html.includes("Promise.all(["));
+});
