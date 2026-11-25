@@ -802,6 +802,19 @@ document.getElementById("loadGraphicsLibrary").addEventListener("click",async()=
       if(!imageResponse.ok)throw new Error("Saved image could not be loaded: "+item.id);
       const objectUrl=URL.createObjectURL(await imageResponse.blob());
       const image=document.createElement("img");image.src=objectUrl;image.alt=item.alt_text||"Saved newsroom graphic";image.loading="lazy";image.style.cssText="width:100%;height:auto;border-radius:8px;margin-top:8px";card.appendChild(image);
+      const deleteButton=document.createElement("button");
+      deleteButton.type="button";deleteButton.textContent="اس تصویر کو حذف کریں";deleteButton.style.marginTop="10px";
+      deleteButton.addEventListener("click",async()=>{
+        if(!window.confirm("کیا آپ یہ نجی تصویر اور اس کا ریکارڈ مستقل حذف کرنا چاہتے ہیں؟"))return;
+        deleteButton.disabled=true;status.textContent="نجی تصویر حذف کی جا رہی ہے…";
+        try{
+          const deleteResponse=await fetch("/api/admin/graphics?id="+encodeURIComponent(item.id),{method:"DELETE",headers:{Authorization:"Bearer "+password,Accept:"application/json"}});
+          const deleteData=await deleteResponse.json().catch(()=>({}));
+          if(!deleteResponse.ok||!deleteData.ok)throw new Error(deleteData.detail||deleteData.error||"Delete failed");
+          URL.revokeObjectURL(objectUrl);card.remove();status.textContent="تصویر اور اس کا metadata نجی storage سے حذف ہوگیا۔";
+        }catch(error){status.textContent="تصویر حذف نہیں ہوئی: "+error.message;deleteButton.disabled=false;}
+      });
+      card.appendChild(deleteButton);
       root.appendChild(card);
     }
     status.textContent=data.items.length+" نجی گرافکس لوڈ ہوئے۔";
