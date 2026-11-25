@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     geminiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiProvider: DEFAULT_MODEL,
     supabaseConfigured,
-    supabasePrivateMediaConfigured: supabaseConfigured,
+    supabasePrivateMediaCredentialsConfigured: supabaseConfigured,
     approvalQueuePersistence: supabaseConfigured ? "supabase-postgres" : "browser-local-only"
   };
 
