@@ -152,3 +152,43 @@ test("authenticated manual image upload persists privately without calling paid 
   assert.equal(res.body.publication, "DISABLED");
   assert.equal(res.body.rightsStatus, "pending_review");
 });
+
+test("authenticated private graphics deletion removes the private object before its metadata", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  const calls = [];
+  const deleteHandler = createGraphicsHandler({
+    findMediaAsset: async id => [{ id, blob_pathname: "newsroom-uploads/test.jpg", media_type: "image", rights_status: "pending_review" }],
+    deletePrivateBlob: async pathname => { calls.push(["blob", pathname]); },
+    deleteMediaAsset: async id => { calls.push(["metadata", id]); }
+  });
+  const res = responseRecorder();
+  await deleteHandler({
+    method: "DELETE",
+    headers: { authorization: "Bearer graphics-test-password" },
+    query: { id: "123e4567-e89b-12d3-a456-426614174000" }
+  }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.publication, "DISABLED");
+  assert.deepEqual(calls, [
+    ["blob", "newsroom-uploads/test.jpg"],
+    ["metadata", "123e4567-e89b-12d3-a456-426614174000"]
+  ]);
+});
+
+test("private graphics deletion rejects malformed IDs before storage access", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  let calls = 0;
+  const deleteHandler = createGraphicsHandler({
+    findMediaAsset: async () => { calls++; return []; },
+    deletePrivateBlob: async () => { calls++; },
+    deleteMediaAsset: async () => { calls++; }
+  });
+  const res = responseRecorder();
+  await deleteHandler({ method: "DELETE", headers: { authorization: "Bearer graphics-test-password" }, query: { id: "not-an-id" } }, res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(calls, 0);
+});
