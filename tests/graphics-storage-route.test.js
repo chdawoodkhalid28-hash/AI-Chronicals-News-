@@ -233,3 +233,23 @@ test("private media metadata is retained when deleting the stored object fails",
   assert.equal(res.statusCode, 502);
   assert.equal(metadataDeletes, 0);
 });
+
+
+test("private graphics retrieval refuses stored paths outside newsroom media folders", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  let storageReads = 0;
+  const readHandler = createGraphicsHandler({
+    findMediaAsset: async id => [{ id, blob_pathname: "other-folder/unsafe.png", media_type: "image" }],
+    getPrivateBlob: async () => { storageReads++; throw new Error("must not read unsafe path"); }
+  });
+  const res = responseRecorder();
+  await readHandler({
+    method: "GET",
+    headers: { authorization: "Bearer graphics-test-password" },
+    query: { id: "123e4567-e89b-12d3-a456-426614174000" }
+  }, res);
+  assert.equal(res.statusCode, 409);
+  assert.equal(storageReads, 0);
+});
