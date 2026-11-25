@@ -122,3 +122,15 @@ The site has a deployable Preview foundation, but the database connectivity chec
 - Preview runtime logs for the latest 30 minutes: no error/fatal logs. Aggregated 24-hour error view still shows one historical middleware TypeError on deployment `dpl_6P7AdMmnhyYoCa49CPDKRpbV3ZX7` (last occurrence 2026-11-19 14:53 UTC); no matching errors appeared in the latest 30-minute log window. Treat as historical, not proof of a current fault.
 - Live authenticated News CRUD round-trip and private Blob upload/download were not executed from this automation session: deployment fetch/authenticated mutation channel did not provide the owner's app session token. Do not claim these live writes passed. Next step is an authenticated session-driven test from the owner's logged-in Admin browser, with a disposable draft and test image, then cleanup.
 - Full 26-director live run remains unexecuted pending explicit cost approval. Publishing, social posting, video generation and Production deployment remain disabled.
+
+
+## 25 November 2026 — Current Preview acceptance snapshot
+
+- Latest application commit: `6b0f001dc63eb894d7c62030aba6c809597055ee`; Preview deployment `dpl_GumtBRSVarcg98rP9RsxM4LhVbC7` is READY.
+- 13/13 public application routes and newsroom/graphics pages checked in Preview returned HTTP 200.
+- `/api/health?supabase=all`: HTTP 200, all 8/8 tables connected (read-only).
+- `/api/health?gemini=1`: HTTP 200, Gemini text generation connected through the `gemini-3.5-flash-lite` fallback after the primary model timed out. Timeout fallback and grounded-research isolation have regression coverage.
+- GitHub Actions on the latest application commit: all five workflows passed; Node suite 150/150 passed.
+- Admin authentication and the queue/news/graphics APIs are covered by synthetic-token handler tests, but live authenticated database writes and private-media upload/read/delete still require the owner-entered Admin password in a secure browser session. No credentials are requested in chat.
+- The latest deployment is Preview only. Production branch/deployment has not been changed. News publication, social posting and video generation remain disabled.
+- Release decision: **Preview functional baseline verified; authenticated write-path acceptance and owner Production release approval remain open.**

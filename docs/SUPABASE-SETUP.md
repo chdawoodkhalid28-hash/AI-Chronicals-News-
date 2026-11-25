@@ -2,7 +2,8 @@
 
 ## Architecture
 - Supabase PostgreSQL is the authoritative database for articles, source records, verification checks, editorial history, department outputs and media metadata.
-- Vercel Blob remains private media/object storage; do not store public media URLs or expose private Blob tokens.
+- Supabase Storage is used for private newsroom graphics/media objects; the `newsroom-private-media` bucket must remain private.
+- The admin approval queue is stored in a private Supabase PostgreSQL table with RLS enabled and no anon/authenticated access.
 - Vercel hosts the server-side API. The browser never receives a Supabase secret/service-role key.
 - GitHub stores source code and migrations.
 - Publishing is hard-disabled in the database schema and API. `approved_not_published` is an editorial decision, not a publish command.
@@ -20,6 +21,30 @@
 
 The backend accepts `SUPABASE_SERVICE_ROLE_KEY1` first and falls back to `SUPABASE_SERVICE_ROLE_KEY`. For a modern `sb_secret_` key, it sends the key in the `apikey` header; for a legacy service_role JWT it also sends the Bearer authorization header. Do not create another key or share the value in chat.
 
+## Apply private storage migrations
+Run these three files in order in Supabase SQL Editor. Each should be run in its own New Query:
+1. [202611240001_private_media_bucket.sql](../supabase/migrations/202611240001_private_media_bucket.sql) — creates the private media bucket.
+2. [202611240002_private_approval_queue.sql](../supabase/migrations/202611240002_private_approval_queue.sql) — creates the RLS-protected admin approval queue table.
+3. [202611240003_private_department_knowledge.sql](../supabase/migrations/202611240003_private_department_knowledge.sql) — creates the private department knowledge/evaluation store.
+
+## Private media bucket
+- The first migration creates or enforces a private `newsroom-private-media` bucket with a 10 MiB file limit and an image MIME allow-list.
+- No anon/authenticated storage policies are added; server-side service-role access only.
+- The graphics API uploads and reads private objects through Supabase Storage using the existing server-only `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or legacy `SUPABASE_SERVICE_ROLE_KEY`).
+- Optional: set `SUPABASE_MEDIA_BUCKET=newsroom-private-media` in Vercel Preview. This is the default and can be omitted.
+- Redeploy Preview after the migrations and verify the private graphics library while logged in as Admin.
+
+## Private approval queue
+- The second migration creates the private `approval_queue` table, enables RLS, and grants access only to the server-side `service_role`.
+- The admin queue API reads and writes queue records through Supabase; `BLOB_READ_WRITE_TOKEN` is no longer required for the graphics library or approval queue.
+- Existing records in the legacy Vercel Blob store are not automatically imported; handle any required archive separately and safely.
+- Publication remains disabled for every queue operation.
+
+## Private department knowledge
+- The third migration creates the private `department_knowledge` table with RLS enabled and no anon/authenticated grants.
+- The department knowledge and evaluation store uses Supabase PostgreSQL and no longer requires Vercel Blob.
+- New knowledge records default to draft; search returns approved knowledge records only.
+
 ## Admin API
 All routes require `Authorization: Bearer <ADMIN_PASSWORD>`.
 - `GET /api/admin/news` — latest 100 articles and their sources.
@@ -36,10 +61,12 @@ Verification requires two source records or one explicitly marked official. Only
 - Do not add the secret key to Production until a separate release review.
 
 ## Preview connectivity verification
-After applying the migration and confirming the Preview variables, open:
+After applying the core migration and confirming the Preview variables, open:
 
 `https://YOUR-PREVIEW-DOMAIN/api/health?supabase=1`
 
 Expected success: HTTP 200 with `provider: "supabase"`, `status: "connected"`, and `probe: "read_only_select"`. This performs only a `SELECT id ... LIMIT 1` against `news_articles`; it does not return article data or expose credentials.
 
-If the response is HTTP 503 with `status: "schema_not_ready"`, the migration has not been applied to the connected project (or the API schema cache needs a refresh). Apply the migration in Supabase SQL Editor and retry the probe. A `credentials_rejected` response means the key is wrong or not accepted; `database_unavailable` indicates a connection/project issue.
+If the response is HTTP 503 with `status: "schema_not_ready"`, the core migration has not been applied to the connected project (or the API schema cache needs a refresh). A `credentials_rejected` response means the key is wrong or not accepted; `database_unavailable` indicates a connection/project issue.
+
+The graphics-generation endpoint still requires an image-provider API key. Storage migration does not perform image generation. No image generation or publication is triggered by these migrations; publication remains disabled.

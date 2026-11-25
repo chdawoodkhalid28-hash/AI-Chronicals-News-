@@ -13,14 +13,16 @@ export default async function handler(req, res) {
     process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD
   );
 
+  const supabaseConfigured = Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY));
+
   const capabilities = {
     adminPasswordConfigured: hasAdminPassword,
     openAIKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     geminiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiProvider: DEFAULT_MODEL,
-    blobTokenConfigured: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-    supabaseConfigured: Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)),
-    approvalQueuePersistence: process.env.BLOB_READ_WRITE_TOKEN ? "private-vercel-blob-with-local-browser-fallback" : "browser-local-only"
+    supabaseConfigured,
+    supabasePrivateMediaCredentialsConfigured: supabaseConfigured,
+    approvalQueuePersistence: supabaseConfigured ? "supabase-postgres" : "browser-local-only"
   };
 
   if (req.query?.supabase === "all") {
@@ -30,30 +32,35 @@ export default async function handler(req, res) {
         ok: false,
         provider: "supabase",
         status: "not_configured",
-        probe: "read_only_select_all_tables",
+        probe: "read_only_select_expected_columns",
         tables: [],
         capabilities
       });
     }
-    const tableNames = [
-      "news_articles",
-      "news_sources",
-      "news_verification_checks",
-      "editorial_events",
-      "department_outputs",
-      "media_assets"
-    ];
+    const tableColumns = {
+      news_articles: "id,headline,summary,body,language,category,assigned_desk,editorial_status,publication_status,verification_notes,created_by,created_at,updated_at",
+      news_sources: "id,article_id,source_url,source_title,publisher,source_type,is_official,checked_at,created_at",
+      news_verification_checks: "id,article_id,check_type,outcome,notes,checked_by,created_at",
+      editorial_events: "id,article_id,previous_status,new_status,note,actor,created_at",
+      department_outputs: "id,article_id,run_id,department_key,output_type,content,editorial_status,publication_status,created_at",
+      media_assets: "id,article_id,blob_pathname,media_type,alt_text,source_url,rights_status,created_at",
+      approval_queue: "id,saved_at,record",
+      department_knowledge: "id,department,kind,title,content,source_url,tags,status,created_at"
+    };
+    const tableNames = Object.keys(tableColumns);
     const tables = await Promise.all(tableNames.map(async (table) => {
       try {
         await supabaseRequest(table, {
-          query: new URLSearchParams({ select: "id", limit: "1" }).toString()
+          query: new URLSearchParams({ select: tableColumns[table], limit: "0" }).toString()
         });
-        return { table, status: "connected" };
+        return { table, status: "connected", columnsChecked: tableColumns[table].split(",").length };
       } catch (error) {
         const upstreamStatus = Number.isInteger(error.statusCode) ? error.statusCode : null;
         const status = upstreamStatus === 404
           ? "schema_not_ready"
-          : upstreamStatus === 401 || upstreamStatus === 403
+          : upstreamStatus === 400
+            ? "schema_mismatch"
+            : upstreamStatus === 401 || upstreamStatus === 403
             ? "credentials_rejected"
             : error.code === "SUPABASE_URL_INVALID" || error.code === "SUPABASE_URL_HTTPS_REQUIRED"
               ? "invalid_configuration"
@@ -69,7 +76,7 @@ export default async function handler(req, res) {
       ok: connected === tableNames.length,
       provider: "supabase",
       status: connected === tableNames.length ? "all_tables_connected" : "partial_schema_or_access",
-      probe: "read_only_select_all_tables",
+      probe: "read_only_select_expected_columns",
       connectedTables: connected,
       totalTables: tableNames.length,
       tables,

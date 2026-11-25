@@ -18,7 +18,7 @@ test("drops missing titles, non-HTTPS links and deduplicates URLs", async () => 
 });
 test("feed failures are recorded without stopping other feeds", async () => {
   const feeds = [{ id: "bad", label: "Bad", url: "https://feed.test/bad" }, { id: "good", label: "Good", url: "https://feed.test/good" }];
-  const report = await scanFeeds({ feeds, fetchImpl: async (url) => { if (url.endsWith("/bad")) throw new Error("network timeout"); return { ok: true, status: 200, text: async () => '<rss><item><title>ok</title><link>https://example.com</a></item></rss>' }; } });
+  const report = await scanFeeds({ feeds, fetchImpl: async (url) => { if (url.endsWith("/bad")) throw new Error("network timeout"); return { ok: true, status: 200, text: async () => '<rss><item><title>ok</title><link>https://example.com</link></item></rss>' }; } });
   assert.equal(report.errors.length, 1);
   assert.equal(report.candidateCount, 1);
 });

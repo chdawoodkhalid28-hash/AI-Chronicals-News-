@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_MODEL, generateGeminiText } from "../lib/gemini.js";
+import { DEFAULT_MODEL, generateGeminiResearch, generateGeminiText } from "../lib/gemini.js";
 
 const originalEnv = { ...process.env };
 const originalFetch = globalThis.fetch;
@@ -10,8 +10,8 @@ test.afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
-test("Gemini defaults to the requested cost-efficient Flash Lite model", () => {
-  assert.equal(DEFAULT_MODEL, "gemini-3.5-flash-lite");
+test("Gemini defaults to the configured primary Flash model", () => {
+  assert.equal(DEFAULT_MODEL, "gemini-3.8-flash");
 });
 
 test("Gemini generation calls the configured model without exposing the API key", async () => {
@@ -29,12 +29,54 @@ test("Gemini generation calls the configured model without exposing the API key"
 
   const result = await generateGeminiText("Reply with a connection check", { maxOutputTokens: 32 });
 
-  assert.match(requestUrl, /models\/gemini-3\.5-flash-lite:generateContent$/);
+  assert.ok(requestUrl.endsWith("/models/gemini-3.8-flash:generateContent"));
   assert.equal(requestOptions.headers["x-goog-api-key"], "test-only-gemini-key");
   assert.ok(requestOptions.signal);
   assert.equal(result.text, "GEMINI_CONNECTION_OK");
-  assert.equal(result.model, "gemini-3.5-flash-lite");
+  assert.equal(result.model, "gemini-3.8-flash");
   assert.equal(JSON.stringify(result).includes("test-only-gemini-key"), false);
+});
+
+test("text-only Gemini generation falls back after a primary-model timeout", async () => {
+  process.env.GEMINI_API_KEY = "test-only-gemini-key";
+  const calls = [];
+  globalThis.fetch = async url => {
+    calls.push(String(url));
+    if (calls.length === 1) {
+      const error = new Error("The operation was aborted due to timeout");
+      error.name = "TimeoutError";
+      throw error;
+    }
+    return new Response(JSON.stringify({
+      candidates: [{ content: { parts: [{ text: "FALLBACK_OK" }] } }]
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+
+  const result = await generateGeminiText("test", { timeoutMs: 10, maxOutputTokens: 16 });
+
+  assert.equal(calls.length, 2);
+  assert.ok(calls[0].endsWith("/models/gemini-3.8-flash:generateContent"));
+  assert.ok(calls[1].endsWith("/models/gemini-3.5-flash-lite:generateContent"));
+  assert.equal(result.model, "gemini-3.5-flash-lite");
+  assert.equal(result.text, "FALLBACK_OK");
+});
+
+test("grounded Gemini research never falls back to an ungrounded text model", async () => {
+  process.env.GEMINI_API_KEY = "test-only-gemini-key";
+  const calls = [];
+  globalThis.fetch = async url => {
+    calls.push(String(url));
+    const error = new Error("The operation was aborted due to timeout");
+    error.name = "TimeoutError";
+    throw error;
+  };
+
+  await assert.rejects(
+    () => generateGeminiResearch("research", { timeoutMs: 10 }),
+    error => error.name === "TimeoutError"
+  );
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0].endsWith("/models/gemini-3.8-flash:generateContent"));
 });
 
 test("Gemini fails safely when no API key is configured", async () => {

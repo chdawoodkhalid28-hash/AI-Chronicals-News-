@@ -132,11 +132,12 @@ a{color:#e5c77f}
 <a href="#researchPanel">ریسرچ و فیکٹ چیک</a>
 <a href="#graphicsPanel">گرافکس و پریزنٹیشن</a>
 <a href="#queuePanel">ایڈیٹوریل منظوری</a>
+ <a href="#knowledgePanel">ڈیپارٹمنٹ نالج</a>
 <a href="/admin-news.html">خبر مینجمنٹ</a>
 </nav>
 <section class="panel" id="dashboardPanel">
 <h1>نیوز روم — مرکزی ڈیش بورڈ</h1>
-<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج نجی Vercel Blob سرور اور مقامی بیک اپ دونوں میں محفوظ ہوں گے۔ ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
+<p class="muted">بلند (Buland) مرکزی کوآرڈینیٹر ہے۔ اس کے تحت 26 شعبہ جاتی ڈائریکٹرز ہیں؛ ہر ڈائریکٹر اپنے شعبے کی تحقیق، معیار، فیصلوں، خطرات اور سفارشات کا ذمہ دار ہے۔ بلند مرکزی اسائنمنٹ دے گا؛ ہر ڈائریکٹر اپنی الگ سرچ، ریسرچ، اسٹوری لائن، گرافکس اور پریزنٹیشن ورک فلو چلائے گا۔ نتائج نجی Supabase PostgreSQL Approval Queue اور مقامی بیک اپ دونوں میں محفوظ ہوں گے۔ ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی۔ اشاعت بند ہے اور ہر خبر آپ کی منظوری کی منتظر رہے گی۔</p>
 <details class="panel"><summary style="font-weight:bold;cursor:pointer">26 شعبہ جاتی ڈائریکٹرز — ذمہ داریاں دیکھیں</summary>
 <ol style="line-height:2.1">
 <li><b>Director Newsroom / Editor-in-Chief:</b> ادارتی قیادت، خبر کا زاویہ، مسودہ اور اشاعت کی تیاری کی سفارش۔</li>
@@ -187,7 +188,7 @@ a{color:#e5c77f}
 <section class="panel" id="researchPanel">
 <h2>ریسرچ اور فیکٹ چیک — Research & Fact-check</h2>
 <p class="muted">ہر شعبے کے نتائج، ذرائع، ثبوت، تضادات اور مزید تصدیق کی ضرورت کو رپورٹ میں دیکھیں۔ سرچ citation خود بخود اس بات کا ثبوت نہیں کہ اصل صفحہ آزادانہ طور پر verify کیا گیا ہے۔</p>
-<section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
+<section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک live API، Supabase کے تمام متوقع table columns اور Gemini text response کو جانچتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
 <div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
@@ -198,9 +199,64 @@ a{color:#e5c77f}
 <p class="muted">ہر ڈپارٹمنٹ رپورٹ میں Graphics Designer کا visual brief اور presentation plan شامل ہوگا۔ اصل تصویر صرف متعلقہ رپورٹ کے Generate Graphics بٹن پر Admin کی کارروائی سے بنے گی؛ کوئی تصویر یا ویڈیو خودکار طور پر شائع نہیں ہوگی۔</p>
 <p class="muted">پہلے Assignment Center سے نیوز روم رن مکمل کریں، پھر Research رپورٹ میں مطلوبہ شعبے کا graphics action استعمال کریں۔ استعمال شدہ تصویر، ماخذ اور حقوق کی حیثیت کی جانچ اشاعت سے پہلے لازم ہے۔</p>
 <p><a href="/graphics/department-templateflyers.html" target="_blank" rel="noopener">10 Department Master TemplateFlyers — تمام شعبہ جاتی ماسٹر گرافکس کھولیں</a></p><p><a href="/graphics/drafts/newsroom-layout-final-review.html" target="_blank" rel="noopener">Newsroom Layout — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/departmental-templates-final-review.html" target="_blank" rel="noopener">Departmental Templates — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/breaking-news-final-review.html" target="_blank" rel="noopener">Breaking News Graphics — Final Review Draft کھولیں</a></p><p><a href="/graphics/broadcast-vfx-template-suite.html" target="_blank" rel="noopener">Broadcast VFX Template Suite کھولیں</a></p><p class="muted">یہ تمام لنکس review/preview assets ہیں؛ اشاعت سے پہلے ایڈمن کی منظوری، story-specific verified copy اور image rights check لازم ہے۔</p><p class="muted">اس Draft میں newsroom dashboard، Breaking News، lower-third، social card، vertical story، data explainer اور editorial status slate شامل ہیں۔ متن براہ راست تبدیل اور Print / Save PDF کیا جا سکتا ہے۔</p>
-<div class="panel"><h3>نجی Graphics Library</h3><p class="muted">محفوظ شدہ گرافکس صرف Admin تصدیق کے بعد نجی Blob storage سے کھلیں گے۔ ہر نئی تصویر کے حقوق کی حیثیت پہلے Pending Review ہوگی۔</p><button id="loadGraphicsLibrary" type="button">محفوظ گرافکس لوڈ کریں</button><div id="graphicsLibraryStatus" class="status" role="status">ابھی لائبریری لوڈ نہیں ہوئی۔</div><div id="graphicsLibrary" class="department-progress"></div></div>
+<div class="panel"><h3>نجی Graphics Library</h3><p class="muted">محفوظ شدہ گرافکس صرف Admin تصدیق کے بعد نجی Supabase Storage سے کھلیں گے۔ ہر نئی تصویر کے حقوق کی حیثیت پہلے Pending Review ہوگی۔</p><label for="manualGraphicsUpload">اپنے کمپیوٹر/موبائل سے تصویر اپ لوڈ کریں (PNG, JPEG, WebP — زیادہ سے زیادہ 3MB)</label><input id="manualGraphicsUpload" type="file" accept="image/png,image/jpeg,image/webp"><label for="manualGraphicsAlt">تصویر کی وضاحت</label><input id="manualGraphicsAlt" type="text" maxlength="500" placeholder="مثلاً: زرعی خبر کے لیے فراہم کردہ تصویر"><button id="uploadGraphicsButton" type="button">نجی لائبریری میں اپ لوڈ کریں</button><div id="manualGraphicsUploadStatus" class="status" role="status">اپ لوڈ سے پہلے تصویر کے حقوق/اجازت کی تصدیق کریں۔</div><button id="loadGraphicsLibrary" type="button">محفوظ گرافکس لوڈ کریں</button><div id="graphicsLibraryStatus" class="status" role="status">ابھی لائبریری لوڈ نہیں ہوئی۔</div><div id="graphicsLibrary" class="department-progress"></div></div>
 <a href="#researchPanel">تازہ Research Report دیکھیں</a>
 </section>
+
+<section class="panel" id="knowledgePanel">
+<h2>Department Knowledge — نجی علمی ذخیرہ</h2>
+<p class="muted">شعبہ جاتی رہنما اصول، تصدیق شدہ پس منظر اور ادارتی نوٹس نجی Supabase میں محفوظ کریں۔ نئی entries بطور Draft محفوظ ہوں گی؛ صرف Admin واضح طور پر Approved منتخب کرے تو وہ Knowledge Search میں دستیاب ہوں گی۔ یہ keyword search ہے، vector embeddings نہیں۔</p>
+<label for="knowledgeDepartment">شعبہ</label>
+<select id="knowledgeDepartment">
+<option value="global">Global / تمام شعبے</option>
+<option value="newsroom">Newsroom</option>
+<option value="assignment_desk">Assignment Desk</option>
+<option value="pakistan_desk">Pakistan Desk</option>
+<option value="provincial_local_desk">Provincial & Local Desk</option>
+<option value="politics_desk">Politics Desk</option>
+<option value="world_desk">World Desk</option>
+<option value="crime_desk">Crime Desk</option>
+<option value="courts_legal_desk">Courts & Legal Desk</option>
+<option value="business_economy_desk">Business & Economy Desk</option>
+<option value="finance_markets_desk">Finance & Markets Desk</option>
+<option value="sports_desk">Sports Desk</option>
+<option value="technology_ai_desk">Technology & AI Desk</option>
+<option value="science_health_desk">Science & Health Desk</option>
+<option value="climate_environment_desk">Climate & Environment Desk</option>
+<option value="education_desk">Education Desk</option>
+<option value="agriculture_desk">Agriculture Desk</option>
+<option value="research_desk">Research Desk</option>
+<option value="open_source_verification_desk">Open Source Verification Desk</option>
+<option value="fact_check_desk">Fact Check Desk</option>
+<option value="urdu_english_desk">Urdu & English Desk</option>
+<option value="copy_editing_desk">Copy Editing Desk</option>
+<option value="photo_visuals_desk">Photo & Visuals Desk</option>
+<option value="audience_social_desk">Audience & Social Desk</option>
+<option value="seo_distribution_desk">SEO & Distribution Desk</option>
+<option value="ethics_standards_desk">Ethics & Standards Desk</option>
+<option value="security_privacy_desk">Security & Privacy Desk</option>
+</select>
+<label for="knowledgeTitle">عنوان</label>
+<input id="knowledgeTitle" maxlength="240" placeholder="مثلاً: Editorial verification checklist">
+<label for="knowledgeContent">علمی مواد / رہنما اصول</label>
+<textarea id="knowledgeContent" maxlength="20000" placeholder="صرف تصدیق شدہ، قابلِ حوالہ معلومات درج کریں۔"></textarea>
+<label for="knowledgeSource">ماخذ URL (اختیاری، صرف HTTPS)</label>
+<input id="knowledgeSource" type="url" placeholder="https://...">
+<label for="knowledgeTags">Tags (comma separated)</label>
+<input id="knowledgeTags" placeholder="verification, editorial, agriculture">
+<label for="knowledgeStatus">حیثیت</label>
+<select id="knowledgeStatus"><option value="draft" selected>Draft — تلاش میں شامل نہیں</option><option value="approved">Approved — Admin کی منظوری کے بعد</option></select>
+<button id="saveKnowledge" type="button">نجی Knowledge میں محفوظ کریں</button>
+<div id="knowledgeSaveStatus" class="status" role="status">محفوظ کرنے کے لیے Admin password درکار ہے۔</div>
+<div class="divider"></div>
+<h3>Knowledge Search</h3>
+<label for="knowledgeQuery">تلاش کے الفاظ</label>
+<input id="knowledgeQuery" minlength="2" placeholder="اردو یا English keywords">
+<button id="searchKnowledge" type="button">منظور شدہ Knowledge تلاش کریں</button>
+<div id="knowledgeSearchStatus" class="status" role="status">تلاش کے لیے کم از کم دو حروف درج کریں۔</div>
+<div id="knowledgeResults" aria-live="polite"></div>
+</section>
+
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
 
 </main>
@@ -443,15 +499,39 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
     const data=await response.json();
     if(!response.ok||!data||!data.capabilities)throw new Error(data&&data.error||"Health endpoint returned an invalid response");
     const c=data.capabilities;
+    const [databaseTest,geminiTest]=await Promise.all([
+      c.supabaseConfigured
+        ? fetch("/api/health?supabase=all",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"})
+            .then(async response=>{const result=await response.json();if(!response.ok)result.ok=false;return result;})
+            .catch(error=>({ok:false,status:"request_failed",error:error.message}))
+        : Promise.resolve({ok:false,status:"not_configured"}),
+      c.geminiKeyConfigured
+        ? fetch("/api/health?gemini=1",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"})
+            .then(async response=>{const result=await response.json();if(!response.ok)result.ok=false;return result;})
+            .catch(error=>({ok:false,status:"request_failed",error:error.message}))
+        : Promise.resolve(null)
+    ]);
+    const tableSummary=databaseTest&&Array.isArray(databaseTest.tables)
+      ? databaseTest.tables.map(item=>item.table+":"+item.status).join(", ")
+      : "not available";
     output.textContent=[
       "API status: "+(data.status||"unknown"),
       "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
-      "OpenAI API key: "+(c.openAIKeyConfigured?"configured":"MISSING"),
-      "Blob token (presence only): "+(c.blobTokenConfigured?"configured — private server queue available":"not configured"),
+      "OpenAI API key: "+(c.openAIKeyConfigured?"configured (quota may still be exhausted)":"not configured"),
+      "Gemini API key: "+(c.geminiKeyConfigured?"configured":"MISSING"),
+      "Gemini configured model: "+(c.geminiProvider||"default model"),
+      "Gemini live text test: "+(geminiTest?(geminiTest.ok?"CONNECTED":"UNAVAILABLE"):"not run"),
+      "Gemini model used: "+(geminiTest&&geminiTest.model||"not confirmed"),
+      "Supabase schema probe: "+(databaseTest?(databaseTest.ok?(databaseTest.connectedTables||0)+"/"+(databaseTest.totalTables||8)+" tables and expected columns verified":"UNAVAILABLE — "+(databaseTest.status||"unknown")):"not run"),
+      "Supabase table details: "+tableSummary,
+      "Provider policy: Gemini text fallback is enabled; grounded research remains source-gated",
+      "Supabase private-media credentials (server-side): "+(c.supabasePrivateMediaCredentialsConfigured?"configured":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
-      "Checked: "+(data.checkedAt||"unknown")
-    ].join("\\n");
+      "Checked: "+(data.checkedAt||"unknown"),
+      geminiTest&&!geminiTest.ok?"Gemini detail: "+(geminiTest.error||geminiTest.status||"unknown error"):"",
+      databaseTest&&!databaseTest.ok?"Supabase detail: "+(databaseTest.error||databaseTest.status||"unknown error"):""
+    ].filter(Boolean).join("\\n");
   }catch(error){output.textContent="تشخیص ناکام: "+error.message;}
   finally{button.disabled=false;}
 });
@@ -666,7 +746,7 @@ button.addEventListener("click",async()=>{
         "The team roles are coordinated stages in the department workflow, not separate persistent hosted services.",
         "Graphics briefs are generated by the department workflow; an actual image is generated only when an admin clicks the per-department graphics button.",
         "Search citations do not prove that every linked page was opened or independently authenticated.",
-        "The approval queue uses private server-side Vercel Blob storage when authenticated; browser localStorage is a local fallback and can be synchronized with the server. Export JSON backups regularly."
+        "The approval queue uses private server-side Supabase PostgreSQL when authenticated; browser localStorage is a local fallback and can be synchronized with the server. Export JSON backups regularly."
       ],
       note:"No story is published. All packages remain PENDING_ADMIN_APPROVAL and publishing is disabled."
     };
@@ -686,6 +766,28 @@ button.addEventListener("click",async()=>{
   }finally{
     button.disabled=false;
   }
+});
+
+document.getElementById("uploadGraphicsButton").addEventListener("click",async()=>{
+  const status=document.getElementById("manualGraphicsUploadStatus");
+  const fileInput=document.getElementById("manualGraphicsUpload");
+  const file=fileInput.files&&fileInput.files[0];
+  const password=activeAdminPassword||document.getElementById("password").value.trim();
+  if(!password){status.textContent="پہلے Admin Panel میں password درج کرکے تصدیق کریں۔";return;}
+  if(!file){status.textContent="پہلے تصویر منتخب کریں۔";return;}
+  if(!["image/png","image/jpeg","image/webp"].includes(file.type)){status.textContent="صرف PNG, JPEG یا WebP تصویر قابلِ قبول ہے۔";return;}
+  if(file.size>3*1024*1024){status.textContent="تصویر 3MB سے بڑی ہے؛ براہ کرم چھوٹی فائل منتخب کریں۔";return;}
+  const button=document.getElementById("uploadGraphicsButton");button.disabled=true;status.textContent="تصویر نجی Supabase Storage میں محفوظ ہو رہی ہے…";
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error("فائل پڑھی نہیں جا سکی۔"));reader.readAsDataURL(file);});
+    const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:JSON.stringify({action:"upload",mimeType:file.type,imageData:dataUrl.split(",")[1],altText:document.getElementById("manualGraphicsAlt").value.trim()})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.detail||data.error||"Upload failed");
+    status.textContent="تصویر نجی لائبریری میں محفوظ ہوگئی۔ حقوق کی حیثیت: Pending Review۔";
+    fileInput.value="";
+    document.getElementById("loadGraphicsLibrary").click();
+  }catch(error){status.textContent="تصویر اپ لوڈ نہیں ہوئی: "+error.message;}
+  finally{button.disabled=false;}
 });
 
 document.getElementById("loadGraphicsLibrary").addEventListener("click",async()=>{
@@ -708,12 +810,72 @@ document.getElementById("loadGraphicsLibrary").addEventListener("click",async()=
       if(!imageResponse.ok)throw new Error("Saved image could not be loaded: "+item.id);
       const objectUrl=URL.createObjectURL(await imageResponse.blob());
       const image=document.createElement("img");image.src=objectUrl;image.alt=item.alt_text||"Saved newsroom graphic";image.loading="lazy";image.style.cssText="width:100%;height:auto;border-radius:8px;margin-top:8px";card.appendChild(image);
+      const deleteButton=document.createElement("button");
+      deleteButton.type="button";deleteButton.textContent="اس تصویر کو حذف کریں";deleteButton.style.marginTop="10px";
+      deleteButton.addEventListener("click",async()=>{
+        if(!window.confirm("کیا آپ یہ نجی تصویر اور اس کا ریکارڈ مستقل حذف کرنا چاہتے ہیں؟"))return;
+        deleteButton.disabled=true;status.textContent="نجی تصویر حذف کی جا رہی ہے…";
+        try{
+          const deleteResponse=await fetch("/api/admin/graphics?id="+encodeURIComponent(item.id),{method:"DELETE",headers:{Authorization:"Bearer "+password,Accept:"application/json"}});
+          const deleteData=await deleteResponse.json().catch(()=>({}));
+          if(!deleteResponse.ok||!deleteData.ok)throw new Error(deleteData.detail||deleteData.error||"Delete failed");
+          URL.revokeObjectURL(objectUrl);card.remove();status.textContent="تصویر اور اس کا metadata نجی storage سے حذف ہوگیا۔";
+        }catch(error){status.textContent="تصویر حذف نہیں ہوئی: "+error.message;deleteButton.disabled=false;}
+      });
+      card.appendChild(deleteButton);
       root.appendChild(card);
     }
     status.textContent=data.items.length+" نجی گرافکس لوڈ ہوئے۔";
   }catch(error){status.textContent="گرافکس لائبریری لوڈ نہیں ہوئی: "+error.message;}
   finally{button.disabled=false;}
 });
+
+document.getElementById("saveKnowledge").addEventListener("click",async()=>{
+  const status=document.getElementById("knowledgeSaveStatus");
+  const button=document.getElementById("saveKnowledge");
+  const password=activeAdminPassword||document.getElementById("password").value.trim();
+  if(!password){status.textContent="پہلے Admin password درج کریں۔";return;}
+  const title=document.getElementById("knowledgeTitle").value.trim();
+  const content=document.getElementById("knowledgeContent").value.trim();
+  if(!title||!content){status.textContent="عنوان اور علمی مواد دونوں درج کریں۔";return;}
+  const sourceUrl=document.getElementById("knowledgeSource").value.trim();
+  const tags=document.getElementById("knowledgeTags").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,12);
+  button.disabled=true;status.textContent="نجی Supabase Knowledge میں محفوظ کیا جا رہا ہے…";
+  try{
+    const response=await fetch("/api/admin/knowledge",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password,"Accept":"application/json"},body:JSON.stringify({action:"save",department:document.getElementById("knowledgeDepartment").value,title,content,sourceUrl,status:document.getElementById("knowledgeStatus").value,kind:"knowledge",tags})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok)throw new Error(data.detail||data.error||"Knowledge save failed");
+    status.textContent="محفوظ ہوگیا: "+data.saved.title+" | "+data.saved.status+" | ID: "+data.saved.id;
+  }catch(error){status.textContent="Knowledge محفوظ نہیں ہوا: "+error.message;}
+  finally{button.disabled=false;}
+});
+document.getElementById("searchKnowledge").addEventListener("click",async()=>{
+  const status=document.getElementById("knowledgeSearchStatus");
+  const root=document.getElementById("knowledgeResults");
+  const button=document.getElementById("searchKnowledge");
+  const password=activeAdminPassword||document.getElementById("password").value.trim();
+  const query=document.getElementById("knowledgeQuery").value.trim();
+  if(!password){status.textContent="پہلے Admin password درج کریں۔";return;}
+  if(query.length<2){status.textContent="تلاش کے لیے کم از کم دو حروف درج کریں۔";return;}
+  button.disabled=true;root.replaceChildren();status.textContent="منظور شدہ نجی Knowledge تلاش ہو رہی ہے…";
+  try{
+    const response=await fetch("/api/admin/knowledge",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password,"Accept":"application/json"},body:JSON.stringify({action:"search",department:document.getElementById("knowledgeDepartment").value,query,limit:10})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok)throw new Error(data.detail||data.error||"Knowledge search failed");
+    if(!Array.isArray(data.records)||!data.records.length){status.textContent="کوئی منظور شدہ متعلقہ Knowledge نہیں ملی۔";return;}
+    for(const record of data.records){
+      const card=document.createElement("article");card.className="report-card";
+      addText(card,"h3",record.title);
+      addText(card,"p",record.content);
+      addText(card,"p","شعبہ: "+record.department+" | مطابقت: "+record.score,"report-meta");
+      if(record.sourceUrl){const link=document.createElement("a");link.href=record.sourceUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent=record.sourceUrl;card.appendChild(link);}
+      root.appendChild(card);
+    }
+    status.textContent=data.records.length+" منظور شدہ Knowledge نتائج ملے۔";
+  }catch(error){status.textContent="Knowledge تلاش ناکام: "+error.message;}
+  finally{button.disabled=false;}
+});
+
 </script>
 </body>
 </html>

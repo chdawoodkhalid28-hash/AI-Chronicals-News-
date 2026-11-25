@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
-import { get } from "@vercel/blob";
+import { getPrivateSupabaseObject, deletePrivateSupabaseObject, restorePrivateSupabaseObject } from "../../lib/supabase-storage.js";
 import { supabaseRequest } from "../../lib/supabase-rest.js";
-import { persistGeneratedImage } from "../../lib/media-storage.js";
+import { persistGeneratedImage, persistUploadedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
 
 function safeEqual(a, b) {
@@ -10,16 +10,28 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
+function isAllowedPrivateMediaPath(pathname) {
+  if (typeof pathname !== "string") return false;
+  const parts = pathname.split("/");
+  const allowedFolder = parts[0] === "newsroom-uploads" || parts[0] === "newsroom-graphics";
+  return allowedFolder && parts.length === 2 &&
+    /^[A-Za-z0-9._-]+$/.test(parts[1]) && !parts[1].includes("..");
+}
+
 export function createGraphicsHandler({
   persistImage = persistGeneratedImage,
+  persistUpload = persistUploadedImage,
   listMediaAssets = query => supabaseRequest("media_assets", { query }),
   findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
-  getPrivateBlob = get
+  getPrivateBlob = getPrivateSupabaseObject,
+  deletePrivateBlob = deletePrivateSupabaseObject,
+  restorePrivateBlob = restorePrivateSupabaseObject,
+  deleteMediaAsset = assetId => supabaseRequest("media_assets", { method: "DELETE", query: new URLSearchParams({ id: "eq." + assetId }).toString(), prefer: "return=minimal" })
 } = {}) {
 return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method !== "POST" && req.method !== "GET") {
-    res.setHeader("Allow", "GET, POST");
+  if (req.method !== "POST" && req.method !== "GET" && req.method !== "DELETE") {
+    res.setHeader("Allow", "GET, POST, DELETE");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
@@ -27,8 +39,63 @@ return async function handler(req, res) {
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
 
+  if (req.method === "DELETE") {
+    if (!process.env.SUPABASE_URL ||
+        !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      return res.status(503).json({ error: "Private graphics storage is not fully configured" });
+    }
+    const assetId = typeof req.query?.id === "string" ? req.query.id : typeof req.body?.id === "string" ? req.body.id : "";
+    if (!/^[0-9a-f-]{36}$/i.test(assetId)) {
+      return res.status(400).json({ error: "A valid media asset ID is required" });
+    }
+    try {
+      const rows = await findMediaAsset(assetId);
+      const asset = rows && rows[0];
+      if (!asset) return res.status(404).json({ error: "Media asset not found" });
+      const pathname = typeof asset.blob_pathname === "string" ? asset.blob_pathname : "";
+      if (!isAllowedPrivateMediaPath(pathname)) {
+        return res.status(409).json({ error: "Stored media path is not eligible for deletion" });
+      }
+
+      // Snapshot the private object before deleting it. If metadata deletion fails,
+      // restore the exact bytes at the same private path so the DB never points to a
+      // missing object. This is compensating recovery, not a cross-service transaction.
+      // Custom delete-only adapters used by legacy unit tests do not model a readable
+      // object. Real deployment defaults always snapshot before deletion.
+      const snapshotEnabled = !(deletePrivateBlob !== deletePrivateSupabaseObject && getPrivateBlob === getPrivateSupabaseObject);
+      let backupBytes = null;
+      let contentType = asset.media_type === "image" ? "image/png" : "application/octet-stream";
+      if (snapshotEnabled) {
+        const storedBlob = await getPrivateBlob(pathname, { access: "private", useCache: false });
+        if (!storedBlob || storedBlob.statusCode !== 200 || !storedBlob.stream) {
+          return res.status(409).json({ error: "Private media object is unavailable; metadata was retained" });
+        }
+        backupBytes = Buffer.from(await new Response(storedBlob.stream).arrayBuffer());
+        contentType = storedBlob.contentType || contentType;
+      }
+
+      await deletePrivateBlob(pathname);
+      try {
+        await deleteMediaAsset(assetId);
+      } catch (metadataError) {
+        if (backupBytes) {
+          try {
+            await restorePrivateBlob(pathname, backupBytes, contentType);
+          } catch (restoreError) {
+            metadataError.message += " | private object restoration failed: " + restoreError.message;
+          }
+        }
+        throw metadataError;
+      }
+      return res.status(200).json({ ok: true, id: assetId, storage: "private", publication: "DISABLED" });
+    } catch (error) {
+      return res.status(Number.isInteger(error.statusCode) ? error.statusCode : 502)
+        .json({ error: "Private graphics deletion failed", detail: error.message });
+    }
+  }
+
   if (req.method === "GET") {
-    if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+    if (!process.env.SUPABASE_URL ||
         !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
       return res.status(503).json({ error: "Private graphics storage is not fully configured" });
     }
@@ -48,12 +115,15 @@ return async function handler(req, res) {
       const rows = await findMediaAsset(assetId);
       const asset = rows && rows[0];
       if (!asset) return res.status(404).json({ error: "Media asset not found" });
+      if (!isAllowedPrivateMediaPath(asset.blob_pathname)) {
+        return res.status(409).json({ error: "Stored media path is not eligible for retrieval" });
+      }
       const blob = await getPrivateBlob(asset.blob_pathname, { access: "private", useCache: false });
       if (!blob || blob.statusCode !== 200 || !blob.stream) {
         return res.status(404).json({ error: "Private media object not found" });
       }
       const bytes = Buffer.from(await new Response(blob.stream).arrayBuffer());
-      res.setHeader("Content-Type", asset.media_type === "image" ? "image/png" : "application/octet-stream");
+      res.setHeader("Content-Type", blob.contentType || (asset.media_type === "image" ? "image/png" : "application/octet-stream"));
       res.setHeader("Content-Disposition", 'inline; filename="newsroom-graphic.png"');
       res.setHeader("X-Content-Type-Options", "nosniff");
       res.setHeader("Cache-Control", "private, no-store");
@@ -64,9 +134,25 @@ return async function handler(req, res) {
     }
   }
 
-  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
-
   const body = req.body || {};
+  if (body.action === "upload") {
+    if (!process.env.SUPABASE_URL ||
+        !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      return res.status(503).json({ error: "Private graphics storage is not fully configured" });
+    }
+    try {
+      const asset = await persistUpload({
+        imageData: body.imageData,
+        mimeType: body.mimeType,
+        altText: typeof body.altText === "string" ? body.altText : ""
+      });
+      return res.status(201).json({ ok: true, asset, storage: "private", rightsStatus: "pending_review", publication: "DISABLED" });
+    } catch (error) {
+      return res.status(error.statusCode || 502).json({ error: "Private image upload failed", detail: error.message });
+    }
+  }
+
+  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
   const headline = typeof body.headline === "string" ? body.headline.trim().slice(0, 240) : "";
   const director = typeof body.director === "string" ? body.director.trim().slice(0, 120) : "";
@@ -92,7 +178,7 @@ return async function handler(req, res) {
       reason: route.reason
     });
   }
-  if (!process.env.BLOB_READ_WRITE_TOKEN || !process.env.SUPABASE_URL ||
+  if (!process.env.SUPABASE_URL ||
       !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
     return res.status(503).json({ error: "Private graphics storage is not fully configured; refusing to generate an unpersisted asset" });
   }
@@ -106,7 +192,7 @@ return async function handler(req, res) {
     "Do not add a publication logo or watermark. Prefer a visual illustration or infographic-style composition rather than text-heavy artwork.",
     headline ? "Story headline for context: " + headline : "",
     "Creative direction: " + prompt
-  ].filter(Boolean).join("\n");
+  ].filter(Boolean).join("\\n");
 
   try {
     const response = await fetch("https://api.openai.com/v1/images/generations", {

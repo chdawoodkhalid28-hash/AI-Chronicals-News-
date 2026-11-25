@@ -20,8 +20,8 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Admin authentication failed" });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(503).json({ error: "OPENAI_API_KEY is not configured for this deployment" });
+  if (!process.env.OPENAI_API_KEY && !process.env.GEMINI_API_KEY) {
+    return res.status(503).json({ error: "No AI provider configured. Add GEMINI_API_KEY." });
   }
 
   const { topic, language = "ur", sources = [] } = req.body || {};
@@ -111,27 +111,41 @@ Departments:
 - Security & Privacy Desk (security_privacy_desk)`;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4.1-mini",
-        temperature: 0.2,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: JSON.stringify({ topic: topic.trim(), language, sources: cleanSources }) }
-        ]
-      })
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      return res.status(502).json({ error: "AI draft service returned an error", detail: data.error?.message || "Upstream request failed" });
+    let raw = "";
+    if (process.env.OPENAI_API_KEY) {
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + process.env.OPENAI_API_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-4.1-mini",
+            temperature: 0.2,
+            response_format: { type: "json_object" },
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: JSON.stringify({ topic: topic.trim(), language, sources: cleanSources }) }
+            ]
+          }),
+          signal: AbortSignal.timeout(55000)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || "OpenAI draft request failed");
+        raw = data.choices?.[0]?.message?.content || "";
+      } catch (error) {
+        if (!process.env.GEMINI_API_KEY) throw error;
+      }
     }
-    const raw = data.choices?.[0]?.message?.content;
+    if (!raw && process.env.GEMINI_API_KEY) {
+      const { generateGeminiText } = await import("../../lib/gemini.js");
+      const result = await generateGeminiText(
+        system + "\n\nReturn valid JSON only. Topic: " + topic.trim() + "\nLanguage: " + language + "\nSupplied source references: " + JSON.stringify(cleanSources),
+        { maxOutputTokens: 4096, responseMimeType: "application/json" }
+      );
+      raw = result.text;
+    }
     if (!raw) return res.status(502).json({ error: "AI draft service returned an empty response" });
     const parsed = JSON.parse(raw);
     parsed.editorialStatus = "PENDING_ADMIN_APPROVAL";

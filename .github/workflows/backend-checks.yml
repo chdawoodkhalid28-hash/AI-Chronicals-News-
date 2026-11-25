@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - ai-newsroom-foundation
+      - feat/supabase-private-media-storage
   pull_request:
     branches:
       - ai-newsroom-foundation
+      - feat/supabase-private-media-storage
 
 permissions:
   contents: read
@@ -37,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(node -p "require('./package.json').type")" = "module"
-          node --input-type=module -e "import('@vercel/blob').then(() => console.log('Vercel Blob SDK import OK'))"
+          node --input-type=module -e "import('./lib/supabase-storage.js').then(() => console.log('Supabase Storage adapter import OK'))"
           mapfile -t api_files < <(find api -type f -name '*.js' -print | sort)
           test "${#api_files[@]}" -gt 0
           for file in "${api_files[@]}"; do

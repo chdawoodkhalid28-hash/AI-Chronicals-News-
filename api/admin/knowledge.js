@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return res.status(503).json({ error: "Private knowledge storage is not configured" });
+  if (!process.env.SUPABASE_URL || !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) return res.status(503).json({ error: "Supabase private knowledge storage is not configured" });
 
   const body = req.body || {};
   try {
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         query: body.query,
         limit: body.limit
       });
-      return res.status(200).json({ ok: true, records, retrieval: "private-blob-keyword-rag", vectorEmbeddings: false });
+      return res.status(200).json({ ok: true, records, retrieval: "supabase-private-keyword-rag", vectorEmbeddings: false });
     }
     return res.status(400).json({ error: "Action must be save or search" });
   } catch (error) {
