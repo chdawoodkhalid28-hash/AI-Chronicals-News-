@@ -81,8 +81,8 @@ The five specialist roles are separate model invocations coordinated by the depa
 
 ## Required Vercel environment variables
 - `ADMIN_PASSWORD` (or legacy `ADMINPASSWORD`) — required for authenticated Admin APIs.
-- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management and media metadata persistence. Keep service-role keys server-side only.
-- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) also authorize server-side private media operations in the Supabase Storage bucket. No Vercel Blob token is required by the current private-media implementation.
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY1` (or `SUPABASE_SERVICE_ROLE_KEY`) — required for News Management, media metadata, and server-side private Supabase Storage operations. Keep service-role keys server-side only.
+- `SUPABASE_MEDIA_BUCKET` — optional private media bucket name; defaults to `newsroom-private-media`. No Vercel Blob token is required by the current private-media implementation.
 - `OPENAI_API_KEY` — required only when generating graphics; this action may incur API usage costs.
 - `OFFICIAL_SOURCE_DOMAINS` — optional comma-separated trusted official publisher hostnames (for example, `gov.pk,example.gov`); only server-configured domains can qualify for the one-official-source verification path.
 - `GEMINI_API_KEY` — enables Gemini 3.8 Flash text generation and Google Search-grounded research. Buland, department workflows and the draft endpoint can fall back to Gemini when OpenAI is unavailable or quota-limited.
