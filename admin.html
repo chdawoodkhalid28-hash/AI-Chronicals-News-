@@ -525,7 +525,7 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
       "Supabase schema probe: "+(databaseTest?(databaseTest.ok?(databaseTest.connectedTables||0)+"/"+(databaseTest.totalTables||8)+" tables and expected columns verified":"UNAVAILABLE — "+(databaseTest.status||"unknown")):"not run"),
       "Supabase table details: "+tableSummary,
       "Provider policy: Gemini text fallback is enabled; grounded research remains source-gated",
-      "Blob token (presence only): "+(c.blobTokenConfigured?"configured":"not configured"),
+      "Private media storage (Supabase): "+(c.supabasePrivateMediaConfigured?"configured":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
       "Checked: "+(data.checkedAt||"unknown"),
