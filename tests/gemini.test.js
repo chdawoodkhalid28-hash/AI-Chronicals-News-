@@ -29,7 +29,7 @@ test("Gemini generation calls the configured model without exposing the API key"
 
   const result = await generateGeminiText("Reply with a connection check", { maxOutputTokens: 32 });
 
-  assert.match(requestUrl, /models\\/gemini-3\\.8-flash:generateContent$/);
+  assert.ok(requestUrl.endsWith("/models/gemini-3.8-flash:generateContent"));
   assert.equal(requestOptions.headers["x-goog-api-key"], "test-only-gemini-key");
   assert.ok(requestOptions.signal);
   assert.equal(result.text, "GEMINI_CONNECTION_OK");
