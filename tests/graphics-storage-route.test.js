@@ -125,3 +125,30 @@ test("private graphics library reads bytes through private Supabase Storage", as
   assert.equal(calls[1][0], "blob");
   assert.deepEqual(calls[1][2], { access: "private", useCache: false });
 });
+
+
+test("authenticated manual image upload persists privately without calling paid image generation", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  delete process.env.OPENAI_API_KEY;
+  let savedInput;
+  const uploadHandler = createGraphicsHandler({
+    persistUpload: async input => {
+      savedInput = input;
+      return { id: "123e4567-e89b-12d3-a456-426614174000", storage: "supabase-private-storage", rightsStatus: "pending_review" };
+    }
+  });
+  const res = responseRecorder();
+  await uploadHandler({
+    method: "POST",
+    headers: { authorization: "Bearer graphics-test-password" },
+    body: { action: "upload", imageData: "cG5n", mimeType: "image/png", altText: "User supplied image" }
+  }, res);
+  assert.equal(res.statusCode, 201);
+  assert.equal(savedInput.mimeType, "image/png");
+  assert.equal(savedInput.altText, "User supplied image");
+  assert.equal(res.body.storage, "private");
+  assert.equal(res.body.publication, "DISABLED");
+  assert.equal(res.body.rightsStatus, "pending_review");
+});
