@@ -188,7 +188,7 @@ a{color:#e5c77f}
 <section class="panel" id="researchPanel">
 <h2>ریسرچ اور فیکٹ چیک — Research & Fact-check</h2>
 <p class="muted">ہر شعبے کے نتائج، ذرائع، ثبوت، تضادات اور مزید تصدیق کی ضرورت کو رپورٹ میں دیکھیں۔ سرچ citation خود بخود اس بات کا ثبوت نہیں کہ اصل صفحہ آزادانہ طور پر verify کیا گیا ہے۔</p>
-<section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک صرف کنفیگریشن کی موجودگی بتاتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
+<section class="panel" id="diagnosticsPanel"><h3>سسٹم تشخیص — System Diagnostics</h3><p class="muted">یہ چیک live API، Supabase کے تمام متوقع table columns اور Gemini text response کو جانچتا ہے؛ کوئی API key یا پاس ورڈ ظاہر نہیں کرتا۔</p><button id="diagnosticsButton" type="button">سسٹم چیک کریں</button><div id="diagnosticsResult" class="status" role="status">ابھی تشخیص نہیں چلائی گئی۔</div></section>
 <section class="panel" id="outputPanel" hidden>
 <h2>غیر شائع شدہ ڈرافٹ <span class="tag">منظوری درکار</span></h2>
 <div id="reportView"></div><details class="raw-data"><summary>مکمل خام JSON رپورٹ</summary><div id="result"></div></details><button id="exportCurrent" type="button">اس رپورٹ کا JSON Export کریں</button>
@@ -499,16 +499,21 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
     const data=await response.json();
     if(!response.ok||!data||!data.capabilities)throw new Error(data&&data.error||"Health endpoint returned an invalid response");
     const c=data.capabilities;
-    let geminiTest=null;
-    if(c.geminiKeyConfigured){
-      try{
-        const testResponse=await fetch("/api/health?gemini=1",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
-        geminiTest=await testResponse.json();
-        if(!testResponse.ok)geminiTest.ok=false;
-      }catch(testError){
-        geminiTest={ok:false,error:testError.message};
-      }
-    }
+    const [databaseTest,geminiTest]=await Promise.all([
+      c.supabaseConfigured
+        ? fetch("/api/health?supabase=all",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"})
+            .then(async response=>{const result=await response.json();if(!response.ok)result.ok=false;return result;})
+            .catch(error=>({ok:false,status:"request_failed",error:error.message}))
+        : Promise.resolve({ok:false,status:"not_configured"}),
+      c.geminiKeyConfigured
+        ? fetch("/api/health?gemini=1",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"})
+            .then(async response=>{const result=await response.json();if(!response.ok)result.ok=false;return result;})
+            .catch(error=>({ok:false,status:"request_failed",error:error.message}))
+        : Promise.resolve(null)
+    ]);
+    const tableSummary=databaseTest&&Array.isArray(databaseTest.tables)
+      ? databaseTest.tables.map(item=>item.table+":"+item.status).join(", ")
+      : "not available";
     output.textContent=[
       "API status: "+(data.status||"unknown"),
       "Admin password: "+(c.adminPasswordConfigured?"configured":"MISSING"),
@@ -517,12 +522,15 @@ document.getElementById("diagnosticsButton").addEventListener("click",async()=>{
       "Gemini configured model: "+(c.geminiProvider||"default model"),
       "Gemini live text test: "+(geminiTest?(geminiTest.ok?"CONNECTED":"UNAVAILABLE"):"not run"),
       "Gemini model used: "+(geminiTest&&geminiTest.model||"not confirmed"),
+      "Supabase schema probe: "+(databaseTest?(databaseTest.ok?(databaseTest.connectedTables||0)+"/"+(databaseTest.totalTables||8)+" tables and expected columns verified":"UNAVAILABLE — "+(databaseTest.status||"unknown")):"not run"),
+      "Supabase table details: "+tableSummary,
       "Provider policy: Gemini text fallback is enabled; grounded research remains source-gated",
       "Blob token (presence only): "+(c.blobTokenConfigured?"configured":"not configured"),
       "Approval Queue: "+(data.approvalQueuePersistence||"browser-local-only"),
       "Publishing: "+(data.publishing||"unknown"),
       "Checked: "+(data.checkedAt||"unknown"),
-      geminiTest&&!geminiTest.ok?"Gemini detail: "+(geminiTest.error||geminiTest.status||"unknown error"):""
+      geminiTest&&!geminiTest.ok?"Gemini detail: "+(geminiTest.error||geminiTest.status||"unknown error"):"",
+      databaseTest&&!databaseTest.ok?"Supabase detail: "+(databaseTest.error||databaseTest.status||"unknown error"):""
     ].filter(Boolean).join("\\n");
   }catch(error){output.textContent="تشخیص ناکام: "+error.message;}
   finally{button.disabled=false;}
