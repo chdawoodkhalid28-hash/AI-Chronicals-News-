@@ -198,7 +198,7 @@ a{color:#e5c77f}
 <p class="muted">ہر ڈپارٹمنٹ رپورٹ میں Graphics Designer کا visual brief اور presentation plan شامل ہوگا۔ اصل تصویر صرف متعلقہ رپورٹ کے Generate Graphics بٹن پر Admin کی کارروائی سے بنے گی؛ کوئی تصویر یا ویڈیو خودکار طور پر شائع نہیں ہوگی۔</p>
 <p class="muted">پہلے Assignment Center سے نیوز روم رن مکمل کریں، پھر Research رپورٹ میں مطلوبہ شعبے کا graphics action استعمال کریں۔ استعمال شدہ تصویر، ماخذ اور حقوق کی حیثیت کی جانچ اشاعت سے پہلے لازم ہے۔</p>
 <p><a href="/graphics/department-templateflyers.html" target="_blank" rel="noopener">10 Department Master TemplateFlyers — تمام شعبہ جاتی ماسٹر گرافکس کھولیں</a></p><p><a href="/graphics/drafts/newsroom-layout-final-review.html" target="_blank" rel="noopener">Newsroom Layout — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/departmental-templates-final-review.html" target="_blank" rel="noopener">Departmental Templates — Final Review Draft کھولیں</a></p><p><a href="/graphics/drafts/breaking-news-final-review.html" target="_blank" rel="noopener">Breaking News Graphics — Final Review Draft کھولیں</a></p><p><a href="/graphics/broadcast-vfx-template-suite.html" target="_blank" rel="noopener">Broadcast VFX Template Suite کھولیں</a></p><p class="muted">یہ تمام لنکس review/preview assets ہیں؛ اشاعت سے پہلے ایڈمن کی منظوری، story-specific verified copy اور image rights check لازم ہے۔</p><p class="muted">اس Draft میں newsroom dashboard، Breaking News، lower-third، social card، vertical story، data explainer اور editorial status slate شامل ہیں۔ متن براہ راست تبدیل اور Print / Save PDF کیا جا سکتا ہے۔</p>
-<div class="panel"><h3>نجی Graphics Library</h3><p class="muted">محفوظ شدہ گرافکس صرف Admin تصدیق کے بعد نجی Supabase Storage سے کھلیں گے۔ ہر نئی تصویر کے حقوق کی حیثیت پہلے Pending Review ہوگی۔</p><button id="loadGraphicsLibrary" type="button">محفوظ گرافکس لوڈ کریں</button><div id="graphicsLibraryStatus" class="status" role="status">ابھی لائبریری لوڈ نہیں ہوئی۔</div><div id="graphicsLibrary" class="department-progress"></div></div>
+<div class="panel"><h3>نجی Graphics Library</h3><p class="muted">محفوظ شدہ گرافکس صرف Admin تصدیق کے بعد نجی Supabase Storage سے کھلیں گے۔ ہر نئی تصویر کے حقوق کی حیثیت پہلے Pending Review ہوگی۔</p><label for="manualGraphicsUpload">اپنے کمپیوٹر/موبائل سے تصویر اپ لوڈ کریں (PNG, JPEG, WebP — زیادہ سے زیادہ 3MB)</label><input id="manualGraphicsUpload" type="file" accept="image/png,image/jpeg,image/webp"><label for="manualGraphicsAlt">تصویر کی وضاحت</label><input id="manualGraphicsAlt" type="text" maxlength="500" placeholder="مثلاً: زرعی خبر کے لیے فراہم کردہ تصویر"><button id="uploadGraphicsButton" type="button">نجی لائبریری میں اپ لوڈ کریں</button><div id="manualGraphicsUploadStatus" class="status" role="status">اپ لوڈ سے پہلے تصویر کے حقوق/اجازت کی تصدیق کریں۔</div><button id="loadGraphicsLibrary" type="button">محفوظ گرافکس لوڈ کریں</button><div id="graphicsLibraryStatus" class="status" role="status">ابھی لائبریری لوڈ نہیں ہوئی۔</div><div id="graphicsLibrary" class="department-progress"></div></div>
 <a href="#researchPanel">تازہ Research Report دیکھیں</a>
 </section>
 <section class="panel" id="queuePanel"><h2>محفوظ شدہ Approval Queue</h2><p class="muted">نجی سرور Queue بنیادی محفوظ ریکارڈ ہے؛ مقامی براؤزر Queue بیک اپ/عارضی کاپی ہے۔ سرور تک رسائی ایڈمن پاس ورڈ سے محفوظ ہے۔ کوئی خبر خودکار طور پر شائع نہیں ہوتی۔</p><button id="syncServerQueue" type="button">نجی سرور سے Queue لوڈ / Sync کریں</button><div id="queueSyncStatus" class="status" role="status">سرور Queue لوڈ کرنے کے لیے ایڈمن پاس ورڈ درج کریں۔</div><div id="queueList" class="muted">ابھی کوئی ڈرافٹ محفوظ نہیں۔</div><button id="exportQueue" type="button">Queue JSON Export کریں</button><label for="importQueue">پہلے محفوظ کیا گیا Queue JSON واپس درآمد کریں</label><input id="importQueue" type="file" accept="application/json,.json"></section>
@@ -702,6 +702,28 @@ button.addEventListener("click",async()=>{
   }finally{
     button.disabled=false;
   }
+});
+
+document.getElementById("uploadGraphicsButton").addEventListener("click",async()=>{
+  const status=document.getElementById("manualGraphicsUploadStatus");
+  const fileInput=document.getElementById("manualGraphicsUpload");
+  const file=fileInput.files&&fileInput.files[0];
+  const password=activeAdminPassword||document.getElementById("password").value.trim();
+  if(!password){status.textContent="پہلے Admin Panel میں password درج کرکے تصدیق کریں۔";return;}
+  if(!file){status.textContent="پہلے تصویر منتخب کریں۔";return;}
+  if(!["image/png","image/jpeg","image/webp"].includes(file.type)){status.textContent="صرف PNG, JPEG یا WebP تصویر قابلِ قبول ہے۔";return;}
+  if(file.size>3*1024*1024){status.textContent="تصویر 3MB سے بڑی ہے؛ براہ کرم چھوٹی فائل منتخب کریں۔";return;}
+  const button=document.getElementById("uploadGraphicsButton");button.disabled=true;status.textContent="تصویر نجی Supabase Storage میں محفوظ ہو رہی ہے…";
+  try{
+    const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error("فائل پڑھی نہیں جا سکی۔"));reader.readAsDataURL(file);});
+    const response=await fetch("/api/admin/graphics",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:JSON.stringify({action:"upload",mimeType:file.type,imageData:dataUrl.split(",")[1],altText:document.getElementById("manualGraphicsAlt").value.trim()})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.detail||data.error||"Upload failed");
+    status.textContent="تصویر نجی لائبریری میں محفوظ ہوگئی۔ حقوق کی حیثیت: Pending Review۔";
+    fileInput.value="";
+    document.getElementById("loadGraphicsLibrary").click();
+  }catch(error){status.textContent="تصویر اپ لوڈ نہیں ہوئی: "+error.message;}
+  finally{button.disabled=false;}
 });
 
 document.getElementById("loadGraphicsLibrary").addEventListener("click",async()=>{
