@@ -80,7 +80,7 @@ test("manual image uploads validate PNG signatures and store privately for right
     upload: async (pathname, bytes) => { uploaded = { pathname, bytes: Buffer.from(bytes) }; },
     insert: async record => { inserted = record; return [{ id: "123e4567-e89b-12d3-a456-426614174000", ...record }]; }
   });
-  assert.match(uploaded.pathname, /^newsroom-uploads\\/.+\\.png$/);
+  assert.ok(uploaded.pathname.startsWith("newsroom-uploads/") && uploaded.pathname.endsWith(".png"));
   assert.deepEqual(uploaded.bytes, png);
   assert.equal(inserted.blob_pathname, uploaded.pathname);
   assert.equal(inserted.rights_status, "pending_review");
@@ -114,5 +114,5 @@ test("manual image uploads roll back private objects if metadata insertion fails
     }),
     /synthetic upload index failure/
   );
-  assert.match(removed, /^newsroom-uploads\\/.+\\.png$/);
+  assert.ok(removed.startsWith("newsroom-uploads/") && removed.endsWith(".png"));
 });
