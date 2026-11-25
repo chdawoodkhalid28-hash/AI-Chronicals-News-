@@ -43,3 +43,18 @@ Production publishing: DISABLED
 
 ## Closure rule
 Keep this work OPEN until CI is green, authenticated disposable CRUD/media tests pass, schema details are checked, and the compensation/transaction decision is resolved. Production publishing stays disabled.
+
+
+## 25 November 2026 — Preview verification and Gemini timeout recovery
+
+- Preview code commit: `6b0f001dc63eb894d7c62030aba6c809597055ee`; deployment `dpl_GumtBRSVarcg98rP9RsxM4LhVbC7` reached READY at https://ai-chronicals-news-47u0519ab-chdawoodkhalid28-5713.vercel.app .
+- Live public-route smoke tests returned HTTP 200 for 13/13 paths: homepage, Admin Panel, News Management, connectors page, master TemplateFlyer page, broadcast VFX suite, image gallery, ready-made flyer library, three review drafts, and two existing news pages.
+- Live read-only Supabase health check returned HTTP 200: all 8/8 tables connected. The single-table `news_articles` probe also returned HTTP 200.
+- Initial live Gemini diagnostic timed out. Fixed text-only Gemini generation to use bounded request timeouts and retry the lightweight `gemini-3.5-flash-lite` model after primary-model timeout. Grounded Google Search requests deliberately do not fall back to an ungrounded model.
+- Live `/api/health?gemini=1` then returned HTTP 200 with `status: connected`; the successful test used `gemini-3.5-flash-lite` and reported 17 total tokens.
+- Added regression tests for timeout fallback and for preserving the no-fallback rule on grounded research.
+- Latest Node test workflow passed 150/150 tests, zero failures. All five workflows passed on commit `6b0f001dc63eb894d7c62030aba6c809597055ee`: Node tests, backend source checks, newsroom suite, newsroom API/safety, and department-team safeguards.
+- Live authenticated Admin login, disposable queue CRUD, real private-media upload/read/delete, and live draft creation remain unverified because the available deployment fetch path cannot submit the owner's admin credentials. Do not claim those operations passed; use the owner's secure browser session for the remaining acceptance tests.
+- Production deployment and all news/social publishing remain disabled. This Preview is not a Production release.
+
+**Status: Preview foundation and read-only database/AI diagnostics pass; authenticated write-path acceptance remains open.**
