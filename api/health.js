@@ -20,8 +20,8 @@ export default async function handler(req, res) {
     openAIKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     geminiKeyConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiProvider: DEFAULT_MODEL,
-    blobTokenConfigured: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
     supabaseConfigured,
+    supabasePrivateMediaConfigured: supabaseConfigured,
     approvalQueuePersistence: supabaseConfigured ? "supabase-postgres" : "browser-local-only"
   };
 
