@@ -10,8 +10,8 @@ test.afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
-test("Gemini defaults to the requested cost-efficient Flash Lite model", () => {
-  assert.equal(DEFAULT_MODEL, "gemini-3.5-flash-lite");
+test("Gemini defaults to the configured primary Flash model", () => {
+  assert.equal(DEFAULT_MODEL, "gemini-3.8-flash");
 });
 
 test("Gemini generation calls the configured model without exposing the API key", async () => {
@@ -33,7 +33,7 @@ test("Gemini generation calls the configured model without exposing the API key"
   assert.equal(requestOptions.headers["x-goog-api-key"], "test-only-gemini-key");
   assert.ok(requestOptions.signal);
   assert.equal(result.text, "GEMINI_CONNECTION_OK");
-  assert.equal(result.model, "gemini-3.5-flash-lite");
+  assert.equal(result.model, "gemini-3.8-flash");
   assert.equal(JSON.stringify(result).includes("test-only-gemini-key"), false);
 });
 
