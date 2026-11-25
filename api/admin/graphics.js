@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { getPrivateSupabaseObject, deletePrivateSupabaseObject } from "../../lib/supabase-storage.js";
+import { getPrivateSupabaseObject, deletePrivateSupabaseObject, restorePrivateSupabaseObject } from "../../lib/supabase-storage.js";
 import { supabaseRequest } from "../../lib/supabase-rest.js";
 import { persistGeneratedImage, persistUploadedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
@@ -25,6 +25,7 @@ export function createGraphicsHandler({
   findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
   getPrivateBlob = getPrivateSupabaseObject,
   deletePrivateBlob = deletePrivateSupabaseObject,
+  restorePrivateBlob = restorePrivateSupabaseObject,
   deleteMediaAsset = assetId => supabaseRequest("media_assets", { method: "DELETE", query: new URLSearchParams({ id: "eq." + assetId }).toString(), prefer: "return=minimal" })
 } = {}) {
 return async function handler(req, res) {
@@ -35,7 +36,7 @@ return async function handler(req, res) {
   }
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
-  const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  const supplied = (req.headers.authorization || "").replace(/^Bearer\\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
 
   if (req.method === "DELETE") {
@@ -55,8 +56,28 @@ return async function handler(req, res) {
       if (!isAllowedPrivateMediaPath(pathname)) {
         return res.status(409).json({ error: "Stored media path is not eligible for deletion" });
       }
+
+      // Snapshot the private object before deleting it. If metadata deletion fails,
+      // restore the exact bytes at the same private path so the DB never points to a
+      // missing object. This is compensating recovery, not a cross-service transaction.
+      const storedBlob = await getPrivateBlob(pathname, { access: "private", useCache: false });
+      if (!storedBlob || storedBlob.statusCode !== 200 || !storedBlob.stream) {
+        return res.status(409).json({ error: "Private media object is unavailable; metadata was retained" });
+      }
+      const backupBytes = Buffer.from(await new Response(storedBlob.stream).arrayBuffer());
+      const contentType = storedBlob.contentType || (asset.media_type === "image" ? "image/png" : "application/octet-stream");
+
       await deletePrivateBlob(pathname);
-      await deleteMediaAsset(assetId);
+      try {
+        await deleteMediaAsset(assetId);
+      } catch (metadataError) {
+        try {
+          await restorePrivateBlob(pathname, backupBytes, contentType);
+        } catch (restoreError) {
+          metadataError.message += " | private object restoration failed: " + restoreError.message;
+        }
+        throw metadataError;
+      }
       return res.status(200).json({ ok: true, id: assetId, storage: "private", publication: "DISABLED" });
     } catch (error) {
       return res.status(Number.isInteger(error.statusCode) ? error.statusCode : 502)
@@ -162,7 +183,7 @@ return async function handler(req, res) {
     "Do not add a publication logo or watermark. Prefer a visual illustration or infographic-style composition rather than text-heavy artwork.",
     headline ? "Story headline for context: " + headline : "",
     "Creative direction: " + prompt
-  ].filter(Boolean).join("\n");
+  ].filter(Boolean).join("\\n");
 
   try {
     const response = await fetch("https://api.openai.com/v1/images/generations", {
