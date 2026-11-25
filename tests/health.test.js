@@ -135,9 +135,11 @@ test("full Supabase probe checks private approval and department knowledge table
   process.env.SUPABASE_URL = "https://example.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
   const requestedTables = [];
+  const requestedQueries = [];
   globalThis.fetch = async url => {
     const parsed = new URL(String(url));
     requestedTables.push(parsed.pathname.split("/").pop());
+    requestedQueries.push(parsed.searchParams);
     return new Response("[]", { status: 200, headers: { "Content-Type": "application/json" } });
   };
   const res = responseRecorder();
@@ -151,4 +153,31 @@ test("full Supabase probe checks private approval and department knowledge table
     "editorial_events", "department_outputs", "media_assets",
     "approval_queue", "department_knowledge"
   ]));
+  assert.equal(requestedQueries.every(query => query.get("limit") === "0"), true);
+  const articlesQuery = requestedQueries[requestedTables.indexOf("news_articles")];
+  assert.ok(articlesQuery.get("select").includes("publication_status"));
+  assert.ok(articlesQuery.get("select").includes("created_by"));
+  assert.equal(res.body.probe, "read_only_select_expected_columns");
+  assert.equal(res.body.tables.every(table => table.columnsChecked > 0), true);
+});
+
+test("full Supabase probe identifies missing expected columns as schema mismatch", async () => {
+  process.env.SUPABASE_URL = "https://example.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
+  globalThis.fetch = async url => {
+    const parsed = new URL(String(url));
+    if (parsed.pathname.endsWith("/news_articles")) {
+      return new Response(JSON.stringify({ message: "column created_by does not exist" }), {
+        status: 400, headers: { "Content-Type": "application/json" }
+      });
+    }
+    return new Response("[]", { status: 200, headers: { "Content-Type": "application/json" } });
+  };
+  const res = responseRecorder();
+  await handler({ method: "GET", query: { supabase: "all" } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.status, "partial_schema_or_access");
+  assert.equal(res.body.tables.find(table => table.table === "news_articles").status, "schema_mismatch");
+  assert.equal(JSON.stringify(res.body).includes("created_by does not exist"), false);
 });
