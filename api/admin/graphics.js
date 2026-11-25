@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { getPrivateSupabaseObject } from "../../lib/supabase-storage.js";
+import { getPrivateSupabaseObject, deletePrivateSupabaseObject } from "../../lib/supabase-storage.js";
 import { supabaseRequest } from "../../lib/supabase-rest.js";
 import { persistGeneratedImage, persistUploadedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
@@ -15,18 +15,46 @@ export function createGraphicsHandler({
   persistUpload = persistUploadedImage,
   listMediaAssets = query => supabaseRequest("media_assets", { query }),
   findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
-  getPrivateBlob = getPrivateSupabaseObject
+  getPrivateBlob = getPrivateSupabaseObject,
+  deletePrivateBlob = deletePrivateSupabaseObject,
+  deleteMediaAsset = assetId => supabaseRequest("media_assets", { method: "DELETE", query: new URLSearchParams({ id: "eq." + assetId }).toString(), prefer: "return=minimal" })
 } = {}) {
 return async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method !== "POST" && req.method !== "GET") {
-    res.setHeader("Allow", "GET, POST");
+  if (req.method !== "POST" && req.method !== "GET" && req.method !== "DELETE") {
+    res.setHeader("Allow", "GET, POST, DELETE");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const expected = process.env.ADMIN_PASSWORD || process.env.ADMINPASSWORD;
   const supplied = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
   if (!safeEqual(supplied, expected)) return res.status(401).json({ error: "Admin authentication failed" });
+
+  if (req.method === "DELETE") {
+    if (!process.env.SUPABASE_URL ||
+        !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      return res.status(503).json({ error: "Private graphics storage is not fully configured" });
+    }
+    const assetId = typeof req.query?.id === "string" ? req.query.id : typeof req.body?.id === "string" ? req.body.id : "";
+    if (!/^[0-9a-f-]{36}$/i.test(assetId)) {
+      return res.status(400).json({ error: "A valid media asset ID is required" });
+    }
+    try {
+      const rows = await findMediaAsset(assetId);
+      const asset = rows && rows[0];
+      if (!asset) return res.status(404).json({ error: "Media asset not found" });
+      const pathname = typeof asset.blob_pathname === "string" ? asset.blob_pathname : "";
+      if (!/^(newsroom-uploads|newsroom-graphics)\\/[A-Za-z0-9._-]+$/.test(pathname) || pathname.includes("..")) {
+        return res.status(409).json({ error: "Stored media path is not eligible for deletion" });
+      }
+      await deletePrivateBlob(pathname);
+      await deleteMediaAsset(assetId);
+      return res.status(200).json({ ok: true, id: assetId, storage: "private", publication: "DISABLED" });
+    } catch (error) {
+      return res.status(Number.isInteger(error.statusCode) ? error.statusCode : 502)
+        .json({ error: "Private graphics deletion failed", detail: error.message });
+    }
+  }
 
   if (req.method === "GET") {
     if (!process.env.SUPABASE_URL ||
