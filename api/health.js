@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       ok: connected === tableNames.length,
       provider: "supabase",
       status: connected === tableNames.length ? "all_tables_connected" : "partial_schema_or_access",
-      probe: "read_only_select_all_tables",
+      probe: "read_only_select_expected_columns",
       connectedTables: connected,
       totalTables: tableNames.length,
       tables,
