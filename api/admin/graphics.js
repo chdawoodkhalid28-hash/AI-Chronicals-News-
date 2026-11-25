@@ -10,6 +10,14 @@ function safeEqual(a, b) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 
+function isAllowedPrivateMediaPath(pathname) {
+  if (typeof pathname !== "string") return false;
+  const parts = pathname.split("/");
+  const allowedFolder = parts[0] === "newsroom-uploads" || parts[0] === "newsroom-graphics";
+  return allowedFolder && parts.length === 2 &&
+    /^[A-Za-z0-9._-]+$/.test(parts[1]) && !parts[1].includes("..");
+}
+
 export function createGraphicsHandler({
   persistImage = persistGeneratedImage,
   persistUpload = persistUploadedImage,
@@ -44,9 +52,7 @@ return async function handler(req, res) {
       const asset = rows && rows[0];
       if (!asset) return res.status(404).json({ error: "Media asset not found" });
       const pathname = typeof asset.blob_pathname === "string" ? asset.blob_pathname : "";
-      const parts = pathname.split("/");
-      const allowedFolder = parts[0] === "newsroom-uploads" || parts[0] === "newsroom-graphics";
-      if (!allowedFolder || parts.length !== 2 || !/^[A-Za-z0-9._-]+$/.test(parts[1]) || parts[1].includes("..")) {
+      if (!isAllowedPrivateMediaPath(pathname)) {
         return res.status(409).json({ error: "Stored media path is not eligible for deletion" });
       }
       await deletePrivateBlob(pathname);
@@ -79,6 +85,9 @@ return async function handler(req, res) {
       const rows = await findMediaAsset(assetId);
       const asset = rows && rows[0];
       if (!asset) return res.status(404).json({ error: "Media asset not found" });
+      if (!isAllowedPrivateMediaPath(asset.blob_pathname)) {
+        return res.status(409).json({ error: "Stored media path is not eligible for retrieval" });
+      }
       const blob = await getPrivateBlob(asset.blob_pathname, { access: "private", useCache: false });
       if (!blob || blob.statusCode !== 200 || !blob.stream) {
         return res.status(404).json({ error: "Private media object not found" });
