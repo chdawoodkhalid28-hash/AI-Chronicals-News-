@@ -66,7 +66,6 @@ test("generated graphics refuse to run when private storage is unavailable", asy
   );
 });
 
-import { persistUploadedImage } from "../lib/media-storage.js";
 
 test("manual image uploads validate PNG signatures and store privately for rights review", async () => {
   process.env.SUPABASE_URL = "https://test-project.supabase.co";
