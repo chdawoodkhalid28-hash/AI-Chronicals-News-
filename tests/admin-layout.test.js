@@ -40,3 +40,37 @@ test("publication safety language remains visible", () => {
   assert.ok(html.includes("اشاعت بند ہے"));
   assert.ok(html.includes("ایڈمن منظوری کے بغیر کوئی خبر شائع نہیں ہوگی"));
 });
+
+
+test("Department Knowledge admin UI exposes all configured desks and safe draft defaults", () => {
+  assert.ok(html.includes('id="knowledgePanel"'));
+  assert.ok(html.includes('href="#knowledgePanel"'));
+  assert.ok(html.includes('id="knowledgeDepartment"'));
+  assert.ok(html.includes('id="knowledgeTitle"'));
+  assert.ok(html.includes('id="knowledgeContent"'));
+  assert.ok(html.includes('id="knowledgeSource"'));
+  assert.ok(html.includes('id="knowledgeTags"'));
+  assert.ok(html.includes('<option value="draft" selected>'));
+  assert.ok(html.includes('<option value="approved">'));
+  assert.ok(html.includes('id="saveKnowledge"'));
+  assert.ok(html.includes('id="searchKnowledge"'));
+  assert.ok(html.includes('fetch("/api/admin/knowledge"'));
+  assert.ok(html.includes('action:"save"'));
+  assert.ok(html.includes('action:"search"'));
+  assert.ok(html.includes('createElement("a")'));
+  assert.ok(html.includes('rel="noopener noreferrer"'));
+  assert.ok(html.includes("vector embeddings نہیں"));
+});
+
+test("Knowledge department selector covers all 26 backend department keys plus Global", async () => {
+  const store = await readFile(new URL("../lib/knowledge-store.js", import.meta.url), "utf8");
+  const selector = html.match(/<select id="knowledgeDepartment">([\\s\\S]*?)<\\/select>/);
+  assert.ok(selector, "Knowledge department selector missing");
+  const uiKeys = [...selector[1].matchAll(/<option value="([^"]+)"/g)].map(match => match[1]);
+  const backendBlock = store.match(/const DEPARTMENT_KEYS = new Set\\(\\[([\\s\\S]*?)\\]\\);/);
+  assert.ok(backendBlock, "backend department registry missing");
+  const backendKeys = [...backendBlock[1].matchAll(/"([a-z_]+)"/g)].map(match => match[1]);
+  assert.equal(uiKeys.length, 27, "selector must include Global plus 26 desks");
+  assert.equal(new Set(uiKeys).size, uiKeys.length, "duplicate department option");
+  assert.deepEqual(uiKeys.filter(key => key !== "global").sort(), backendKeys.sort());
+});
