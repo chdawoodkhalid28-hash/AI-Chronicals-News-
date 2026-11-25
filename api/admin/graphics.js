@@ -44,7 +44,9 @@ return async function handler(req, res) {
       const asset = rows && rows[0];
       if (!asset) return res.status(404).json({ error: "Media asset not found" });
       const pathname = typeof asset.blob_pathname === "string" ? asset.blob_pathname : "";
-      if (!/^(newsroom-uploads|newsroom-graphics)\\/[A-Za-z0-9._-]+$/.test(pathname) || pathname.includes("..")) {
+      const parts = pathname.split("/");
+      const allowedFolder = parts[0] === "newsroom-uploads" || parts[0] === "newsroom-graphics";
+      if (!allowedFolder || parts.length !== 2 || !/^[A-Za-z0-9._-]+$/.test(parts[1]) || parts[1].includes("..")) {
         return res.status(409).json({ error: "Stored media path is not eligible for deletion" });
       }
       await deletePrivateBlob(pathname);
