@@ -64,12 +64,16 @@ test("Department Knowledge admin UI exposes all configured desks and safe draft 
 
 test("Knowledge department selector covers all 26 backend department keys plus Global", async () => {
   const store = await readFile(new URL("../lib/knowledge-store.js", import.meta.url), "utf8");
-  const selector = html.match(/<select id="knowledgeDepartment">([\\s\\S]*?)<\\/select>/);
-  assert.ok(selector, "Knowledge department selector missing");
-  const uiKeys = [...selector[1].matchAll(/<option value="([^"]+)"/g)].map(match => match[1]);
-  const backendBlock = store.match(/const DEPARTMENT_KEYS = new Set\\(\\[([\\s\\S]*?)\\]\\);/);
-  assert.ok(backendBlock, "backend department registry missing");
-  const backendKeys = [...backendBlock[1].matchAll(/"([a-z_]+)"/g)].map(match => match[1]);
+  const selectorStart = html.indexOf('<select id="knowledgeDepartment">');
+  assert.ok(selectorStart >= 0, "Knowledge department selector missing");
+  const selectorEnd = html.indexOf("</select>", selectorStart);
+  const selector = html.slice(selectorStart, selectorEnd);
+  const uiKeys = [...selector.matchAll(/<option value="([^"]+)"/g)].map(match => match[1]);
+  const backendStart = store.indexOf("const DEPARTMENT_KEYS = new Set([");
+  assert.ok(backendStart >= 0, "backend department registry missing");
+  const backendEnd = store.indexOf("]);", backendStart);
+  const backendBlock = store.slice(backendStart, backendEnd);
+  const backendKeys = [...backendBlock.matchAll(/"([a-z_]+)"/g)].map(match => match[1]);
   assert.equal(uiKeys.length, 27, "selector must include Global plus 26 desks");
   assert.equal(new Set(uiKeys).size, uiKeys.length, "duplicate department option");
   assert.deepEqual(uiKeys.filter(key => key !== "global").sort(), backendKeys.sort());
