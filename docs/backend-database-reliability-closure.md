@@ -53,8 +53,18 @@ Keep this work OPEN until CI is green, authenticated disposable CRUD/media tests
 - Initial live Gemini diagnostic timed out. Fixed text-only Gemini generation to use bounded request timeouts and retry the lightweight `gemini-3.5-flash-lite` model after primary-model timeout. Grounded Google Search requests deliberately do not fall back to an ungrounded model.
 - Live `/api/health?gemini=1` then returned HTTP 200 with `status: connected`; the successful test used `gemini-3.5-flash-lite` and reported 17 total tokens.
 - Added regression tests for timeout fallback and for preserving the no-fallback rule on grounded research.
-- Latest Node test workflow passed 150/150 tests, zero failures. All five workflows passed on commit `6b0f001dc63eb894d7c62030aba6c809597055ee`: Node tests, backend source checks, newsroom suite, newsroom API/safety, and department-team safeguards.
+- Latest Node test workflow passed 152/152 tests, zero failures. All five workflows passed on commit `f33c653d79c46c70048d3cf32dd1c40d3c0509c5`: Node tests, backend source checks, newsroom suite, newsroom API/safety, and department-team safeguards.
 - Live authenticated Admin login, disposable queue CRUD, real private-media upload/read/delete, and live draft creation remain unverified because the available deployment fetch path cannot submit the owner's admin credentials. Do not claim those operations passed; use the owner's secure browser session for the remaining acceptance tests.
 - Production deployment and all news/social publishing remain disabled. This Preview is not a Production release.
 
 **Status: Preview foundation and read-only database/AI diagnostics pass; authenticated write-path acceptance remains open.**
+
+
+## 25 November 2026 — Latest verification follow-up
+
+- Rechecked the current Preview deployment: it remains READY. Live read-only Supabase health returned HTTP 200 with 8/8 tables connected; live Gemini diagnostic returned HTTP 200 and generated a response using the working fallback model `gemini-3.5-flash-lite` after the configured primary model did not complete promptly.
+- Latest branch commit `f33c653d79c46c70048d3cf32dd1c40d3c0509c5` passed all five GitHub Actions workflows; Node test log confirms 152/152 tests passed.
+- The branch now includes the expected-column Supabase read-only probe. The currently deployed Preview is older than this commit, so that new schema probe is not yet live-verified.
+- Attempted a new Preview deployment from the latest tested commit. Vercel rejected the deployment request because the account/team has exceeded its 100-deployments-per-day API limit; Vercel reports retry after 24 hours. No Production deployment was attempted and no settings or billing were changed.
+- Authenticated live Admin Panel actions, disposable queue CRUD, and real private-media upload/read/delete remain open. The deployment fetch path can serve public HTML and health diagnostics but rejects authenticated admin API paths; do not claim live write-path acceptance.
+- Production publishing remains disabled.
