@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getPrivateSupabaseObject } from "../../lib/supabase-storage.js";
 import { supabaseRequest } from "../../lib/supabase-rest.js";
-import { persistGeneratedImage } from "../../lib/media-storage.js";
+import { persistGeneratedImage, persistUploadedImage } from "../../lib/media-storage.js";
 import { resolveTemplate } from "./templateflyer-routing.js";
 
 function safeEqual(a, b) {
@@ -12,6 +12,7 @@ function safeEqual(a, b) {
 
 export function createGraphicsHandler({
   persistImage = persistGeneratedImage,
+  persistUpload = persistUploadedImage,
   listMediaAssets = query => supabaseRequest("media_assets", { query }),
   findMediaAsset = assetId => supabaseRequest("media_assets", { query: new URLSearchParams({ select: "id,blob_pathname,media_type,rights_status", id: "eq." + assetId, limit: "1" }).toString() }),
   getPrivateBlob = getPrivateSupabaseObject
@@ -64,9 +65,25 @@ return async function handler(req, res) {
     }
   }
 
-  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
-
   const body = req.body || {};
+  if (body.action === "upload") {
+    if (!process.env.SUPABASE_URL ||
+        !(process.env.SUPABASE_SERVICE_ROLE_KEY1 || process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      return res.status(503).json({ error: "Private graphics storage is not fully configured" });
+    }
+    try {
+      const asset = await persistUpload({
+        imageData: body.imageData,
+        mimeType: body.mimeType,
+        altText: typeof body.altText === "string" ? body.altText : ""
+      });
+      return res.status(201).json({ ok: true, asset, storage: "private", rightsStatus: "pending_review", publication: "DISABLED" });
+    } catch (error) {
+      return res.status(error.statusCode || 502).json({ error: "Private image upload failed", detail: error.message });
+    }
+  }
+
+  if (!process.env.OPENAI_API_KEY) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
   const headline = typeof body.headline === "string" ? body.headline.trim().slice(0, 240) : "";
   const director = typeof body.director === "string" ? body.director.trim().slice(0, 120) : "";
