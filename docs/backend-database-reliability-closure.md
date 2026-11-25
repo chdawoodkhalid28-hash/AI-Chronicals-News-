@@ -1,33 +1,42 @@
 # Backend & Database Reliability Closure
 
 Branch: feat/supabase-private-media-storage
-Scope: source-code review and test planning only. Production publishing remains DISABLED.
+Last reviewed: 2026-11-25
+Production publishing: DISABLED
 
-## Verified code controls
-- Admin graphics API uses constant-time token comparison and no-store responses.
-- Private media upload validates MIME type, base64, signatures and a 3 MB size cap.
-- Media uploads and generated graphics index private objects and roll back storage objects if metadata insertion fails.
-- Retrieval/deletion path validation restricts objects to newsroom-uploads/ and newsroom-graphics/ single-file paths.
-- News API creates articles in pending_verification with publication disabled.
-- Verification requires two distinct publisher hosts or one official source.
-- Article edits reset editorial state to pending_verification and publication_status disabled.
-- Deletes require explicit confirmation and existence check.
+## Confirmed in Preview
+- Supabase read-only health probes connected to all 8 configured tables: news_articles, news_sources, news_verification_checks, editorial_events, department_outputs, media_assets, approval_queue, department_knowledge.
+- This is a read-only connectivity result. It is not a live write/delete certification.
+- Vercel runtime logs for the checked Preview deployment returned no warning/error/fatal records in the checked 30-minute window.
+- No production data or publication state was changed.
 
-## Known reliability risks requiring implementation and tests
-1. News article PATCH is not transactional across article, source, and editorial_events REST calls. A source-delete/source-insert or event-write failure can leave partial state. Needs compensating rollback or a database RPC transaction.
-2. News POST inserts article, then sources, then editorial event. Source failure triggers article rollback, but rollback failure is swallowed; event failure occurs after article/sources and may return an error despite persisted records.
-3. News PATCH currently deletes prior sources before inserting replacements. If source insertion fails, the previous source set is lost.
-4. Media delete removes storage object before metadata. If metadata deletion fails, metadata may point to a missing object. Needs compensation/retry or transactional cleanup.
-5. Database credentials/schema connectivity are not owner-authenticated in this audit. Supabase health previously showed 401, so live table checks cannot be marked complete until credentials are corrected.
-6. No live deployment or production mutation is part of this closure; Vercel deployment quota is a known blocker.
+## Implemented safeguards
+- Admin APIs use constant-time bearer-token comparison and no-store responses.
+- News article creation starts at pending_verification with publication_status disabled.
+- Verification requires two distinct publisher hosts or one configured official source.
+- Article edits reset editorial state to pending_verification and publication remains disabled.
+- Article deletion requires explicit confirmation and an existence check.
+- News POST compensates source/article inserts if source or editorial-event insertion fails, preserving the original failure and appending cleanup failures.
+- News PATCH snapshots the prior article and sources and attempts compensating restoration if source/event writes fail.
+- Private media uploads validate PNG/JPEG/WebP signatures, size and MIME type; metadata insertion failure triggers private object cleanup.
+- Private media deletion snapshots the private object before removal. If metadata deletion fails, the object is restored to the same private path with its original bytes/content type. If restoration also fails, the failure detail records both problems.
+- Private media remains private; no public Blob URL is emitted. Rights status remains pending_review.
+- Graphics, queue and draft responses preserve publication DISABLED.
 
-## Required tests before closure
-- Fault-injection tests for each database call in news POST/PATCH/DELETE and media delete.
-- Assert rollback/compensation and preserve the original error.
-- Idempotent retry behavior for duplicate submissions.
-- Schema smoke tests for all eight configured tables.
-- Supabase owner-authenticated read/write/delete in a disposable test record.
-- Run CI and inspect all workflow results for the commit.
+## Automated verification
+- Existing test coverage includes news create/edit compensation, verification rules, admin authorization, private media upload/retrieval/deletion, and queue validation.
+- Added tests for media deletion compensation when metadata deletion fails, including the double-failure case where storage restoration also fails.
+- Backend source checks now run on this Preview branch.
+- CI must be green on the latest commit before closure. Earlier failures caused by bearer-token parsing in the graphics route were corrected; confirm the latest rerun before marking tests passed.
+
+## Still OPEN — required before closure
+1. Confirm all CI workflows pass on the latest commit.
+2. Establish an authenticated Admin Panel browser session to run the disposable approval_queue CRUD test (create/read/update/delete/confirm absent). Never use production newsroom records.
+3. Run a disposable private-media upload/read/delete test and verify metadata and object are both removed; run a controlled metadata-failure test only through mocks, not live fault injection.
+4. Verify admin queue, draft, graphics and news endpoints in the authenticated Preview session.
+5. Confirm all 8 tables' expected columns/constraints against the live schema, not just SELECT access.
+6. Decide whether to replace REST multi-call compensation with PostgreSQL RPC transactions. Compensation is not equivalent to a database transaction and cannot guarantee atomicity if both primary and rollback calls fail.
+7. Recheck that publishing remains disabled in Preview and Production.
 
 ## Closure rule
-Backend/database reliability must remain OPEN until risks 1-4 are fixed and tested, live Supabase schema/access is verified, and CI is green. Publication stays disabled.
+Keep this work OPEN until CI is green, authenticated disposable CRUD/media tests pass, schema details are checked, and the compensation/transaction decision is resolved. Production publishing stays disabled.
