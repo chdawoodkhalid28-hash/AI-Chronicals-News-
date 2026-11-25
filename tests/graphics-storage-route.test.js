@@ -192,3 +192,44 @@ test("private graphics deletion rejects malformed IDs before storage access", as
   assert.equal(res.statusCode, 400);
   assert.equal(calls, 0);
 });
+
+
+test("private graphics deletion refuses paths outside the newsroom media folders", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  let deletes = 0;
+  const deleteHandler = createGraphicsHandler({
+    findMediaAsset: async id => [{ id, blob_pathname: "other-folder/unsafe.png", media_type: "image" }],
+    deletePrivateBlob: async () => { deletes++; },
+    deleteMediaAsset: async () => { deletes++; }
+  });
+  const res = responseRecorder();
+  await deleteHandler({
+    method: "DELETE",
+    headers: { authorization: "Bearer graphics-test-password" },
+    query: { id: "123e4567-e89b-12d3-a456-426614174000" }
+  }, res);
+  assert.equal(res.statusCode, 409);
+  assert.equal(deletes, 0);
+});
+
+test("private media metadata is retained when deleting the stored object fails", async () => {
+  process.env.ADMIN_PASSWORD = "graphics-test-password";
+  process.env.SUPABASE_URL = "https://test-project.supabase.co";
+  process.env.SUPABASE_SERVICE_ROLE_KEY1 = "test-db-key";
+  let metadataDeletes = 0;
+  const deleteHandler = createGraphicsHandler({
+    findMediaAsset: async id => [{ id, blob_pathname: "newsroom-uploads/test.png", media_type: "image" }],
+    deletePrivateBlob: async () => { throw new Error("storage unavailable"); },
+    deleteMediaAsset: async () => { metadataDeletes++; }
+  });
+  const res = responseRecorder();
+  await deleteHandler({
+    method: "DELETE",
+    headers: { authorization: "Bearer graphics-test-password" },
+    query: { id: "123e4567-e89b-12d3-a456-426614174000" }
+  }, res);
+  assert.equal(res.statusCode, 502);
+  assert.equal(metadataDeletes, 0);
+});
