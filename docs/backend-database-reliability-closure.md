@@ -27,7 +27,8 @@ Production publishing: DISABLED
 - Existing test coverage includes news create/edit compensation, verification rules, admin authorization, private media upload/retrieval/deletion, and queue validation.
 - Added tests for media deletion compensation when metadata deletion fails, including the double-failure case where storage restoration also fails.
 - Backend source checks now run on this Preview branch.
-- CI must be green on the latest commit before closure. Earlier failures caused by bearer-token parsing in the graphics route were corrected; confirm the latest rerun before marking tests passed.
+- CI verified green on code commit `17e780c6fa12ce8be770ca66f646ee780a7ebf06`: 141/141 Node tests passed, and all five Preview-branch workflows passed (Node tests, backend source checks, newsroom suite, newsroom API/safety, department-team safeguards).
+- A subsequent documentation-only commit updates this closure record; no application code changed after the green test commit.
 
 ## Still OPEN — required before closure
 1. Confirm all CI workflows pass on the latest commit.
