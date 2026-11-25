@@ -26,13 +26,15 @@ Production publishing: DISABLED
 ## Automated verification
 - Existing test coverage includes news create/edit compensation, verification rules, admin authorization, private media upload/retrieval/deletion, and queue validation.
 - Added tests for media deletion compensation when metadata deletion fails, including the double-failure case where storage restoration also fails.
+- Added endpoint smoke tests using a synthetic admin token for queue, draft and graphics: all three reject missing/incorrect credentials; each accepts the synthetic token and reaches request validation; method restrictions are checked. These tests do not access the live admin password or mutate Supabase.
+- Latest CI for commit `dad828bb45e8c30bf6adfa97be84c22875b4601c`: 148/148 Node tests passed; all five workflows passed (Node tests, backend source checks, newsroom suite, newsroom API/safety, department-team safeguards).
 - Backend source checks now run on this Preview branch.
 - CI verified green on code commit `17e780c6fa12ce8be770ca66f646ee780a7ebf06`: 141/141 Node tests passed, and all five Preview-branch workflows passed (Node tests, backend source checks, newsroom suite, newsroom API/safety, department-team safeguards).
 - A subsequent documentation-only commit updates this closure record; no application code changed after the green test commit.
 
 ## Still OPEN — required before closure
 1. Confirm all CI workflows pass on the latest commit.
-2. Establish an authenticated Admin Panel browser session to run the disposable approval_queue CRUD test (create/read/update/delete/confirm absent). Never use production newsroom records.
+2. Establish an authenticated Admin Panel browser session or equivalent secure runtime to run the disposable approval_queue CRUD test (create/read/update/delete/confirm absent). Browser automation is currently unavailable because its wallet is negative; do not require that provider if a no-cost secure alternative is available. Never use production newsroom records.
 3. Run a disposable private-media upload/read/delete test and verify metadata and object are both removed; run a controlled metadata-failure test only through mocks, not live fault injection.
 4. Verify admin queue, draft, graphics and news endpoints in the authenticated Preview session.
 5. Confirm all 8 tables' expected columns/constraints against the live schema, not just SELECT access.
