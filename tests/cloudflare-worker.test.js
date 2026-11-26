@@ -20,6 +20,7 @@ test("health endpoint is explicit that preview backend is not migrated", async (
   assert.equal(body.status, "partial-preview");
   assert.equal(body.ok, false);
   assert.equal(body.backendMigration, "in_progress");
+  assert.equal(body.capabilities.adminLoginRateLimitConfigured, false);
   assert.equal(body.publishing, "DISABLED");
 });
 
