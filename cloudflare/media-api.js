@@ -8,7 +8,7 @@ const json = (status, body) => new Response(JSON.stringify(body), {
   status,
   headers: { "content-type":"application/json; charset=utf-8", "cache-control":"no-store", "x-content-type-options":"nosniff", "referrer-policy":"no-referrer" }
 });
-const error = (status, message) => json(status, { ok:false, error:message, storage:"private", publication:"DISABLED" });
+const error = (status, message, code) => json(status, { ok:false, error:message, ...(code?{code}:{}), storage:"private", publication:"DISABLED" });
 
 function configuration(env) {
   const key = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY1;
@@ -130,7 +130,10 @@ export async function handlePrivateMedia(request, env) {
         if(!asset?.id) throw new Error("Supabase did not return the saved media asset ID");
         return json(201,{ok:true,asset:{id:asset.id,pathname,mediaType:"image",mimeType:body.mimeType,rightsStatus:"pending_review"},storage:"private",publication:"DISABLED"});
       } catch(err) {
-        if(uploaded) await storageRequest(env,"DELETE",pathname).catch(()=>{});
+        if(uploaded) {
+          try { await storageRequest(env,"DELETE",pathname); }
+          catch { throw Object.assign(new Error("Metadata indexing failed and private object cleanup also failed"), {status:502,code:"PRIVATE_MEDIA_ORPHAN_CLEANUP_FAILED"}); }
+        }
         throw err;
       }
     }
@@ -152,7 +155,8 @@ export async function handlePrivateMedia(request, env) {
       try {
         await database(env,"DELETE",new URLSearchParams({id:"eq."+id}).toString(),undefined,"return=minimal");
       } catch(err) {
-        await storageRequest(env,"PUT",asset.blob_pathname,snapshot,contentType).catch(()=>{});
+        try { await storageRequest(env,"PUT",asset.blob_pathname,snapshot,contentType); }
+        catch { throw Object.assign(new Error("Metadata deletion failed and private object restoration also failed"), {status:502,code:"PRIVATE_MEDIA_RESTORE_FAILED"}); }
         throw err;
       }
       return json(200,{ok:true,id,storage:"private",publication:"DISABLED"});
@@ -161,6 +165,6 @@ export async function handlePrivateMedia(request, env) {
     return error(405,"Method not allowed");
   } catch(err) {
     const status=Number.isInteger(err.status)?err.status:502;
-    return error(status,status===503?"Private media storage is not configured or available":"Private media operation failed");
+    return error(status,status===503?"Private media storage is not configured or available":"Private media operation failed",err.code||"PRIVATE_MEDIA_OPERATION_FAILED");
   }
 }
