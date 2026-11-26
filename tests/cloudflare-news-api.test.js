@@ -5,6 +5,7 @@ import worker from "../cloudflare/worker.js";
 const ARTICLE_ID = "123e4567-e89b-42d3-a456-426614174000";
 const origin = "https://preview.example";
 const secret = "only-for-unit-tests";
+const originalFetch = globalThis.fetch;
 const limiter = { async limit() { return { success: true }; } };
 
 function mockSupabase(resolver) {
@@ -29,6 +30,7 @@ function mockSupabase(resolver) {
 }
 
 function envFor(fetch) {
+  globalThis.fetch = fetch;
   return {
     ADMIN_PASSWORD: "test-admin-password",
     ADMIN_SESSION_SECRET: secret,
@@ -80,6 +82,8 @@ function article(overrides = {}) {
     ...overrides
   };
 }
+
+test.afterEach(() => { globalThis.fetch = originalFetch; });
 
 test("news API is protected by the signed Admin session", async () => {
   const { fetch } = mockSupabase(() => { throw new Error("database must not be called"); });
