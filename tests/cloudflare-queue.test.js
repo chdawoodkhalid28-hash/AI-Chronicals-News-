@@ -23,10 +23,18 @@ function makeBucket() {
 
 async function adminCookie(env) {
   const origin = "https://preview.example";
+  const loginEnv = {
+    ...env,
+    LOGIN_RATE_LIMITER: { async limit() { return { success: true }; } }
+  };
   const response = await worker.fetch(new Request(origin + "/api/admin/access", {
     method: "POST",
-    headers: { Origin: origin, Authorization: "Bearer test-password-only" }
-  }), env);
+    headers: {
+      Origin: origin,
+      "CF-Connecting-IP": "192.0.2.10",
+      Authorization: "Bearer test-password-only"
+    }
+  }), loginEnv);
   assert.equal(response.status, 200);
   return response.headers.get("set-cookie").match(/acn_admin_session=([^;]+)/)[1];
 }
