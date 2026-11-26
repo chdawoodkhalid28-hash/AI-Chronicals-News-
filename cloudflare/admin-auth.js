@@ -72,6 +72,19 @@ async function createToken(secret, now = Date.now()) {
   return { token: payload + "." + base64url(signature), expiresAt };
 }
 
+async function allowLoginAttempt(request, env) {
+  const limiter = env.LOGIN_RATE_LIMITER;
+  if (!limiter || typeof limiter.limit !== "function") return false;
+  const ip = request.headers.get("CF-Connecting-IP");
+  if (!ip) return false;
+  try {
+    const result = await limiter.limit({ key: "admin-login:" + ip });
+    return result?.success === true;
+  } catch {
+    return false;
+  }
+}
+
 export async function verifyAdminSession(request, env, now = Date.now()) {
   if (!env.ADMIN_SESSION_SECRET) return false;
   const token = cookieValue(request, COOKIE);
@@ -104,6 +117,9 @@ export async function handleAdminAuth(request, env) {
     if (!originAllowed(request)) return json(403, { ok: false, error: "Same-origin request required" });
     if (!env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET) {
       return json(503, { ok: false, error: "Admin authentication is not configured" });
+    }
+    if (!(await allowLoginAttempt(request, env))) {
+      return json(503, { ok: false, error: "Admin login rate limiter is unavailable or the request limit was reached" });
     }
     const supplied = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
     if (!(await equalSecret(supplied, env.ADMIN_PASSWORD))) {

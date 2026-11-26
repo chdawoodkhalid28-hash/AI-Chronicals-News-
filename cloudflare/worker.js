@@ -24,6 +24,7 @@ export default {
         capabilities: {
           staticAssets: Boolean(env.ASSETS),
           adminSessionConfigured: Boolean(env.ADMIN_PASSWORD && env.ADMIN_SESSION_SECRET),
+          adminLoginRateLimitConfigured: Boolean(env.LOGIN_RATE_LIMITER && typeof env.LOGIN_RATE_LIMITER.limit === "function"),
           approvalQueueStorageConfigured: Boolean(env.APPROVAL_QUEUE),
           adminApi: false,
           approvalQueue: Boolean(env.APPROVAL_QUEUE),
