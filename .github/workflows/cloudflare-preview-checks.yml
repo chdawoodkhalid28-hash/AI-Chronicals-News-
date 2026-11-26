@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - cloudflare-test-deployment
+      - feat/cloudflare-news-crud
 
 permissions:
   contents: read
@@ -22,4 +23,4 @@ jobs:
         with:
           node-version: 22
       - name: Run Cloudflare preview worker tests
-        run: node --test tests/cloudflare-worker.test.js tests/cloudflare-admin-auth.test.js tests/cloudflare-queue.test.js
+        run: node --test tests/cloudflare-worker.test.js tests/cloudflare-admin-auth.test.js tests/cloudflare-queue.test.js tests/cloudflare-news-api.test.js
