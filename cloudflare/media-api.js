@@ -76,7 +76,9 @@ function bytesFromBase64(input) {
   return bytes;
 }
 
-async function readJson(request, max=4*1024*1024) {
+async function readJson(request, max=Math.ceil(MAX_BYTES/3)*4+16_384) {
+  const declaredLength=Number(request.headers.get("Content-Length")||0);
+  if(declaredLength>max) throw Object.assign(new Error("Request body is too large"),{status:413});
   const raw=await request.text();
   if(new TextEncoder().encode(raw).byteLength>max) throw Object.assign(new Error("Request body is too large"),{status:413});
   try{return raw?JSON.parse(raw):{};}catch{throw Object.assign(new Error("Invalid JSON body"),{status:400});}
