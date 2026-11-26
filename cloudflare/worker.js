@@ -1,6 +1,7 @@
 import { handleAdminAuth, verifyAdminSession } from "./admin-auth.js";
 import { handleQueueRequest } from "./approval-queue.js";
 import { handleNewsApi } from "./news-api.js";
+import { handlePrivateMedia } from "./media-api.js";
 
 const json = (status, payload) => new Response(JSON.stringify(payload, null, 2), {
   status,
@@ -32,10 +33,11 @@ export default {
           newsCrud: supabaseConfigured,
           approvalQueue: Boolean(env.APPROVAL_QUEUE),
           supabase: supabaseConfigured,
-          privateMediaStorage: false
+          privateMediaStorageApi: true,
+          privateMediaStorageConfigured: supabaseConfigured
         },
         publishing: "DISABLED",
-        message: "Admin sessions, the R2 approval queue adapter, and a Supabase-backed News CRUD API are implemented; remaining newsroom APIs and production bindings are not yet migrated."
+        message: "Admin sessions, R2 approval queue, Supabase News CRUD and private Supabase media APIs are implemented; remaining newsroom APIs and production bindings are not yet migrated."
       });
     }
 
@@ -49,6 +51,7 @@ export default {
       if (url.pathname === "/api/admin/news" || (url.pathname === "/api/admin/queue" && url.searchParams.get("resource") === "news")) {
         return handleNewsApi(request, env);
       }
+      if (url.pathname === "/api/admin/graphics") return handlePrivateMedia(request, env);
       return json(503, {
         ok: false,
         error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
