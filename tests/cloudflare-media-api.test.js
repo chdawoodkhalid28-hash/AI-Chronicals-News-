@@ -123,3 +123,20 @@ test("media endpoints reject unauthenticated access",async()=>{
   const r=await worker.fetch(new Request(origin+"/api/admin/graphics"),env());
   assert.equal(r.status,401);
 });
+
+test("surfaces failed private object restoration when metadata deletion fails",async()=>{
+  const calls=mockFetch(c=>{
+    if(c.url.pathname==="/rest/v1/media_assets"&&c.method==="GET") return {data:[{id:ASSET_ID,blob_pathname:"newsroom-uploads/example.png",media_type:"image"}]};
+    if(c.url.pathname.includes("/storage/v1/object/")&&c.method==="GET") return {binary:png};
+    if(c.url.pathname.includes("/storage/v1/object/")&&c.method==="DELETE") return [];
+    if(c.url.pathname==="/rest/v1/media_assets"&&c.method==="DELETE") return {status:500,data:{message:"synthetic metadata failure"}};
+    if(c.url.pathname.includes("/storage/v1/object/")&&c.method==="PUT") return {status:500,data:{message:"synthetic restore failure"}};
+    throw new Error("Unexpected request");
+  });
+  const e=env(),c=await cookie(e);
+  const r=await call(e,c,"DELETE",{id:ASSET_ID});
+  const body=await r.json();
+  assert.equal(r.status,502);
+  assert.equal(body.code,"PRIVATE_MEDIA_RESTORE_FAILED");
+  assert.equal(calls.some(x=>x.method==="PUT"),true);
+});
