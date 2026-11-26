@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - cloudflare-test-deployment
+      - feat/cloudflare-news-crud
   pull_request:
     branches:
       - cloudflare-test-deployment
+      - feat/cloudflare-news-crud
 
 permissions:
   contents: read
