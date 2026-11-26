@@ -1,5 +1,6 @@
 import { handleAdminAuth, verifyAdminSession } from "./admin-auth.js";
 import { handleQueueRequest } from "./approval-queue.js";
+import { handleNewsApi } from "./news-api.js";
 
 const json = (status, payload) => new Response(JSON.stringify(payload, null, 2), {
   status,
@@ -15,6 +16,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/health" && request.method === "GET") {
+      const supabaseConfigured = Boolean(env.SUPABASE_URL && (env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY1));
       return json(200, {
         service: "AI Chronicals News",
         status: "partial-preview",
@@ -27,12 +29,13 @@ export default {
           adminLoginRateLimitConfigured: Boolean(env.LOGIN_RATE_LIMITER && typeof env.LOGIN_RATE_LIMITER.limit === "function"),
           approvalQueueStorageConfigured: Boolean(env.APPROVAL_QUEUE),
           adminApi: false,
+          newsCrud: supabaseConfigured,
           approvalQueue: Boolean(env.APPROVAL_QUEUE),
-          supabase: false,
+          supabase: supabaseConfigured,
           privateMediaStorage: false
         },
         publishing: "DISABLED",
-        message: "Signed admin sessions and the private R2 approval queue adapter are available; remaining newsroom APIs and production bindings are not yet migrated."
+        message: "Admin sessions, the R2 approval queue adapter, and a Supabase-backed News CRUD API are implemented; remaining newsroom APIs and production bindings are not yet migrated."
       });
     }
 
@@ -42,7 +45,10 @@ export default {
       if (!(await verifyAdminSession(request, env))) {
         return json(401, { ok: false, error: "Admin session required" });
       }
-      if (url.pathname === "/api/admin/queue") return handleQueueRequest(request, env);
+      if (url.pathname === "/api/admin/queue" && url.searchParams.get("resource") !== "news") return handleQueueRequest(request, env);
+      if (url.pathname === "/api/admin/news" || (url.pathname === "/api/admin/queue" && url.searchParams.get("resource") === "news")) {
+        return handleNewsApi(request, env);
+      }
       return json(503, {
         ok: false,
         error: "CLOUDFLARE_BACKEND_MIGRATION_PENDING",
